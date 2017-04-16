@@ -1,0 +1,36 @@
+package no.nav.sbl.config;
+
+import no.nav.metrics.aspects.CountAspect;
+import no.nav.metrics.aspects.TimerAspect;
+import no.nav.sbl.selftest.HealthCheckService;
+import no.nav.sbl.selftest.IsAliveServlet;
+import org.springframework.context.annotation.*;
+
+@Configuration
+@EnableAspectJAutoProxy
+@ComponentScan("no.nav.sbl")
+@Import({
+        DatabaseConfig.class,
+        ServiceContext.class,
+})
+public class ApplicationConfig {
+    @Bean
+    public TimerAspect timerAspect() {
+        return new TimerAspect();
+    }
+
+    @Bean
+    public CountAspect countAspect() {
+        return new CountAspect();
+    }
+
+    @Bean
+    public HealthCheckService healthCheckService() {
+        return new HealthCheckService();
+    }
+
+    @Bean
+    public IsAliveServlet isAliveServlet() {
+        return new IsAliveServlet();
+    }
+}
