@@ -1,5 +1,6 @@
 package no.nav.sbl.rest;
 
+import no.nav.metrics.aspects.Timed;
 import no.nav.sbl.rest.domain.RSEvents;
 import no.nav.sbl.service.EventService;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ public class EventRessurs {
     private EventService eventService;
 
     @GET
+    @Timed(name = "hentNyeEvents")
     @Path("{eventId}")
     public RSEvents hentNyeEvents(@PathParam("eventId") String eventId) {
         return new RSEvents().withEvents(eventService.hentEventerEtterId(Long.parseLong(eventId)));

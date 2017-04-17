@@ -32,20 +32,20 @@ public class ContextRessurs {
 
     @GET
     @Path("/aktivbruker")
-    @Timed
+    @Timed(name = "hentAktivBruker")
     public RSContext hentAktivBruker() {
         return contextService.hentAktivBruker(getSubjectHandler().getUid());
     }
 
     @GET
     @Path("/aktivenhet")
-    @Timed
+    @Timed(name = "hentAktivEnhet")
     public RSContext hentAktivEnhet() {
         return contextService.hentAktivEnhet(getSubjectHandler().getUid());
     }
 
     @POST
-    @Timed
+    @Timed(name = "oppdaterVeiledersContext")
     public void oppdaterVeiledersContext(RSNyContext rsNyContext) {
         RSNyContext context = new RSNyContext()
                 .withIp(request.getRemoteAddr())
