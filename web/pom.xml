@@ -15,6 +15,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>no.nav.sbl</groupId>
+            <artifactId>common-batch</artifactId>
+        </dependency>
+        <dependency>
             <groupId>no.nav.sbl.dialogarena</groupId>
             <artifactId>common-web</artifactId>
         </dependency>
@@ -39,27 +43,6 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-        </dependency>
-
         <!-- Jersey Jax-RS (needed for servlet in web.xml and DPI with Spring in Resource class -->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
@@ -133,16 +116,8 @@
             <artifactId>spring-orm</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-        </dependency>
-        <dependency>
             <groupId>no.nav.sbl.dialogarena</groupId>
             <artifactId>common-jetty</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.sbl.dialogarena</groupId>
-            <artifactId>common-test</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.components</groupId>
@@ -167,7 +142,6 @@
             <version>9.3.0.M2</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -176,10 +150,6 @@
         <dependency>
             <artifactId>javax.ws.rs-api</artifactId>
             <groupId>javax.ws.rs</groupId>
-        </dependency>
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
         </dependency>
     </dependencies>
 </project>

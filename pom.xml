@@ -19,13 +19,6 @@
     </modules>
 
     <properties>
-        <sonar.exclusions>
-            **/testdata/**,
-            **/selftest/**,
-            **/domain/**,
-            **/model/**,
-            **/mocks/**,
-        </sonar.exclusions>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Tredjeparts  -->
@@ -34,60 +27,26 @@
         <hibernate.version>4.3.11.Final</hibernate.version>
         <jersey.version>2.25</jersey.version>
         <slf4j-api.version>1.7.15</slf4j-api.version>
-        <cxf.version>2.7.6</cxf.version>
         <aspectjweaver.version>1.8.8</aspectjweaver.version>
-        <guava.version>16.0.1</guava.version>
         <logback.version>1.1.6</logback.version>
-        <saxon.version>9.7.0-4</saxon.version>
-        <wss4j.version>1.6.17</wss4j.version>
         <commons-io.version>2.4</commons-io.version>
-        <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
-        <ehcache.version>2.6.11</ehcache.version>
 
         <!-- Egenlagde  -->
         <common-batch.version>1.0.3</common-batch.version>
         <common-web.version>2.0.4</common-web.version>
         <common-types.version>1.2</common-types.version>
         <common-jetty.version>2.0.12</common-jetty.version>
-        <common-test.version>1.3</common-test.version>
         <modig-core.version>1.0.1</modig-core.version>
         <modig-security.version>3.0.0</modig-security.version>
         <modig-testcertificates.version>1.1.4</modig-testcertificates.version>
-        <modig-log-jaxws.version>1.1.3</modig-log-jaxws.version>
         <nav.metrics.version>3.1.1</nav.metrics.version>
-        <common-cxf.version>3.1.20</common-cxf.version>
-        <javax.jms-api.version>2.0.1</javax.jms-api.version>
-        <common-time.version>3.1.15</common-time.version>
         <oidc-security.version>2.1.19</oidc-security.version>
-
-        <!-- Tjenester  -->
-        <moetev1-tjenestespesifikasjon.version>1.0.12</moetev1-tjenestespesifikasjon.version>
-        <behandle-moetev1-tjenestespesifikasjon.version>1.0.5</behandle-moetev1-tjenestespesifikasjon.version>
-        <dial-nav-tjeneste-aktoer_v2.version>1.1</dial-nav-tjeneste-aktoer_v2.version>
-        <organisasjonenhet-v1-tjenestespesifikasjon.version>1.0.3</organisasjonenhet-v1-tjenestespesifikasjon.version>
-        <organisasjonRessursEnhet-v1-tjenestespesifikasjon.version>1.0.2</organisasjonRessursEnhet-v1-tjenestespesifikasjon.version>
-        <brukerprofil-v3-tjenestespesifikasjon.version>3.0.1</brukerprofil-v3-tjenestespesifikasjon.version>
-        <organisasjonv4-tjenestespesifikasjon.version>1.0.0</organisasjonv4-tjenestespesifikasjon.version>
-        <sykefravaersoppfoelgingv1-tjenestespesifikasjon.version>1.0.10</sykefravaersoppfoelgingv1-tjenestespesifikasjon.version>
-
-        <!-- Test -->
-        <powermock.version>1.6.3</powermock.version>
-        <junit.version>4.12</junit.version>
-        <mockito.version>1.10.19</mockito.version>
-        <assertj.version>2.4.1</assertj.version>
-        <activemq.version>5.7.0</activemq.version>
 
         <!-- Java -->
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.interceptor-api.version>1.2</javax.interceptor-api.version>
         <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
-        <jbossxacml.version>2.0.9.Final</jbossxacml.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
-
-        <!--Tilgangskontroll-->
-        <modiabrukerdialog-api.version>5.0.1</modiabrukerdialog-api.version>
-        <modig-content.version>2.0.13</modig-content.version>
-        <!--Tilgangskontroll-->
     </properties>
 
     <dependencyManagement>
@@ -96,32 +55,6 @@
                 <artifactId>javax.ws.rs-api</artifactId>
                 <groupId>javax.ws.rs</groupId>
                 <version>${javax.ws.rs-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.syfo.tjenester</groupId>
-                <artifactId>sykefravaersoppfoelgingv1-tjenestespesifikasjon</artifactId>
-                <version>${sykefravaersoppfoelgingv1-tjenestespesifikasjon.version}</version>
-            </dependency>
-            <!-- Tjenester  -->
-            <dependency>
-                <groupId>no.nav.syfo.tjenester</groupId>
-                <artifactId>moetev1-tjenestespesifikasjon</artifactId>
-                <version>${moetev1-tjenestespesifikasjon.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.syfo.tjenester</groupId>
-                <artifactId>brukerprofil-v3-tjenestespesifikasjon</artifactId>
-                <version>${brukerprofil-v3-tjenestespesifikasjon.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.syfo.tjenester</groupId>
-                <artifactId>behandle-moetev1-tjenestespesifikasjon</artifactId>
-                <version>${behandle-moetev1-tjenestespesifikasjon.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.sbl.dialogarena</groupId>
-                <artifactId>dial-nav-tjeneste-aktoer_v2</artifactId>
-                <version>${dial-nav-tjeneste-aktoer_v2.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.nav.sbl</groupId>
@@ -144,30 +77,6 @@
                 <artifactId>oidc-security</artifactId>
                 <version>${oidc-security.version}</version>
             </dependency>
-            <!--Tilgangskontroll-->
-            <dependency>
-                <groupId>no.nav.sbl.dialogarena</groupId>
-                <artifactId>modiabrukerdialog-api</artifactId>
-                <version>${modiabrukerdialog-api.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-core</artifactId>
-                <version>${ehcache.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.modig</groupId>
-                <artifactId>modig-content</artifactId>
-                <version>${modig-content.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-                <scope>test</scope>
-            </dependency>
             <dependency>
                 <groupId>no.nav.sbl.dialogarena</groupId>
                 <artifactId>common-time</artifactId>
@@ -177,11 +86,6 @@
                 <groupId>no.nav.sbl.dialogarena</groupId>
                 <artifactId>common-web</artifactId>
                 <version>${common-web.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.jms</groupId>
-                <artifactId>javax.jms-api</artifactId>
-                <version>${javax.jms-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.nav.sbl.dialogarena</groupId>
@@ -199,63 +103,11 @@
                 <artifactId>javax.inject</artifactId>
                 <version>1</version>
             </dependency>
-            <dependency>
-                <groupId>no.nav.sbl.dialogarena</groupId>
-                <artifactId>common-cxf</artifactId>
-                <version>${common-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.sbl.dialogarena</groupId>
-                <artifactId>varsel-inn</artifactId>
-                <version>1.0.5</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.meldinger.virksomhet</groupId>
-                <artifactId>nav-virksomhet-varselMedHandling-v1-meldingsdefinisjon</artifactId>
-                <version>1.0.0</version>
-                <classifier>jaxb</classifier>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.meldinger.virksomhet</groupId>
-                <artifactId>nav-virksomhet-stoppReVarsel-v1-meldingsdefinisjon</artifactId>
-                <version>1.0.1</version>
-                <classifier>jaxb</classifier>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.meldinger.virksomhet</groupId>
-                <artifactId>nav-virksomhet-opprettOppgavehenvendelse-v1-meldingsdefinisjon</artifactId>
-                <version>1.0.0</version>
-                <classifier>jaxb</classifier>
-            </dependency>
+
             <dependency>
                 <groupId>no.nav.modig</groupId>
                 <artifactId>modig-core</artifactId>
                 <version>${modig-core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.modig</groupId>
-                <artifactId>modig-security-ws</artifactId>
-                <version>${modig-security.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>commons-logging</artifactId>
-                        <groupId>commons-logging</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>no.nav.modig</groupId>
@@ -275,117 +127,11 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>no.nav.modig</groupId>
-                <artifactId>modig-log-jaxws</artifactId>
-                <version>${modig-log-jaxws.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <!-- transitive dependency of modig-security which must be provided -->
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-transports-http</artifactId>
-                <version>${cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-api</artifactId>
-                <version>${cxf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-ws-security</artifactId>
-                <version>${cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-frontend-jaxws</artifactId>
-                <version>${cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-frontend-simple</artifactId>
-                <version>${cxf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-core</artifactId>
-                <version>${cxf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-ws-policy</artifactId>
-                <version>${cxf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-bindings-soap</artifactId>
-                <version>${cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- External dependencies -->
-            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${javax.servlet-api.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <!-- for testing -->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-core</artifactId>
-                <version>${powermock.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-module-junit4</artifactId>
-                <version>${powermock.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito</artifactId>
-                <version>${powermock.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <!-- Jersey Jax-RS (needed for servlet in web.xml and DPI with Spring in Resource class -->
             <dependency>
                 <groupId>org.glassfish.jersey.containers</groupId>
                 <artifactId>jersey-container-servlet-core</artifactId>
@@ -444,12 +190,6 @@
                 <groupId>javax.annotation</groupId>
                 <artifactId>javax.annotation-api</artifactId>
                 <version>1.2</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.saxon</groupId>
-                <artifactId>Saxon-HE</artifactId>
-                <version>${saxon.version}</version>
-                <scope>runtime</scope>
             </dependency>
 
             <!-- JPA 2.1 (Hibernate) -->
@@ -534,25 +274,9 @@
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jms</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>4.3.2.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>${assertj.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.nav.sbl.dialogarena</groupId>
@@ -561,51 +285,10 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>no.nav.sbl.dialogarena</groupId>
-                <artifactId>common-test</artifactId>
-                <version>${common-test.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.oracle</groupId>
                 <artifactId>ojdbc6</artifactId>
                 <version>${ojdbc.version}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.security</groupId>
-                <artifactId>jbossxacml</artifactId>
-                <version>${jbossxacml.version}</version>
-            </dependency>
-            <!-- SMTP -->
-            <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-                <version>1.4.7</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.activation</groupId>
-                <artifactId>activation</artifactId>
-                <version>1.1.1</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                <version>${geronimo-javamail_1.4_spec.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-core</artifactId>
-                <version>${activemq.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.geronimo.specs</groupId>
-                        <artifactId>geronimo-jms_1.1_spec</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>

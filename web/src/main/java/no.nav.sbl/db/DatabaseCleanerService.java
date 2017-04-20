@@ -1,0 +1,38 @@
+package no.nav.sbl.db;
+
+import no.nav.batch.aspects.RunOnlyOnMaster;
+import no.nav.metrics.aspects.Timed;
+import no.nav.sbl.db.dao.EventDAO;
+import no.nav.sbl.db.domain.PEvent;
+import org.springframework.scheduling.annotation.Scheduled;
+
+import javax.inject.Inject;
+
+import java.util.List;
+
+import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
+import static no.nav.sbl.db.domain.EventType.NY_AKTIV_ENHET;
+
+public class DatabaseCleanerService {
+
+    @Inject
+    private EventDAO eventDAO;
+
+    @Scheduled(cron = "0 0 2 * *")
+    @RunOnlyOnMaster
+    @Timed(name = "slettAlleNyAktivBrukerEvents")
+    public void slettAlleNyAktivBrukerEvents() {
+        eventDAO.slettAlleAvEventType(NY_AKTIV_BRUKER.name());
+    }
+
+    @Scheduled(cron = "0 0 3 * *")
+    @RunOnlyOnMaster
+    @Timed(name = "slettAlleUtenomSisteNyAktivEnhet")
+    public void slettAlleUtenomSisteNyAktivEnhet() {
+        eventDAO.hentUnikeVeilederIdenter()
+                .forEach(veilederIdent -> {
+                    List<PEvent> eventer = eventDAO.hentVeiledersEventerAvType(NY_AKTIV_ENHET.name(), veilederIdent);
+                    eventDAO.slettAlleEventerUtenomNyeste(eventer);
+                });
+    }
+}

@@ -1,5 +1,6 @@
 package no.nav.sbl.config;
 
+import no.nav.batch.aspects.RunOnlyOnMasterAspect;
 import no.nav.metrics.aspects.CountAspect;
 import no.nav.metrics.aspects.TimerAspect;
 import no.nav.sbl.selftest.HealthCheckService;
@@ -22,6 +23,11 @@ public class ApplicationConfig {
     @Bean
     public CountAspect countAspect() {
         return new CountAspect();
+    }
+
+    @Bean
+    public RunOnlyOnMasterAspect runOnlyOnMasterAspect() {
+        return new RunOnlyOnMasterAspect();
     }
 
     @Bean

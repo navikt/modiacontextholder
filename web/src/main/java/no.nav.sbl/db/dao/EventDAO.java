@@ -2,6 +2,7 @@ package no.nav.sbl.db.dao;
 
 import no.nav.sbl.db.domain.PEvent;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,5 +52,34 @@ public class EventDAO extends AbstractDAO<PEvent> {
                 .createCriteria(PEvent.class)
                 .add(gt("id", id));
         return criteria.list();
+    }
+
+    public int slettAlleAvEventType(String eventType) {
+        Query query = this.getSession()
+                .createQuery("DELETE from PEvent WHERE event_type = :eventType");
+
+        query.setParameter("eventType", eventType);
+
+        return query.executeUpdate();
+    }
+
+    public void slettAlleEventerUtenomNyeste(List<PEvent> eventer) {
+        eventer.stream().sorted((o1, o2) -> o2.getId() < o1.getId() ? 1 : -1)
+                .limit(eventer.size() - 1)
+                .forEach(pEvent -> this.getSession().delete(pEvent));
+    }
+
+    public List<PEvent> hentVeiledersEventerAvType(String eventType, String veilederIdent) {
+        return this.getSession()
+                .createCriteria(PEvent.class)
+                .add(eq("veilederIdent", veilederIdent))
+                .add(eq("eventType", eventType))
+                .list();
+    }
+
+    public List<String> hentUnikeVeilederIdenter() {
+        Query query = this.getSession()
+                .createQuery("SELECT DISTINCT veilederIdent from PEvent");
+        return query.list();
     }
 }

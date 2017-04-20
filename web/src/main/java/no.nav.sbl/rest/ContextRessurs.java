@@ -9,7 +9,10 @@ import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static no.nav.brukerdialog.security.context.SubjectHandler.getSubjectHandler;
