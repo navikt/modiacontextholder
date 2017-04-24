@@ -6,9 +6,11 @@ import no.nav.metrics.aspects.TimerAspect;
 import no.nav.sbl.selftest.HealthCheckService;
 import no.nav.sbl.selftest.IsAliveServlet;
 import org.springframework.context.annotation.*;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
 @EnableAspectJAutoProxy
+@EnableScheduling
 @ComponentScan("no.nav.sbl")
 @Import({
         DatabaseConfig.class,

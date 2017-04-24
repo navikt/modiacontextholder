@@ -18,14 +18,14 @@ public class DatabaseCleanerService {
     @Inject
     private EventDAO eventDAO;
 
-    @Scheduled(cron = "0 0 2 * *")
+    @Scheduled(cron = "0 0 2 * * *")
     @RunOnlyOnMaster
     @Timed(name = "slettAlleNyAktivBrukerEvents")
     public void slettAlleNyAktivBrukerEvents() {
         eventDAO.slettAlleAvEventType(NY_AKTIV_BRUKER.name());
     }
 
-    @Scheduled(cron = "0 0 3 * *")
+    @Scheduled(cron = "0 0 3 * * *")
     @RunOnlyOnMaster
     @Timed(name = "slettAlleUtenomSisteNyAktivEnhet")
     public void slettAlleUtenomSisteNyAktivEnhet() {
