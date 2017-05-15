@@ -20,9 +20,9 @@ public class ContextService {
     @Inject
     private EventDAO eventDAO;
 
-    public RSContext hentVeiledersContext(String veilederIdent) {
+    public RSContext hentVeiledersContext(String veilederIdent, String remoteAdress) {
         return new RSContext()
-                .withAktivBruker(hentAktivBruker(veilederIdent).aktivBruker)
+                .withAktivBruker(hentAktivBruker(veilederIdent, remoteAdress).aktivBruker)
                 .withAktivEnhet(hentAktivEnhet(veilederIdent).aktivEnhet);
     }
 
@@ -34,8 +34,8 @@ public class ContextService {
                 .withVeilederIdent(veilederIdent));
     }
 
-    public RSContext hentAktivBruker(String veilederIdent) {
-        PEvent sisteAktivBrukerEvent = eventDAO.sistAktiveBrukerEvent(veilederIdent).orElse(new PEvent());
+    public RSContext hentAktivBruker(String veilederIdent, String remoteAdress) {
+        PEvent sisteAktivBrukerEvent = eventDAO.sistAktiveBrukerEvent(veilederIdent, remoteAdress).orElse(new PEvent());
         return map(sisteAktivBrukerEvent, p2context);
     }
 

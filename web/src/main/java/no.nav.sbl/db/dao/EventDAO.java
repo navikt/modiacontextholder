@@ -26,12 +26,13 @@ public class EventDAO extends AbstractDAO<PEvent> {
         return LOG;
     }
 
-    public Optional<PEvent> sistAktiveBrukerEvent(String veilederIdent) {
+    public Optional<PEvent> sistAktiveBrukerEvent(String veilederIdent, String remoteAdress) {
         Criteria criteria = this
                 .getSession()
                 .createCriteria(PEvent.class)
                 .add(eq("veilederIdent", veilederIdent))
                 .add(eq("eventType", NY_AKTIV_BRUKER.name()))
+                .add(eq("ip", remoteAdress))
                 .addOrder(desc("created"));
         return criteria.list().stream().findFirst();
     }

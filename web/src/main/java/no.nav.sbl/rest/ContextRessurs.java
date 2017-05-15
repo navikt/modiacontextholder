@@ -30,14 +30,14 @@ public class ContextRessurs {
     @GET
     @Timed
     public RSContext hentVeiledersContext() {
-        return contextService.hentVeiledersContext(getSubjectHandler().getUid());
+        return contextService.hentVeiledersContext(getSubjectHandler().getUid(), request.getRemoteAddr());
     }
 
     @GET
     @Path("/aktivbruker")
     @Timed(name = "hentAktivBruker")
     public RSContext hentAktivBruker() {
-        return contextService.hentAktivBruker(getSubjectHandler().getUid());
+        return contextService.hentAktivBruker(getSubjectHandler().getUid(), request.getRemoteAddr());
     }
 
     @GET
