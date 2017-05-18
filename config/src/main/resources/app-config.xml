@@ -15,7 +15,7 @@
 
     <resources>
         <rest alias="oidc-login-api" mapToProperty="oidc-redirect"/>
-        <datasource alias="modiacontextholderDB" xaEnabled="true" jndi="java:jboss/jdbc/modiacontextholderDS">
+        <datasource alias="modiacontextholderDB" jndi="java:jboss/jdbc/modiacontextholderDS">
             <pool maxPoolSize="300" minPoolSize="0"/>
         </datasource>
 
