@@ -54,14 +54,6 @@
         <url-pattern>/internal/selftest</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>jsonselftest</servlet-name>
-        <servlet-class>no.nav.sbl.selftest.SelftestServletJson</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>jsonselftest</servlet-name>
-        <url-pattern>/internal/selftest.json</url-pattern>
-    </servlet-mapping>
-    <servlet>
         <servlet-name>isAliveServlet</servlet-name>
         <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
     </servlet>

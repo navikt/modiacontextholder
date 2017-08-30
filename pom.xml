@@ -30,11 +30,12 @@
         <aspectjweaver.version>1.8.8</aspectjweaver.version>
         <logback.version>1.1.6</logback.version>
         <commons-io.version>2.4</commons-io.version>
+        <jackson.version>2.9.0</jackson.version>
 
         <!-- Egenlagde  -->
         <common-batch.version>1.0.3</common-batch.version>
-        <common-web.version>2.0.4</common-web.version>
-        <common-types.version>1.2</common-types.version>
+        <common-web.version>5.0.16</common-web.version>
+        <common-types.version>2.0.10</common-types.version>
         <common-jetty.version>2.0.12</common-jetty.version>
         <modig-core.version>1.0.1</modig-core.version>
         <modig-security.version>3.0.0</modig-security.version>
@@ -51,6 +52,24 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+                <scope>runtime</scope>
+            </dependency>
             <dependency>
                 <artifactId>javax.ws.rs-api</artifactId>
                 <groupId>javax.ws.rs</groupId>

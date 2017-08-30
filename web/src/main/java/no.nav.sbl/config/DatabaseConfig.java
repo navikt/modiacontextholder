@@ -59,14 +59,15 @@ public class DatabaseConfig {
 
     @Bean
     public Pingable dbPing() {
+        Pingable.Ping.PingMetadata pingMetadata = new Pingable.Ping.PingMetadata("jdbc/modiacontextholderDS", "MODIACONTEXTHOLDER_DB", true);
         return () -> {
             try (Connection connection = dataSource().getConnection();
                  PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM PRODUCT_COMPONENT_VERSION");
                  ResultSet resultSet = preparedStatement.executeQuery()) {
                 resultSet.next();
-                return Pingable.Ping.lyktes("DATABASE");
+                return Pingable.Ping.lyktes(pingMetadata);
             } catch (Exception e) {
-                return Pingable.Ping.feilet("DATABASE", e);
+                return Pingable.Ping.feilet(pingMetadata, e);
             }
         };
     }
