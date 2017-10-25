@@ -29,6 +29,7 @@
     <security serviceUserResourceAlias="srvmodiacontextholder" />
 
     <exposed-services>
+        <exposedRest path="/modiacontextholder/internal/isAlive" name="veiledercontext-isalive" description="enkel isAlive for appen"/>
         <exposedRest path="/modiacontextholder/api/veiledercontext" name="veiledercontext-api" description="API for konteksten til en veileder"/>
         <exposedRest path="/modiacontextholder/api/events" name="events-api"
                      description="Tjeneste for å hente eventer. Legg på url-parameter etterEventId for å henter kun eventer etter en gitt id."/>
