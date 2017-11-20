@@ -83,4 +83,13 @@ public class EventDAO extends AbstractDAO<PEvent> {
                 .createQuery("SELECT DISTINCT veilederIdent from PEvent");
         return query.list();
     }
+
+    public int slettAllEventer(String veilederIdent) {
+        Query query = this.getSession()
+                .createQuery("DELETE from PEvent WHERE veileder_ident = :veilederIdent");
+
+        query.setParameter("veilederIdent", veilederIdent);
+
+        return query.executeUpdate();
+    }
 }
