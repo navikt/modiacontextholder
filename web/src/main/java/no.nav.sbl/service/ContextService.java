@@ -1,6 +1,7 @@
 package no.nav.sbl.service;
 
 import no.nav.sbl.db.dao.EventDAO;
+import no.nav.sbl.db.domain.EventType;
 import no.nav.sbl.db.domain.PEvent;
 import no.nav.sbl.mappers.EventMapper;
 import no.nav.sbl.rest.domain.RSContext;
@@ -42,5 +43,9 @@ public class ContextService {
     public RSContext hentAktivEnhet(String veilederIdent) {
         PEvent sisteAktivEnhetEvent = eventDAO.sistAktiveEnhetEvent(veilederIdent).orElse(new PEvent());
         return map(sisteAktivEnhetEvent, p2context);
+    }
+
+    public void nullstillContext(String veilederIdent) {
+        eventDAO.slettAllEventer(veilederIdent);
     }
 }

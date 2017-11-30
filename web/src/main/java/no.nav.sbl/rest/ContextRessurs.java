@@ -9,10 +9,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static no.nav.brukerdialog.security.context.SubjectHandler.getSubjectHandler;
@@ -45,6 +42,13 @@ public class ContextRessurs {
     @Timed(name = "hentAktivEnhet")
     public RSContext hentAktivEnhet() {
         return contextService.hentAktivEnhet(getSubjectHandler().getUid());
+    }
+
+    @DELETE
+    @Path("/nullstill")
+    @Timed(name = "nullstillContext")
+    public void nullstillBrukerContext() {
+        contextService.nullstillContext(getSubjectHandler().getUid());
     }
 
     @POST
