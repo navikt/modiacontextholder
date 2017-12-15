@@ -23,8 +23,7 @@
 
         <!-- Tredjeparts  -->
         <ojdbc.version>11.2.0.3</ojdbc.version>
-        <spring.version>4.1.7.RELEASE</spring.version> <!-- newer version will cause error with Apache CXF -->
-        <hibernate.version>4.3.11.Final</hibernate.version>
+        <spring.version>4.3.13.RELEASE</spring.version>
         <jersey.version>2.25</jersey.version>
         <slf4j-api.version>1.7.15</slf4j-api.version>
         <aspectjweaver.version>1.8.8</aspectjweaver.version>
@@ -46,7 +45,6 @@
         <!-- Java -->
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.interceptor-api.version>1.2</javax.interceptor-api.version>
-        <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
     </properties>
 
@@ -84,6 +82,12 @@
                 <groupId>org.apache.geronimo.components</groupId>
                 <artifactId>geronimo-jaspi</artifactId>
                 <version>2.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.16.16</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>no.nav.dialogarena</groupId>
@@ -180,11 +184,6 @@
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>${slf4j-api.version}</version>
                 <scope>runtime</scope>
@@ -211,24 +210,6 @@
                 <version>1.2</version>
             </dependency>
 
-            <!-- JPA 2.1 (Hibernate) -->
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>${hibernate.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.javax.persistence</groupId>
-                <artifactId>hibernate-jpa-2.1-api</artifactId>
-                <version>${hibernate-jpa-2.1-api.version}</version>
-            </dependency>
-
             <!-- Spring -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -244,6 +225,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aop</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
@@ -281,21 +267,6 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
                 <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>4.3.2.Final</version>
             </dependency>
             <dependency>
                 <groupId>no.nav.sbl.dialogarena</groupId>
