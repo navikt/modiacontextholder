@@ -51,6 +51,13 @@ public class ContextRessurs {
         contextService.nullstillContext(getSubjectHandler().getUid());
     }
 
+    @DELETE
+    @Path("/nullstillAktivBruker")
+    @Timed(name = "nullstillAktivBrukerContext")
+    public void nullstillAktivBrukerContext() {
+        contextService.nullstillAktivBruker(getSubjectHandler().getUid());
+    }
+
     @POST
     @Timed(name = "oppdaterVeiledersContext")
     public void oppdaterVeiledersContext(RSNyContext rsNyContext) {
