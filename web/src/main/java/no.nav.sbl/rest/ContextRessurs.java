@@ -52,7 +52,7 @@ public class ContextRessurs {
     }
 
     @DELETE
-    @Path("/nullstillAktivBruker")
+    @Path("/aktivbruker")
     @Timed(name = "nullstillAktivBrukerContext")
     public void nullstillAktivBrukerContext() {
         contextService.nullstillAktivBruker(getSubjectHandler().getUid());
