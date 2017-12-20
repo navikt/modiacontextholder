@@ -13,6 +13,7 @@ import javax.ws.rs.NotFoundException;
 
 import java.util.Optional;
 
+import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
 import static no.nav.sbl.mappers.EventMapper.*;
 import static no.nav.sbl.util.MapUtil.map;
 
@@ -47,5 +48,9 @@ public class ContextService {
 
     public void nullstillContext(String veilederIdent) {
         eventDAO.slettAllEventer(veilederIdent);
+    }
+
+    public void nullstillAktivBruker(String veilederIdent) {
+        eventDAO.slettAlleAvEventTypeForVeileder(NY_AKTIV_BRUKER.name(), veilederIdent);
     }
 }

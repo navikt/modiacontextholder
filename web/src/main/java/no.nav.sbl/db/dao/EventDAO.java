@@ -64,6 +64,16 @@ public class EventDAO extends AbstractDAO<PEvent> {
         return query.executeUpdate();
     }
 
+    public int slettAlleAvEventTypeForVeileder(String eventType, String veilederIdent) {
+        Query query = this.getSession()
+                .createQuery("DELETE from PEvent WHERE event_type = :eventType AND veileder_ident = :veilederIdent");
+
+        query.setParameter("eventType", eventType);
+        query.setParameter("veilederIdent", veilederIdent);
+
+        return query.executeUpdate();
+    }
+
     public void slettAlleEventerUtenomNyeste(List<PEvent> eventer) {
         eventer.stream().sorted((o1, o2) -> o2.getId() < o1.getId() ? 1 : -1)
                 .limit(eventer.size() - 1)
