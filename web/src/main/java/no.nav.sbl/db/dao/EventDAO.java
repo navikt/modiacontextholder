@@ -52,14 +52,14 @@ public class EventDAO {
 
     public Optional<PEvent> sistAktiveBrukerEvent(String veilederIdent) {
         return queryOptional(jdbcTemplate,
-                "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc",
+                "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc) where ROWNUM = 1",
                 new EventMapper(),
                 veilederIdent);
     }
 
     public Optional<PEvent> sistAktiveEnhetEvent(String veilederIdent) {
         return queryOptional(jdbcTemplate,
-                "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc",
+                "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc) where ROWNUM = 1",
                 new EventMapper(),
                 veilederIdent);
     }
