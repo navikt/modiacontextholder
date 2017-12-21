@@ -42,10 +42,17 @@ public class ContextRessurs {
     }
 
     @DELETE
-    @Path("/nullstill")
     @Timed(name = "nullstillContext")
     public void nullstillBrukerContext() {
         contextService.nullstillContext(getSubjectHandler().getUid());
+    }
+
+    @DELETE
+    @Deprecated
+    @Path("/nullstill")
+    //migrer over til den som ligger på "/" da dette er mest riktig REST-semantisk.
+    public void deprecatedNullstillContext() {
+        nullstillBrukerContext();
     }
 
     @DELETE

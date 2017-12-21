@@ -39,7 +39,6 @@
         <common-jetty.version>2.0.12</common-jetty.version>
         <modig-core.version>1.0.1</modig-core.version>
         <modig-security.version>3.0.6</modig-security.version>
-        <modig-testcertificates.version>1.1.4</modig-testcertificates.version>
         <nav.metrics.version>3.3.1</nav.metrics.version>
         <oidc-security.version>2.3-digisyfo</oidc-security.version>
 
@@ -144,12 +143,6 @@
                 <artifactId>modig-security-core</artifactId>
                 <version>${modig-security.version}</version>
                 <type>test-jar</type>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.modig</groupId>
-                <artifactId>modig-testcertificates</artifactId>
-                <version>${modig-testcertificates.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -292,6 +285,12 @@
                 <artifactId>httpclient</artifactId>
                 <version>4.4</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>

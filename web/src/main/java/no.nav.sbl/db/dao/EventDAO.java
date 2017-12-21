@@ -72,14 +72,8 @@ public class EventDAO {
         jdbcTemplate.update("delete from event where event_type = ?", eventType);
     }
 
-    public int slettAlleAvEventTypeForVeileder(String eventType, String veilederIdent) {
-        Query query = this.getSession()
-                .createQuery("DELETE from PEvent WHERE event_type = :eventType AND veileder_ident = :veilederIdent");
-
-        query.setParameter("eventType", eventType);
-        query.setParameter("veilederIdent", veilederIdent);
-
-        return query.executeUpdate();
+    public void slettAlleAvEventTypeForVeileder(String eventType, String veilederIdent) {
+        jdbcTemplate.update("delete from event where event_type = ? and veileder_ident = ?", eventType, veilederIdent);
     }
 
     public void slettAlleEventerUtenomNyeste(List<PEvent> eventer) {
