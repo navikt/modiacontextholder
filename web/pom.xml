@@ -97,6 +97,11 @@
             <artifactId>modig-testcertificates</artifactId>
         </dependency>
         <dependency>
+            <groupId>no.nav.sbl.dialogarena</groupId>
+            <artifactId>common-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
@@ -117,10 +122,6 @@
             <artifactId>common-jetty</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.components</groupId>
-            <artifactId>geronimo-jaspi</artifactId>
-        </dependency>
-        <dependency>
             <groupId>no.nav.dialogarena</groupId>
             <artifactId>oidc-security</artifactId>
             <type>test-jar</type>
@@ -128,6 +129,14 @@
         <dependency>
             <groupId>no.nav.dialogarena</groupId>
             <artifactId>oidc-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
         </dependency>
         <dependency>
             <groupId>com.oracle</groupId>

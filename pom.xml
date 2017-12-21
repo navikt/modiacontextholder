@@ -27,20 +27,21 @@
         <jersey.version>2.25</jersey.version>
         <slf4j-api.version>1.7.15</slf4j-api.version>
         <aspectjweaver.version>1.8.8</aspectjweaver.version>
-        <logback.version>1.1.6</logback.version>
+        <logback.version>1.2.3</logback.version>
         <commons-io.version>2.4</commons-io.version>
         <jackson.version>2.9.0</jackson.version>
 
         <!-- Egenlagde  -->
         <common-batch.version>1.0.3</common-batch.version>
-        <common-web.version>5.0.16</common-web.version>
+        <common-web.version>5.0.33</common-web.version>
         <common-types.version>2.0.10</common-types.version>
+        <common-test.version>1.3</common-test.version>
         <common-jetty.version>2.0.12</common-jetty.version>
         <modig-core.version>1.0.1</modig-core.version>
-        <modig-security.version>3.0.0</modig-security.version>
+        <modig-security.version>3.0.6</modig-security.version>
         <modig-testcertificates.version>1.1.4</modig-testcertificates.version>
         <nav.metrics.version>3.3.1</nav.metrics.version>
-        <oidc-security.version>2.0-digisyfo</oidc-security.version>
+        <oidc-security.version>2.3-digisyfo</oidc-security.version>
 
         <!-- Java -->
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
@@ -79,11 +80,6 @@
                 <version>${common-batch.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.geronimo.components</groupId>
-                <artifactId>geronimo-jaspi</artifactId>
-                <version>2.0.0</version>
-            </dependency>
-            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.16.16</version>
@@ -99,6 +95,12 @@
                 <groupId>no.nav.dialogarena</groupId>
                 <artifactId>oidc-security</artifactId>
                 <version>${oidc-security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.sbl.dialogarena</groupId>
+                <artifactId>common-test</artifactId>
+                <version>${common-test.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>no.nav.sbl.dialogarena</groupId>
@@ -284,6 +286,18 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
                 <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.4</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.4</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

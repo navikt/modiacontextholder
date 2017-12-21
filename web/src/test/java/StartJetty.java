@@ -1,34 +1,30 @@
-import no.nav.brukerdialog.security.context.InternbrukerSubjectHandler;
-import no.nav.brukerdialog.security.context.JettySubjectHandler;
+import no.nav.brukerdialog.security.context.CustomizableSubjectHandler;
 import no.nav.sbl.dialogarena.common.jetty.Jetty;
-import org.apache.geronimo.components.jaspi.AuthConfigFactoryImpl;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import javax.security.auth.message.config.AuthConfigFactory;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.security.Security;
 import java.util.Properties;
 
+import static java.lang.System.getProperty;
 import static java.lang.System.setProperty;
-import static no.nav.brukerdialog.security.context.InternbrukerSubjectHandler.setServicebruker;
-import static no.nav.brukerdialog.security.context.InternbrukerSubjectHandler.setVeilederIdent;
+import static no.nav.brukerdialog.security.context.CustomizableSubjectHandler.setInternSsoToken;
+import static no.nav.brukerdialog.security.context.CustomizableSubjectHandler.setUid;
+import static no.nav.brukerdialog.tools.ISSOProvider.getIDToken;
 import static no.nav.sbl.dialogarena.common.jetty.Jetty.usingWar;
 import static no.nav.sbl.dialogarena.common.jetty.JettyStarterUtils.*;
+import static no.nav.sbl.dialogarena.test.SystemProperties.setFrom;
 
 public class StartJetty {
     public static void main(String[] args) throws Exception {
-        setVeilederIdent("Z990572");
-        setServicebruker("srvmodiacontextholder");
-        setProperty("no.nav.modig.core.context.subjectHandlerImplementationClass", InternbrukerSubjectHandler.class.getName());
-        setProperty("org.apache.geronimo.jaspic.configurationFile", "src/test/resources/jaspiconf.xml");
-        Security.setProperty(AuthConfigFactory.DEFAULT_FACTORY_SECURITY_PROPERTY, AuthConfigFactoryImpl.class.getCanonicalName());
+        setFrom("environment.properties");
+        setProperty("no.nav.brukerdialog.security.context.subjectHandlerImplementationClass", CustomizableSubjectHandler.class.getName());
+        setUid(getProperty("veileder.username"));
+        setInternSsoToken(getIDToken());
 
         Jetty jetty = usingWar()
                 .at("modiacontextholder")
                 .port(8390)
-                .loadProperties("/environment.properties")
-                .configureForJaspic()
                 .overrideWebXml()
                 .addDatasource(buildDataSource("oracledb.properties"), "jdbc/modiacontextholderDS")
                 .buildJetty();
