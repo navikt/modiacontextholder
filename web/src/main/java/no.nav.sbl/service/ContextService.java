@@ -7,6 +7,7 @@ import no.nav.sbl.rest.domain.RSNyContext;
 
 import javax.inject.Inject;
 
+import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
 import static no.nav.sbl.mappers.EventMapper.p2context;
 import static no.nav.sbl.util.MapUtil.map;
 
@@ -40,5 +41,9 @@ public class ContextService {
 
     public void nullstillContext(String veilederIdent) {
         eventDAO.slettAllEventer(veilederIdent);
+    }
+
+    public void nullstillAktivBruker(String veilederIdent) {
+        eventDAO.slettAlleAvEventTypeForVeileder(NY_AKTIV_BRUKER.name(), veilederIdent);
     }
 }
