@@ -8,7 +8,6 @@ import no.nav.sbl.service.ContextService;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -21,20 +20,18 @@ public class ContextRessurs {
 
     @Inject
     private ContextService contextService;
-    @Inject
-    private HttpServletRequest request;
 
     @GET
     @Timed
     public RSContext hentVeiledersContext() {
-        return contextService.hentVeiledersContext(getSubjectHandler().getUid(), request.getRemoteAddr());
+        return contextService.hentVeiledersContext(getSubjectHandler().getUid());
     }
 
     @GET
     @Path("/aktivbruker")
     @Timed(name = "hentAktivBruker")
     public RSContext hentAktivBruker() {
-        return contextService.hentAktivBruker(getSubjectHandler().getUid(), request.getRemoteAddr());
+        return contextService.hentAktivBruker(getSubjectHandler().getUid());
     }
 
     @GET
@@ -45,10 +42,17 @@ public class ContextRessurs {
     }
 
     @DELETE
-    @Path("/nullstill")
     @Timed(name = "nullstillContext")
     public void nullstillBrukerContext() {
         contextService.nullstillContext(getSubjectHandler().getUid());
+    }
+
+    @DELETE
+    @Deprecated
+    @Path("/nullstill")
+    //migrer over til den som ligger på "/" da dette er mest riktig REST-semantisk.
+    public void deprecatedNullstillContext() {
+        nullstillBrukerContext();
     }
 
     @DELETE
@@ -62,9 +66,8 @@ public class ContextRessurs {
     @Timed(name = "oppdaterVeiledersContext")
     public void oppdaterVeiledersContext(RSNyContext rsNyContext) {
         RSNyContext context = new RSNyContext()
-                .withIp(request.getRemoteAddr())
-                .withVerdi(rsNyContext.verdi)
-                .withEventType(EventType.valueOf(rsNyContext.eventType).name());
+                .verdi(rsNyContext.verdi)
+                .eventType(EventType.valueOf(rsNyContext.eventType).name());
         contextService.oppdaterVeiledersContext(context, getSubjectHandler().getUid());
     }
 }

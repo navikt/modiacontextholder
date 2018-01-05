@@ -23,6 +23,6 @@ public class EventRessurs {
     @Timed(name = "hentNyeEvents")
     @Path("{eventId}")
     public RSEvents hentNyeEvents(@PathParam("eventId") String eventId) {
-        return new RSEvents().withEvents(eventService.hentEventerEtterId(Long.parseLong(eventId)));
+        return new RSEvents().events(eventService.hentEventerEtterId(Long.parseLong(eventId)));
     }
 }

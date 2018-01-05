@@ -1,20 +1,14 @@
 package no.nav.sbl.service;
 
 import no.nav.sbl.db.dao.EventDAO;
-import no.nav.sbl.db.domain.EventType;
 import no.nav.sbl.db.domain.PEvent;
-import no.nav.sbl.mappers.EventMapper;
 import no.nav.sbl.rest.domain.RSContext;
 import no.nav.sbl.rest.domain.RSNyContext;
-import no.nav.sbl.util.MapUtil;
 
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
-
-import java.util.Optional;
 
 import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
-import static no.nav.sbl.mappers.EventMapper.*;
+import static no.nav.sbl.mappers.EventMapper.p2context;
 import static no.nav.sbl.util.MapUtil.map;
 
 public class ContextService {
@@ -22,22 +16,21 @@ public class ContextService {
     @Inject
     private EventDAO eventDAO;
 
-    public RSContext hentVeiledersContext(String veilederIdent, String remoteAdress) {
+    public RSContext hentVeiledersContext(String veilederIdent) {
         return new RSContext()
-                .withAktivBruker(hentAktivBruker(veilederIdent, remoteAdress).aktivBruker)
-                .withAktivEnhet(hentAktivEnhet(veilederIdent).aktivEnhet);
+                .aktivBruker(hentAktivBruker(veilederIdent).aktivBruker)
+                .aktivEnhet(hentAktivEnhet(veilederIdent).aktivEnhet);
     }
 
     public void oppdaterVeiledersContext(RSNyContext context, String veilederIdent) {
         eventDAO.save(new PEvent()
-                .withVerdi(context.verdi)
-                .withEventType(context.eventType)
-                .withIp(context.ip)
-                .withVeilederIdent(veilederIdent));
+                .verdi(context.verdi)
+                .eventType(context.eventType)
+                .veilederIdent(veilederIdent));
     }
 
-    public RSContext hentAktivBruker(String veilederIdent, String remoteAdress) {
-        PEvent sisteAktivBrukerEvent = eventDAO.sistAktiveBrukerEvent(veilederIdent, remoteAdress).orElse(new PEvent());
+    public RSContext hentAktivBruker(String veilederIdent) {
+        PEvent sisteAktivBrukerEvent = eventDAO.sistAktiveBrukerEvent(veilederIdent).orElse(new PEvent());
         return map(sisteAktivBrukerEvent, p2context);
     }
 

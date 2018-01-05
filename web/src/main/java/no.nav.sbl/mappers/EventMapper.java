@@ -12,11 +12,11 @@ import static no.nav.sbl.db.domain.EventType.NY_AKTIV_ENHET;
 public class EventMapper {
 
     public static Function<PEvent, RSContext> p2context = event -> new RSContext()
-            .withAktivEnhet(NY_AKTIV_ENHET.name().equals(event.eventType) ? event.verdi : null)
-            .withAktivBruker(NY_AKTIV_BRUKER.name().equals(event.eventType) ? event.verdi : null);
+            .aktivEnhet(NY_AKTIV_ENHET.name().equals(event.eventType) ? event.verdi : null)
+            .aktivBruker(NY_AKTIV_BRUKER.name().equals(event.eventType) ? event.verdi : null);
 
     public static Function<PEvent, RSEvent> p2event = event -> new RSEvent()
-            .withId(event.getId())
-            .withEventType(event.eventType)
-            .withVeilederIdent(event.veilederIdent);
+            .id(event.id)
+            .eventType(event.eventType)
+            .veilederIdent(event.veilederIdent);
 }
