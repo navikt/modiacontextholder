@@ -10,12 +10,15 @@ import static no.nav.metrics.MetricsFactory.createEvent;
 
 @Provider
 public class RuntimeLogger implements ExceptionMapper<RuntimeException> {
+
+    private static final String NO_BIGIP_5XX_REDIRECT = "X-Escape-5xx-Redirect";
+
     @Override
     public Response toResponse(RuntimeException e) {
         if (statuskode(e) == 500) {
             createEvent("runtimeexception").report();
         }
-        return status(statuskode(e)).build();
+        return status(statuskode(e)).header(NO_BIGIP_5XX_REDIRECT, true).build();
     }
 
     private int statuskode(RuntimeException e) {
