@@ -83,7 +83,7 @@ public class EventDAO {
     }
 
     public void deleteEvent(long id) {
-        jdbcTemplate.update("delete from event event_id = ?", id);
+        jdbcTemplate.update("delete from event where event_id = ?", id);
     }
 
     public List<PEvent> hentVeiledersEventerAvType(String eventType, String veilederIdent) {
@@ -95,6 +95,6 @@ public class EventDAO {
     }
 
     public void slettAllEventer(String veilederIdent) {
-        jdbcTemplate.update("delete event where veileder_ident = ?", veilederIdent);
+        jdbcTemplate.update("delete from event where veileder_ident = ?", veilederIdent);
     }
 }
