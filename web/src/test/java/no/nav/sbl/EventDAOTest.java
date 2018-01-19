@@ -44,7 +44,7 @@ public class EventDAOTest {
         ));
 
         verify(jdbcTemplate, times(3)).update(sql.capture(), args.capture());
-        assertThat(sql.getAllValues()).contains("delete from event event_id = ?");
+        assertThat(sql.getAllValues()).contains("delete from event where event_id = ?");
         assertThat(args.getAllValues()).contains(1L);
         assertThat(args.getAllValues()).contains(2L);
         assertThat(args.getAllValues()).contains(3L);

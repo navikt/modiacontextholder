@@ -40,7 +40,7 @@
         <modig-core.version>1.0.1</modig-core.version>
         <modig-security.version>3.0.6</modig-security.version>
         <nav.metrics.version>3.3.1</nav.metrics.version>
-        <oidc-security.version>2.4-digisyfo</oidc-security.version>
+        <oidc-security.version>2.5-digisyfo</oidc-security.version>
 
         <!-- Java -->
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
