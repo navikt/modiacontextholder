@@ -31,7 +31,7 @@ public class DbHelsesjekk implements Helsesjekk{
     public HelsesjekkMetadata getMetadata() {
         return new HelsesjekkMetadata(
                 "dbhelsesjekk",
-                System.getProperty("db.url", "inmemory"),
+                System.getProperty("modiacontextholderDB.url", "inmemory"),
                 "Oracle-database",
                 true
         );
