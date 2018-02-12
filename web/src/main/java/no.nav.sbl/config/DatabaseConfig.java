@@ -48,7 +48,7 @@ public class DatabaseConfig {
     }
 
     @Bean
-    public DbHelsesjekk dbHelsesjekk(DataSource dataSource) {
-        return new DbHelsesjekk(dataSource);
+    public DbHelsesjekk dbHelsesjekk(JdbcTemplate jdbcTemplate) {
+        return new DbHelsesjekk(jdbcTemplate);
     }
 }
