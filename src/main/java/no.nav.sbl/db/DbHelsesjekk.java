@@ -6,10 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 @Component
 public class DbHelsesjekk implements Helsesjekk{
@@ -21,7 +17,7 @@ public class DbHelsesjekk implements Helsesjekk{
     }
 
     @Override
-    public void helsesjekk() throws Throwable {
+    public void helsesjekk() {
         jdbcTemplate.execute("SELECT * FROM PRODUCT_COMPONENT_VERSION");
     }
 
