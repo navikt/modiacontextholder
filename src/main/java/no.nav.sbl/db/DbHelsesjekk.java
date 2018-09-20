@@ -7,8 +7,13 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
+import static no.nav.sbl.util.EnvironmentUtils.getRequiredProperty;
+
 @Component
 public class DbHelsesjekk implements Helsesjekk{
+
+    private static final String MODIACONTEXTHOLDERDB_URL = "MODIACONTEXTHOLDERDB_URL";
+
     private JdbcTemplate jdbcTemplate;
 
     @Inject
@@ -23,9 +28,10 @@ public class DbHelsesjekk implements Helsesjekk{
 
     @Override
     public HelsesjekkMetadata getMetadata() {
+
         return new HelsesjekkMetadata(
                 "dbhelsesjekk",
-                System.getProperty("modiacontextholderDB.url", "inmemory"),
+                getRequiredProperty(MODIACONTEXTHOLDERDB_URL),
                 "Oracle-database",
                 true
         );
