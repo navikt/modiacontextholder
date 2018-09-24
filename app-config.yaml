@@ -30,9 +30,9 @@ fasitResources:
       resourceType: credential
     - alias: securityTokenService
       resourceType: baseurl
-    - alias: bigip
-      resourceType: loadbalancer
     - alias: loadbalancer:modiacontextholder
+      resourceType: loadbalancerconfig
+    - alias: loadbalancer:modiacontextolder-modapp
       resourceType: loadbalancerconfig
     - alias: veilarblogin.redirect-url
       resourceType: restservice
