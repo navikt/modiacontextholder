@@ -2,8 +2,7 @@ package no.nav.sbl.config;
 
 import no.nav.sbl.db.DbHelsesjekk;
 import no.nav.sbl.db.dao.EventDAO;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import no.nav.sbl.jdbc.DataSourceFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,14 +24,13 @@ public class DatabaseConfig {
 
     @Bean
     public DataSource getDataSource() {
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(getRequiredProperty(MODIACONTEXTHOLDERDB_URL));
-        config.setUsername(getRequiredProperty(MODIACONTEXTHOLDERDB_USERNAME));
-        config.setPassword(getRequiredProperty(MODIACONTEXTHOLDERDB_PASSWORD));
-        config.setMaximumPoolSize(300);
-        config.setMinimumIdle(1);
-
-        return new HikariDataSource(config);
+        return DataSourceFactory.dataSource()
+                .url(getRequiredProperty(MODIACONTEXTHOLDERDB_URL))
+                .username(getRequiredProperty(MODIACONTEXTHOLDERDB_USERNAME))
+                .password(getRequiredProperty(MODIACONTEXTHOLDERDB_PASSWORD))
+                .maxPoolSize(300)
+                .minimumIdle(1)
+                .build();
     }
 
     @Bean
