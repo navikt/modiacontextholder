@@ -1,6 +1,8 @@
 Modiacontextholder
 ==================
 
+Håndterer kontekst for veiledere på tvers av flater.
+
 # Henvendelser
 
 Spørsmål knyttet til koden eller prosjektet kan stilles ved å opprette en issue.
