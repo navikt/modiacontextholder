@@ -20,10 +20,10 @@ prometheus:
 resources:
   limits:
     cpu: 3000m
-    memory: 1024Mi
+    memory: 768Mi
   requests:
     cpu: 200m
-    memory: 256Mi
+    memory: 512Mi
 fasitResources:
   used:
     - alias: srvmodiacontextholder
