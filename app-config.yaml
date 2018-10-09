@@ -41,6 +41,10 @@ fasitResources:
     - alias: modiacontextholderDB
       resourceType: datasource
 
+    # Unleash
+    - alias: unleash-api
+      resourceType: restservice
+
     # ISSO
     - alias: isso-host
       resourceType: baseurl
@@ -56,6 +60,10 @@ fasitResources:
     # Appdynamics
     - alias: appdynamics
       resourceType: applicationProperties
+
+    # Kafka
+    - alias: kafka_bootstrap_servers
+      resourceType: restservice
 
   exposed:
     - alias: veiledercontext-isalive

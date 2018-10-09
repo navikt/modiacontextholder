@@ -1,9 +1,10 @@
 package no.nav.sbl.service;
 
-
+import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
 import no.nav.sbl.rest.domain.RSContext;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,9 +27,12 @@ public class ContextServiceTest {
     private ContextService contextService;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setup(){
         eventDAO = mock(EventDAO.class);
-        contextService = new ContextService(eventDAO);
+        FeatureToggle featureToggle = mock(FeatureToggle.class);
+        KafkaProducer kafka = (KafkaProducer<String, String>) mock(KafkaProducer.class);
+        contextService = new ContextService(eventDAO, kafka, featureToggle);
     }
 
     @Test
@@ -65,6 +69,8 @@ public class ContextServiceTest {
         gitt_sist_aktive_bruker_event(now().minusDays(1).plusSeconds(1)); // i går men mindre enn en dag
         har_ikke_aktiv_bruker();
     }
+
+
 
     private void har_ikke_aktiv_bruker() {
         assertThat(contextService.hentAktivBruker("ident")).isEqualTo(new RSContext());

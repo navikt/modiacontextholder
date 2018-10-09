@@ -23,7 +23,7 @@ public class DbHelsesjekk implements Helsesjekk{
 
     @Override
     public void helsesjekk() {
-        jdbcTemplate.execute("SELECT * FROM PRODUCT_COMPONENT_VERSION");
+        jdbcTemplate.execute("SELECT * FROM DUAL");
     }
 
     @Override
