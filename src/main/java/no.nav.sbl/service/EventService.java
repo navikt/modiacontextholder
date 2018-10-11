@@ -1,13 +1,13 @@
 package no.nav.sbl.service;
 
 import no.nav.sbl.db.dao.EventDAO;
+import no.nav.sbl.mappers.EventMapper;
 import no.nav.sbl.rest.domain.RSEvent;
 
 import javax.inject.Inject;
 import java.util.List;
 
-import static no.nav.sbl.mappers.EventMapper.p2event;
-import static no.nav.sbl.util.MapUtil.mapListe;
+import static java.util.stream.Collectors.toList;
 
 public class EventService {
 
@@ -15,6 +15,9 @@ public class EventService {
     private EventDAO eventDAO;
 
     public List<RSEvent> hentEventerEtterId(long id) {
-        return mapListe(eventDAO.finnAlleEventerEtterId(id), p2event);
+        return eventDAO.finnAlleEventerEtterId(id)
+                .stream()
+                .map(EventMapper::toRSEvent)
+                .collect(toList());
     }
 }

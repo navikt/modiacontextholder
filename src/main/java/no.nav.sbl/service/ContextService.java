@@ -2,19 +2,25 @@ package no.nav.sbl.service;
 
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
+import no.nav.sbl.mappers.EventMapper;
 import no.nav.sbl.rest.domain.RSContext;
 import no.nav.sbl.rest.domain.RSNyContext;
 
 import javax.inject.Inject;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
-import static no.nav.sbl.mappers.EventMapper.p2context;
-import static no.nav.sbl.util.MapUtil.map;
 
 public class ContextService {
 
+    private final EventDAO eventDAO;
+
     @Inject
-    private EventDAO eventDAO;
+    public ContextService(EventDAO eventDAO) {
+        this.eventDAO = eventDAO;
+    }
 
     public RSContext hentVeiledersContext(String veilederIdent) {
         return new RSContext()
@@ -30,13 +36,20 @@ public class ContextService {
     }
 
     public RSContext hentAktivBruker(String veilederIdent) {
-        PEvent sisteAktivBrukerEvent = eventDAO.sistAktiveBrukerEvent(veilederIdent).orElse(new PEvent());
-        return map(sisteAktivBrukerEvent, p2context);
+        return eventDAO.sistAktiveBrukerEvent(veilederIdent)
+                .filter(this::erFortsattAktuell)
+                .map(EventMapper::toRSContext)
+                .orElse(new RSContext());
+    }
+
+    private boolean erFortsattAktuell(PEvent pEvent) {
+        return LocalDate.now().isEqual(pEvent.created.toLocalDate());
     }
 
     public RSContext hentAktivEnhet(String veilederIdent) {
-        PEvent sisteAktivEnhetEvent = eventDAO.sistAktiveEnhetEvent(veilederIdent).orElse(new PEvent());
-        return map(sisteAktivEnhetEvent, p2context);
+        return eventDAO.sistAktiveEnhetEvent(veilederIdent)
+                .map(EventMapper::toRSContext)
+                .orElse(new RSContext());
     }
 
     public void nullstillContext(String veilederIdent) {
