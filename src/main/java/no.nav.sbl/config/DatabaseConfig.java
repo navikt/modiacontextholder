@@ -18,9 +18,9 @@ import static no.nav.sbl.util.EnvironmentUtils.getRequiredProperty;
 @EnableTransactionManagement
 public class DatabaseConfig {
 
-    private static final String MODIACONTEXTHOLDERDB_URL = "MODIACONTEXTHOLDERDB_URL";
-    private static final String MODIACONTEXTHOLDERDB_USERNAME = "MODIACONTEXTHOLDERDB_USERNAME";
-    private static final String MODIACONTEXTHOLDERDB_PASSWORD = "MODIACONTEXTHOLDERDB_PASSWORD";
+    public static final String MODIACONTEXTHOLDERDB_URL = "MODIACONTEXTHOLDERDB_URL";
+    public static final String MODIACONTEXTHOLDERDB_USERNAME = "MODIACONTEXTHOLDERDB_USERNAME";
+    public static final String MODIACONTEXTHOLDERDB_PASSWORD = "MODIACONTEXTHOLDERDB_PASSWORD";
 
     @Bean
     public DataSource getDataSource() {
