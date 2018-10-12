@@ -1,6 +1,7 @@
 package no.nav.sbl.config;
 
 import no.nav.sbl.db.DatabaseCleanerService;
+import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.service.ContextService;
 import no.nav.sbl.service.EventService;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +11,8 @@ import org.springframework.context.annotation.Configuration;
 public class ServiceContext {
 
     @Bean
-    public ContextService contextService() {
-        return new ContextService();
+    public ContextService contextService(EventDAO eventDAO) {
+        return new ContextService(eventDAO);
     }
 
     @Bean
