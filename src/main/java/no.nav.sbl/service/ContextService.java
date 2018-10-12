@@ -7,9 +7,7 @@ import no.nav.sbl.rest.domain.RSContext;
 import no.nav.sbl.rest.domain.RSNyContext;
 
 import javax.inject.Inject;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
 
@@ -37,12 +35,12 @@ public class ContextService {
 
     public RSContext hentAktivBruker(String veilederIdent) {
         return eventDAO.sistAktiveBrukerEvent(veilederIdent)
-                .filter(this::erFortsattAktuell)
+                .filter(ContextService::erFortsattAktuell)
                 .map(EventMapper::toRSContext)
                 .orElse(new RSContext());
     }
 
-    private boolean erFortsattAktuell(PEvent pEvent) {
+    public static boolean erFortsattAktuell(PEvent pEvent) {
         return LocalDate.now().isEqual(pEvent.created.toLocalDate());
     }
 

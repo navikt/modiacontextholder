@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
 import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
+import static no.nav.sbl.service.ContextService.erFortsattAktuell;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -33,6 +34,20 @@ public class ContextServiceTest {
     @Test
     public void ingen_aktiv_bruker_event(){
         har_ikke_aktiv_bruker();
+    }
+
+    @Test
+    public void eventer_fra_forrige_dag_regnes_ikke_som_aktuelle() {
+        PEvent event = new PEvent().created(now().minusDays(1));
+        boolean result = erFortsattAktuell(event);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void eventer_fra_i_dag_regnes_som_aktuelle() {
+        PEvent event = new PEvent().created(now());
+        boolean result = erFortsattAktuell(event);
+        assertThat(result).isTrue();
     }
 
     @Test
