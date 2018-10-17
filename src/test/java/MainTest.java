@@ -3,6 +3,7 @@ import no.nav.brukerdialog.tools.SecurityConstants;
 import no.nav.dialogarena.config.fasit.DbCredentials;
 import no.nav.dialogarena.config.fasit.FasitUtils;
 import no.nav.dialogarena.config.fasit.ServiceUser;
+import no.nav.dialogarena.config.fasit.dto.RestService;
 import no.nav.testconfig.ApiAppTest;
 
 import static no.nav.dialogarena.config.fasit.FasitUtils.Zone.FSS;
@@ -26,7 +27,7 @@ public class MainTest {
         String issoISSUER = FasitUtils.getBaseUrl("isso-issuer");
         String issoIsAlive = FasitUtils.getBaseUrl("isso.isalive", FSS);
         ServiceUser isso_rp_user = FasitUtils.getServiceUser("isso-rp-user", APPLICATION_NAME);
-        String loginUrl = FasitUtils.getBaseUrl("veilarblogin.redirect-url", FSS);
+        RestService loginUrl = FasitUtils.getRestService("veilarblogin.redirect-url", FasitUtils.getDefaultEnvironment());
         setProperty(Constants.ISSO_HOST_URL_PROPERTY_NAME, issoHost, PUBLIC);
         setProperty(Constants.ISSO_RP_USER_USERNAME_PROPERTY_NAME, isso_rp_user.getUsername(), PUBLIC);
         setProperty(Constants.ISSO_RP_USER_PASSWORD_PROPERTY_NAME, isso_rp_user.getPassword(), SECRET);
@@ -35,7 +36,7 @@ public class MainTest {
         setProperty(Constants.ISSO_ISALIVE_URL_PROPERTY_NAME, issoIsAlive, PUBLIC);
         setProperty(SecurityConstants.SYSTEMUSER_USERNAME, srvmodiacontextholder.getUsername(), PUBLIC);
         setProperty(SecurityConstants.SYSTEMUSER_PASSWORD, srvmodiacontextholder.getPassword(), SECRET);
-        setProperty(Constants.OIDC_REDIRECT_URL_PROPERTY_NAME, loginUrl, PUBLIC);
+        setProperty(Constants.OIDC_REDIRECT_URL_PROPERTY_NAME, loginUrl.getUrl(), PUBLIC);
 
         // db
         DbCredentials dbCredentials = FasitUtils.getDbCredentials(APPLICATION_NAME);
