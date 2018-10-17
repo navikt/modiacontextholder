@@ -21,21 +21,16 @@ public class DatabaseCleanerService {
     @Scheduled(cron = "0 0 2 * * *")
     @Timed(name = "slettAlleNyAktivBrukerEvents")
     public void slettAlleNyAktivBrukerEvents() {
-        if(Utils.isMasterNode()) {
-            eventDAO.slettAlleAvEventType(NY_AKTIV_BRUKER.name());
-
-        }
+        eventDAO.slettAlleAvEventType(NY_AKTIV_BRUKER.name());
     }
 
     @Scheduled(cron = "0 0 3 * * *")
     @Timed(name = "slettAlleUtenomSisteNyAktivEnhet")
     public void slettAlleUtenomSisteNyAktivEnhet() {
-        if(Utils.isMasterNode()) {
-            eventDAO.hentUnikeVeilederIdenter()
-                    .forEach(veilederIdent -> {
-                        List<PEvent> eventer = eventDAO.hentVeiledersEventerAvType(NY_AKTIV_ENHET.name(), veilederIdent);
-                        eventDAO.slettAlleEventerUtenomNyeste(eventer);
-                    });
-        }
+        eventDAO.hentUnikeVeilederIdenter()
+                .forEach(veilederIdent -> {
+                    List<PEvent> eventer = eventDAO.hentVeiledersEventerAvType(NY_AKTIV_ENHET.name(), veilederIdent);
+                    eventDAO.slettAlleEventerUtenomNyeste(eventer);
+                });
     }
 }
