@@ -58,9 +58,9 @@ public class ContextService {
         String verdi = nyContext.verdi;
         kafka.send(new ProducerRecord<>(topic, veilederIdent, verdi),(metadata, e) -> {
             if (e != null) {
-                log.warn("KAFKA SEND FAILED: topic={} veileder={} verdi={} message={}", topic, veilederIdent, verdi, e.getMessage());
+                log.warn("KAFKA SEND FAILED: topic={} offset={} veileder={} message={}", topic, metadata.offset(), veilederIdent, e.getMessage());
             }
-            log.info("KAFKA SEND OK: topic={} veileder={} verdi={} partisjon={} offset={}", metadata.topic(), veilederIdent, verdi, metadata.partition(), metadata.offset());
+            log.info("KAFKA SEND OK: topic={} offset={} veileder={} partisjon={}", metadata.topic(), metadata.offset(), veilederIdent, metadata.partition());
         });
     }
 
