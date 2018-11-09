@@ -1,5 +1,6 @@
 package no.nav.sbl.config;
 
+import lombok.SneakyThrows;
 import no.nav.apiapp.ApiApplication;
 import no.nav.apiapp.ServletUtil;
 import no.nav.apiapp.config.ApiAppConfigurator;
@@ -19,15 +20,16 @@ import javax.servlet.ServletContext;
 @ComponentScan("no.nav.sbl.rest")
 @Import({
         DatabaseConfig.class,
-        ServiceContext.class,
+        ServiceContext.class
 })
 public class ApplicationConfig implements ApiApplication.NaisApiApplication {
 
     @Override
+    @SneakyThrows
     public void configure(ApiAppConfigurator apiAppConfigurator) {
-        apiAppConfigurator
-                .issoLogin();
+        apiAppConfigurator.issoLogin();
     }
+
 
     @Bean
     public TimerAspect timerAspect() {
