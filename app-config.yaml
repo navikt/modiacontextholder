@@ -62,8 +62,10 @@ fasitResources:
       resourceType: applicationProperties
 
     # Kafka
-    - alias: kafka_bootstrap_servers
-      resourceType: restservice
+    - alias: kafka-brokers
+      resourceType: baseurl
+      propertyMap:
+        url: KAFKA_BROKERS_URL
 
   exposed:
     - alias: veiledercontext-isalive
