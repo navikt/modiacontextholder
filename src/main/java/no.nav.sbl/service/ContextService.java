@@ -1,6 +1,7 @@
 package no.nav.sbl.service;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.json.JsonUtils;
 import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
@@ -15,6 +16,7 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 
 import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
+import static no.nav.sbl.mappers.EventMapper.toRSEvent;
 
 @Slf4j
 public class ContextService {
@@ -39,28 +41,30 @@ public class ContextService {
     }
 
     public void oppdaterVeiledersContext(RSNyContext nyContext, String veilederIdent) {
-        saveToDb(nyContext, veilederIdent);
+        PEvent event = new PEvent()
+                .verdi(nyContext.verdi)
+                .eventType(nyContext.eventType)
+                .veilederIdent(veilederIdent);
 
+        saveToDb(event);
         if (featureToggle.isKafkaEnabled()) {
-            sendToKafka(nyContext, veilederIdent);
+            sendToKafka(nyContext, veilederIdent, event);
         }
     }
 
-    private void saveToDb(RSNyContext nyContext, String veilederIdent) {
-        eventDAO.save(new PEvent()
-                .verdi(nyContext.verdi)
-                .eventType(nyContext.eventType)
-                .veilederIdent(veilederIdent));
+    private void saveToDb(PEvent event) {
+        eventDAO.save(event);
     }
 
-    private void sendToKafka(RSNyContext nyContext, String veilederIdent) {
+    private void sendToKafka(RSNyContext nyContext, String veilederIdent, PEvent event) {
         String topic = KafkaUtil.asTopic(nyContext);
-        String verdi = nyContext.verdi;
-        kafka.send(new ProducerRecord<>(topic, veilederIdent, verdi),(metadata, e) -> {
+        String eventJson = JsonUtils.toJson(toRSEvent(event));
+        kafka.send(new ProducerRecord<>(topic, veilederIdent, eventJson),(metadata, e) -> {
             if (e != null) {
                 log.warn("KAFKA SEND FAILED: topic={} offset={} veileder={} message={}", topic, metadata.offset(), veilederIdent, e.getMessage());
+            } else {
+                log.info("KAFKA SEND OK: topic={} offset={} veileder={} partisjon={}", metadata.topic(), metadata.offset(), veilederIdent, metadata.partition());
             }
-            log.info("KAFKA SEND OK: topic={} offset={} veileder={} partisjon={}", metadata.topic(), metadata.offset(), veilederIdent, metadata.partition());
         });
     }
 
