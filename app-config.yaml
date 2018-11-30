@@ -10,10 +10,10 @@ webproxy: true
 healthcheck:
   liveness:
     path: modiacontextholder/internal/isAlive
-    initialDelay: 60
+    initialDelay: 15
   readiness:
     path: modiacontextholder/internal/isReady
-    initialDay: 60
+    initialDelay: 15
 prometheus:
   enabled: true
   path: modiacontextholder/internal/metrics
