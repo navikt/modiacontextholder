@@ -12,7 +12,7 @@ healthcheck:
     path: modiacontextholder/internal/isAlive
     initialDelay: 60
   readiness:
-    path: modiacontextholder/internal/selftest
+    path: modiacontextholder/internal/isReady
     initialDay: 60
 prometheus:
   enabled: true
@@ -77,3 +77,7 @@ fasitResources:
     - alias: events-api
       resourceType: restservice
       path: /modiacontextholder/api/events
+
+
+alertProfiles:
+  - common-java-modules
