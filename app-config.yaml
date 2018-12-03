@@ -10,10 +10,10 @@ webproxy: true
 healthcheck:
   liveness:
     path: modiacontextholder/internal/isAlive
-    initialDelay: 60
+    initialDelay: 15
   readiness:
-    path: modiacontextholder/internal/selftest
-    initialDay: 60
+    path: modiacontextholder/internal/isReady
+    initialDelay: 15
 prometheus:
   enabled: true
   path: modiacontextholder/internal/metrics
@@ -77,3 +77,7 @@ fasitResources:
     - alias: events-api
       resourceType: restservice
       path: /modiacontextholder/api/events
+
+
+alertProfiles:
+  - common-java-modules
