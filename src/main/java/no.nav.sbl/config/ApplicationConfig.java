@@ -27,7 +27,9 @@ public class ApplicationConfig implements ApiApplication.NaisApiApplication {
     @Override
     @SneakyThrows
     public void configure(ApiAppConfigurator apiAppConfigurator) {
-        apiAppConfigurator.issoLogin();
+        apiAppConfigurator
+                .issoLogin()
+                .azureADB2CLogin();
     }
 
 
