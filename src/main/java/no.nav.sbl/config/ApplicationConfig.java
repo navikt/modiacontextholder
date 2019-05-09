@@ -1,6 +1,7 @@
 package no.nav.sbl.config;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.apiapp.ApiApplication;
 import no.nav.apiapp.ServletUtil;
 import no.nav.apiapp.config.ApiAppConfigurator;
@@ -14,6 +15,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
 
+@Slf4j
 @Configuration
 @EnableAspectJAutoProxy
 @EnableScheduling
@@ -22,7 +24,7 @@ import javax.servlet.ServletContext;
         DatabaseConfig.class,
         ServiceContext.class
 })
-public class ApplicationConfig implements ApiApplication.NaisApiApplication {
+public class ApplicationConfig implements ApiApplication {
 
     @Override
     @SneakyThrows
@@ -31,7 +33,6 @@ public class ApplicationConfig implements ApiApplication.NaisApiApplication {
                 .issoLogin()
                 .azureADB2CLogin();
     }
-
 
     @Bean
     public TimerAspect timerAspect() {
@@ -44,14 +45,10 @@ public class ApplicationConfig implements ApiApplication.NaisApiApplication {
     }
 
     @Override
-    public boolean brukSTSHelsesjekk() {
-        return false;
-    }
-
-    @Override
     public void startup(ServletContext servletContext) {
         CleanupServlet cleanupServlet = new CleanupServlet(WebApplicationContextUtils.findWebApplicationContext(servletContext).getBean(DatabaseCleanerService.class));
         ServletUtil.leggTilServlet(servletContext, cleanupServlet, "/internal/cleanup");
     }
+
 
 }

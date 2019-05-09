@@ -1,17 +1,17 @@
 import no.nav.brukerdialog.security.Constants;
 import no.nav.brukerdialog.tools.SecurityConstants;
-import no.nav.dialogarena.config.fasit.DbCredentials;
-import no.nav.dialogarena.config.fasit.FasitUtils;
-import no.nav.dialogarena.config.fasit.ServiceUser;
-import no.nav.dialogarena.config.fasit.ServiceUserCertificate;
-import no.nav.dialogarena.config.fasit.dto.RestService;
+import no.nav.fasit.DbCredentials;
+import no.nav.fasit.FasitUtils;
+import no.nav.fasit.ServiceUser;
+import no.nav.fasit.ServiceUserCertificate;
+import no.nav.fasit.dto.RestService;
 import no.nav.testconfig.ApiAppTest;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 
-import static no.nav.dialogarena.config.fasit.FasitUtils.Zone.FSS;
+import static no.nav.fasit.FasitUtils.Zone.FSS;
 import static no.nav.sbl.config.DatabaseConfig.*;
 import static no.nav.sbl.kafka.KafkaConfig.SRV_PASSWORD;
 import static no.nav.sbl.kafka.KafkaConfig.SRV_USERNAME;
