@@ -62,6 +62,8 @@ fasitResources:
       resourceType: credential
     - alias: aad_b2c_discovery
       resourceType: baseurl
+    - alias: loginservice_oidc
+      resourceType: AzureOIDC
 
     # Appdynamics
     - alias: appdynamics

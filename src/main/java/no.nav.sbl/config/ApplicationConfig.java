@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.apiapp.ApiApplication;
 import no.nav.apiapp.ServletUtil;
 import no.nav.apiapp.config.ApiAppConfigurator;
-import no.nav.metrics.aspects.CountAspect;
-import no.nav.metrics.aspects.TimerAspect;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.rest.CleanupServlet;
 import org.springframework.context.annotation.*;
@@ -31,17 +29,8 @@ public class ApplicationConfig implements ApiApplication {
     public void configure(ApiAppConfigurator apiAppConfigurator) {
         apiAppConfigurator
                 .issoLogin()
+                .validateAzureAdInternalUsersTokens()
                 .azureADB2CLogin();
-    }
-
-    @Bean
-    public TimerAspect timerAspect() {
-        return new TimerAspect();
-    }
-
-    @Bean
-    public CountAspect countAspect() {
-        return new CountAspect();
     }
 
     @Override
