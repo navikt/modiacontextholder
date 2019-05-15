@@ -28,9 +28,7 @@ public class ApplicationConfig implements ApiApplication {
     @SneakyThrows
     public void configure(ApiAppConfigurator apiAppConfigurator) {
         apiAppConfigurator
-                .issoLogin()
-                .validateAzureAdInternalUsersTokens()
-                .azureADB2CLogin();
+                .validateAzureAdInternalUsersTokens();
     }
 
     @Override
