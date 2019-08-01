@@ -34,12 +34,12 @@ fasitResources:
       resourceType: loadbalancerconfig
     - alias: loadbalancer:modiacontextholder-modapp
       resourceType: loadbalancerconfig
-    - alias: veilarblogin.redirect-url
-      resourceType: restservice
-      propertyMap:
-        url: OIDC_REDIRECT_URL
     - alias: modiacontextholderDB
       resourceType: datasource
+    - alias: virksomhet:Enhet_v1
+      resourceType: webserviceendpoint
+    - alias: virksomhet:OrganisasjonEnhet_v2
+      resourceType: webserviceendpoint
 
     # Unleash
     - alias: unleash-api
@@ -56,6 +56,10 @@ fasitResources:
       resourceType: baseurl
     - alias: isso-rp-user
       resourceType: credential
+    - alias: veilarblogin.redirect-url
+      resourceType: restservice
+      propertyMap:
+        url: OIDC_REDIRECT_URL
 
     # AzureAD Business2Consumer
     - alias: aad_b2c_clientid

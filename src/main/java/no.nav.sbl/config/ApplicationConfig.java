@@ -19,6 +19,7 @@ import javax.servlet.ServletContext;
 @EnableScheduling
 @ComponentScan("no.nav.sbl.rest")
 @Import({
+        CacheConfig.class,
         DatabaseConfig.class,
         ServiceContext.class
 })
