@@ -29,7 +29,7 @@ public class MainTest {
         ApiAppTest.setupTestContext(ApiAppTest.Config.builder().applicationName(APPLICATION_NAME).build());
 
         //kafka
-        ServiceUser serviceUser = FasitUtils.getServiceUser("srvveilarbveileder", "veilarbveileder");
+        ServiceUser serviceUser = FasitUtils.getServiceUser("srvmodiacontextholder", "modiacontextholder");
         setProperty(SRV_USERNAME, serviceUser.getUsername(), PUBLIC);
         setProperty(SRV_PASSWORD, serviceUser.getPassword(), SECRET);
         setProperty("KAFKA_BROKERS_URL", "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443", PUBLIC);
