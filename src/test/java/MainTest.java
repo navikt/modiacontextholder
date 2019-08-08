@@ -1,10 +1,10 @@
 import no.nav.brukerdialog.security.Constants;
+import no.nav.brukerdialog.security.oidc.provider.AzureADB2CConfig;
 import no.nav.brukerdialog.tools.SecurityConstants;
-import no.nav.fasit.DbCredentials;
-import no.nav.fasit.FasitUtils;
-import no.nav.fasit.ServiceUser;
-import no.nav.fasit.ServiceUserCertificate;
+import no.nav.fasit.*;
 import no.nav.fasit.dto.RestService;
+import no.nav.sbl.config.VirksomhetEnhetV1Config;
+import no.nav.sbl.config.VirksomhetOrganisasjonEnhetV2Config;
 import no.nav.testconfig.ApiAppTest;
 import org.apache.commons.io.FileUtils;
 
@@ -22,14 +22,14 @@ import static no.nav.sbl.util.EnvironmentUtils.setProperty;
 public class MainTest {
 
     private static final String APPLICATION_NAME = "modiacontextholder";
-    private static final String TEST_PORT = "8390";
+    private static final String TEST_PORT = "8290";
 
     public static void main(String[] args) throws IOException {
 
         ApiAppTest.setupTestContext(ApiAppTest.Config.builder().applicationName(APPLICATION_NAME).build());
 
         //kafka
-        ServiceUser serviceUser = FasitUtils.getServiceUser("srvmodiacontextholder", APPLICATION_NAME);
+        ServiceUser serviceUser = FasitUtils.getServiceUser("srvmodiacontextholder", "modiacontextholder");
         setProperty(SRV_USERNAME, serviceUser.getUsername(), PUBLIC);
         setProperty(SRV_PASSWORD, serviceUser.getPassword(), SECRET);
         setProperty("KAFKA_BROKERS_URL", "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443", PUBLIC);
@@ -37,13 +37,14 @@ public class MainTest {
         // kafka trenger fungerende truststore
         ServiceUserCertificate navTrustStore = FasitUtils.getServiceUserCertificate("nav_truststore", FasitUtils.getDefaultEnvironmentClass());
         File navTrustStoreFile = File.createTempFile("nav_truststore", ".jks");
-        FileUtils.writeByteArrayToFile(navTrustStoreFile,navTrustStore.getKeystore());
+        FileUtils.writeByteArrayToFile(navTrustStoreFile, navTrustStore.getKeystore());
 
         setProperty("javax.net.ssl.trustStore", navTrustStoreFile.getAbsolutePath(), PUBLIC);
         setProperty("javax.net.ssl.trustStorePassword", navTrustStore.getKeystorepassword(), SECRET);
 
         // isso
-        ServiceUser srvmodiacontextholder = FasitUtils.getServiceUser("srvmodiacontextholder", APPLICATION_NAME);
+        String securityTokenService = FasitUtils.getBaseUrl("securityTokenService", FSS);
+        AzureOidcConfigProperties loginserviceOidc = FasitUtils.getAzureOidcConfig("loginservice_oidc", FSS).getProperties();
         String issoHost = FasitUtils.getBaseUrl("isso-host");
         String issoJWS = FasitUtils.getBaseUrl("isso-jwks");
         String issoISSUER = FasitUtils.getBaseUrl("isso-issuer");
@@ -56,9 +57,16 @@ public class MainTest {
         setProperty(Constants.ISSO_JWKS_URL_PROPERTY_NAME, issoJWS, PUBLIC);
         setProperty(Constants.ISSO_ISSUER_URL_PROPERTY_NAME, issoISSUER, PUBLIC);
         setProperty(Constants.ISSO_ISALIVE_URL_PROPERTY_NAME, issoIsAlive, PUBLIC);
-        setProperty(SecurityConstants.SYSTEMUSER_USERNAME, srvmodiacontextholder.getUsername(), PUBLIC);
-        setProperty(SecurityConstants.SYSTEMUSER_PASSWORD, srvmodiacontextholder.getPassword(), SECRET);
+        setProperty(SecurityConstants.STS_URL_KEY, securityTokenService, PUBLIC);
+        setProperty(SecurityConstants.SYSTEMUSER_USERNAME, serviceUser.getUsername(), PUBLIC);
+        setProperty(SecurityConstants.SYSTEMUSER_PASSWORD, serviceUser.getPassword(), SECRET);
         setProperty(Constants.OIDC_REDIRECT_URL_PROPERTY_NAME, loginUrl.getUrl(), PUBLIC);
+        setProperty(AzureADB2CConfig.INTERNAL_USERS_AZUREAD_B2C_DISCOVERY_URI_PROPERTY_NAME, loginserviceOidc.getDiscoveryUri(), PUBLIC);
+        setProperty(AzureADB2CConfig.INTERNAL_USERS_AZUREAD_B2C_CLIENTID_PROPERTY_NAME, loginserviceOidc.getClientId(), PUBLIC);
+
+        // Tjenester
+        setProperty(VirksomhetOrganisasjonEnhetV2Config.NORG2_ORGANISASJONENHET_V2_URL, FasitUtils.getWebServiceEndpoint("virksomhet:OrganisasjonEnhet_v2").url, PUBLIC);
+        setProperty(VirksomhetEnhetV1Config.NORG_VIRKSOMHET_ENHET_URL, FasitUtils.getWebServiceEndpoint("virksomhet:Enhet_v1").url, PUBLIC);
 
         // db
         DbCredentials dbCredentials = FasitUtils.getDbCredentials(APPLICATION_NAME);
