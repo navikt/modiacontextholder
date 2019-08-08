@@ -30,6 +30,7 @@ public class ApplicationConfig implements ApiApplication {
     public void configure(ApiAppConfigurator apiAppConfigurator) {
         apiAppConfigurator
                 .issoLogin()
+                .sts()
                 .validateAzureAdInternalUsersTokens();
     }
 
