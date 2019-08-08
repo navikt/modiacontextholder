@@ -3,7 +3,7 @@ import no.nav.brukerdialog.security.oidc.provider.AzureADB2CConfig;
 import no.nav.brukerdialog.tools.SecurityConstants;
 import no.nav.fasit.*;
 import no.nav.fasit.dto.RestService;
-import no.nav.sbl.config.VirksomhetEnhetV1Config;
+import no.nav.sbl.config.VirksomhetOrganisasjonRessursEnhetV1Config;
 import no.nav.sbl.config.VirksomhetOrganisasjonEnhetV2Config;
 import no.nav.testconfig.ApiAppTest;
 import org.apache.commons.io.FileUtils;
@@ -42,6 +42,12 @@ public class MainTest {
         setProperty("javax.net.ssl.trustStore", navTrustStoreFile.getAbsolutePath(), PUBLIC);
         setProperty("javax.net.ssl.trustStorePassword", navTrustStore.getKeystorepassword(), SECRET);
 
+        LdapConfig ldapConfig = FasitUtils.getLdapConfig();
+        System.setProperty("ldap.basedn", ldapConfig.baseDN);
+        System.setProperty("ldap.url", ldapConfig.url);
+        System.setProperty("ldap.username", ldapConfig.username);
+        System.setProperty("ldap.password", ldapConfig.password);
+
         // isso
         String securityTokenService = FasitUtils.getBaseUrl("securityTokenService", FSS);
         AzureOidcConfigProperties loginserviceOidc = FasitUtils.getAzureOidcConfig("loginservice_oidc", FSS).getProperties();
@@ -66,7 +72,7 @@ public class MainTest {
 
         // Tjenester
         setProperty(VirksomhetOrganisasjonEnhetV2Config.NORG2_ORGANISASJONENHET_V2_URL, FasitUtils.getWebServiceEndpoint("virksomhet:OrganisasjonEnhet_v2").url, PUBLIC);
-        setProperty(VirksomhetEnhetV1Config.NORG_VIRKSOMHET_ENHET_URL, FasitUtils.getWebServiceEndpoint("virksomhet:Enhet_v1").url, PUBLIC);
+        setProperty(VirksomhetOrganisasjonRessursEnhetV1Config.VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_ENDPOINTURL, FasitUtils.getWebServiceEndpoint("virksomhet:OrganisasjonRessursEnhet_v1").url, PUBLIC);
 
         // db
         DbCredentials dbCredentials = FasitUtils.getDbCredentials(APPLICATION_NAME);

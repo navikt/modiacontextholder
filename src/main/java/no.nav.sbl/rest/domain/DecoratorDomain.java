@@ -7,11 +7,11 @@ public class DecoratorDomain {
         public final String ident, navn, fornavn, etternavn;
         public final List<Enhet> enheter;
 
-        public DecoratorConfig(String ident, String fornavn, String etternavn, List<Enhet> enheter) {
-            this.ident = ident;
-            this.fornavn = fornavn;
-            this.etternavn = etternavn;
-            this.navn = fornavn + " " + etternavn;
+        public DecoratorConfig(Saksbehandler saksbehandler, List<Enhet> enheter) {
+            this.ident = saksbehandler.ident;
+            this.fornavn = saksbehandler.fornavn;
+            this.etternavn = saksbehandler.etternavn;
+            this.navn = saksbehandler.navn;
             this.enheter = enheter;
         }
     }
@@ -22,6 +22,17 @@ public class DecoratorDomain {
         public Enhet(String enhetId, String navn) {
             this.enhetId = enhetId;
             this.navn = navn;
+        }
+    }
+
+    public static class Saksbehandler {
+        public final String ident, navn, fornavn, etternavn;
+
+        public Saksbehandler(String ident, String fornavn, String etternavn) {
+            this.ident = ident;
+            this.fornavn = fornavn;
+            this.etternavn = etternavn;
+            this.navn = fornavn + " " + etternavn;
         }
     }
 }

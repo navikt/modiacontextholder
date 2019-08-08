@@ -36,7 +36,7 @@
         <!-- tjenester -->
         <dependency>
             <groupId>no.nav.tjenestespesifikasjoner</groupId>
-            <artifactId>enhet-v1-tjenestespesifikasjon</artifactId>
+            <artifactId>organisasjon-ressurs-enhet-v1-tjenestespesifikasjon</artifactId>
             <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
         <dependency>
