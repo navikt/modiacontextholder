@@ -3,10 +3,7 @@ package no.nav.sbl.config;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.kafka.KafkaConfig;
-import no.nav.sbl.service.ContextService;
-import no.nav.sbl.service.DecoratorService;
-import no.nav.sbl.service.EnheterCache;
-import no.nav.sbl.service.EventService;
+import no.nav.sbl.service.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +13,7 @@ import org.springframework.context.annotation.Import;
 @Import({
         KafkaConfig.class,
         FeatureToggleConfig.class,
-        VirksomhetEnhetV1Config.class,
+        VirksomhetOrganisasjonRessursEnhetV1Config.class,
         VirksomhetOrganisasjonEnhetV2Config.class
 })
 public class ServiceContext {
@@ -37,12 +34,22 @@ public class ServiceContext {
     }
 
     @Bean
+    public LdapService ldapService() {
+        return new LdapService();
+    }
+
+    @Bean
     public EnheterCache enheterCache() {
         return new EnheterCache();
     }
 
     @Bean
-    public DecoratorService enhetService() {
-        return new DecoratorService();
+    public VeilederService veilederCache() {
+        return new VeilederService();
+    }
+
+    @Bean
+    public EnheterService enhetService() {
+        return new EnheterService();
     }
 }

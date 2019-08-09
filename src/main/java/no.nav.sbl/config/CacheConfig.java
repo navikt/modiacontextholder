@@ -18,20 +18,13 @@ import java.lang.reflect.Method;
 @EnableCaching
 public class CacheConfig implements CachingConfigurer {
 
-    private String cacheSecondsString = System.getProperty("cache.config.seconds", "3600");
-    private int cacheSecondsInt = Integer.parseInt(cacheSecondsString);
+    private static int cacheSecondsInt = Integer.parseInt(System.getProperty("cache.config.seconds", "3600"));
 
     @Bean
     public net.sf.ehcache.CacheManager ehCacheManager() {
-        CacheConfiguration cacheConfiguration = new CacheConfiguration();
-        cacheConfiguration.setName("decoratorCache");
-        cacheConfiguration.setMaxEntriesLocalHeap(10000);
-        cacheConfiguration.setMemoryStoreEvictionPolicy("LRU");
-        cacheConfiguration.setTimeToIdleSeconds(6000);
-        cacheConfiguration.setTimeToLiveSeconds(cacheSecondsInt);
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
-
-        config.addCache(cacheConfiguration);
+        config.addCache(lagCacheConfig("enheterCache"));
+        config.addCache(lagCacheConfig("veilederCache"));
 
         return net.sf.ehcache.CacheManager.newInstance(config);
     }
@@ -62,5 +55,16 @@ public class CacheConfig implements CachingConfigurer {
         public Object generate(Object target, Method method, Object... params) {
             return String.format("%s.%s(%s)", target.getClass().getName(), method.getName(), super.generate(target, method, params));
         }
+    }
+
+    static CacheConfiguration lagCacheConfig(String name) {
+        CacheConfiguration cacheConfiguration = new CacheConfiguration();
+        cacheConfiguration.setName(name);
+        cacheConfiguration.setMaxEntriesLocalHeap(10000);
+        cacheConfiguration.setMemoryStoreEvictionPolicy("LRU");
+        cacheConfiguration.setTimeToIdleSeconds(6000);
+        cacheConfiguration.setTimeToLiveSeconds(cacheSecondsInt);
+
+        return cacheConfiguration;
     }
 }

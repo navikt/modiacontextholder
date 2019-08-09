@@ -1,11 +1,9 @@
 package no.nav.sbl.rest;
 
-import io.vavr.control.Option;
 import no.nav.common.auth.SubjectHandler;
-import no.nav.sbl.mappers.DecoratorMapper;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
-import no.nav.sbl.service.DecoratorService;
-import no.nav.sbl.service.EnheterCache;
+import no.nav.sbl.service.EnheterService;
+import no.nav.sbl.service.VeilederService;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
@@ -20,17 +18,18 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 public class DecoratorRessurs {
 
     @Inject
-    DecoratorService decoratorService;
+    EnheterService enheterService;
 
     @Inject
-    EnheterCache enheterCache;
+    VeilederService veilederService;
 
     @GET
     public DecoratorConfig hentSaksbehandlerInfoOgEnheter() {
-        return Option.ofOptional(SubjectHandler.getIdent())
-                .toTry(() -> new WebApplicationException("Fant ingen subjecthandler", 500))
-                .flatMap(decoratorService::hentVeilederInfo)
-                .map((response) -> DecoratorMapper.map(response, enheterCache.get()))
+        String ident = SubjectHandler.getIdent()
+                .orElseThrow(() -> new WebApplicationException("Fant ingen subjecthandler", 500));
+
+        return enheterService.hentEnheter(ident)
+                .map((enheter) -> new DecoratorConfig(veilederService.hentVeilederNavn(ident), enheter))
                 .getOrElseThrow((throwable) -> {
                     if (throwable instanceof WebApplicationException) {
                         return (WebApplicationException) throwable;
