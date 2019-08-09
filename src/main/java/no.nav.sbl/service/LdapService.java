@@ -29,7 +29,7 @@ public class LdapService {
         env.put(Context.PROVIDER_URL, EnvironmentUtils.getRequiredProperty("ldap.url", "LDAP_URL"));
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
         env.put(Context.SECURITY_PRINCIPAL, EnvironmentUtils.getRequiredProperty("ldap.username", "LDAP_USERNAME"));
-        env.put(Context.SECURITY_CREDENTIALS, EnvironmentUtils.getRequiredProperty("ldap.password", "LDAP_PASSWORD "));
+        env.put(Context.SECURITY_CREDENTIALS, EnvironmentUtils.getRequiredProperty("ldap.password", "LDAP_PASSWORD"));
 
         SEARCHBASE = "OU=Users,OU=NAV,OU=BusinessUnits," + EnvironmentUtils.getRequiredProperty("ldap.basedn", "LDAP_BASEDN");
     }
