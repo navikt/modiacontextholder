@@ -8,7 +8,10 @@ import no.nav.sbl.service.ContextService;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static no.nav.brukerdialog.security.context.SubjectHandler.getSubjectHandler;
@@ -69,5 +72,10 @@ public class ContextRessurs {
                 .verdi(rsNyContext.verdi)
                 .eventType(EventType.valueOf(rsNyContext.eventType).name());
         contextService.oppdaterVeiledersContext(context, getSubjectHandler().getUid());
+    }
+
+    @OPTIONS
+    public Response preflight(@Context HttpServletResponse response) {
+        return Response.status(200).build();
     }
 }
