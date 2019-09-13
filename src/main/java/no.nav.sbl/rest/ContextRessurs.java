@@ -73,9 +73,4 @@ public class ContextRessurs {
                 .eventType(EventType.valueOf(rsNyContext.eventType).name());
         contextService.oppdaterVeiledersContext(context, getSubjectHandler().getUid());
     }
-
-    @OPTIONS
-    public Response preflight(@Context HttpServletResponse response) {
-        return Response.status(200).build();
-    }
 }
