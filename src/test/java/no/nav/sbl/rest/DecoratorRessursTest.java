@@ -32,11 +32,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DecoratorRessursTest {
-    static {
-        System.setProperty(AxsysConfig.AXSYS_URL, "url");
-        System.setProperty(SecurityConstants.SYSTEMUSER_USERNAME, "username");
-    }
-
     private static final String IDENT = "Z999999";
     private static final Subject MOCK_SUBJECT = new Subject(IDENT, IdentType.InternBruker, SsoToken.oidcToken("asda", emptyMap()));
 
