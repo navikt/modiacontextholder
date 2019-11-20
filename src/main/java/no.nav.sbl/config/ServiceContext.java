@@ -14,7 +14,8 @@ import org.springframework.context.annotation.Import;
         KafkaConfig.class,
         FeatureToggleConfig.class,
         VirksomhetOrganisasjonRessursEnhetV1Config.class,
-        VirksomhetOrganisasjonEnhetV2Config.class
+        VirksomhetOrganisasjonEnhetV2Config.class,
+        AxsysConfig.class
 })
 public class ServiceContext {
 

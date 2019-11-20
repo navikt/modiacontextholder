@@ -2,11 +2,15 @@ package no.nav.sbl.rest;
 
 import io.vavr.control.Try;
 import no.nav.brukerdialog.security.domain.IdentType;
+import no.nav.brukerdialog.tools.SecurityConstants;
 import no.nav.common.auth.SsoToken;
 import no.nav.common.auth.Subject;
 import no.nav.common.auth.SubjectHandler;
+import no.nav.sbl.config.AxsysConfig;
+import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
+import no.nav.sbl.service.AxsysService;
 import no.nav.sbl.service.EnheterService;
 import no.nav.sbl.service.VeilederService;
 import org.junit.Test;
@@ -28,6 +32,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DecoratorRessursTest {
+    static {
+        System.setProperty(AxsysConfig.AXSYS_URL, "url");
+        System.setProperty(SecurityConstants.SYSTEMUSER_USERNAME, "username");
+    }
 
     private static final String IDENT = "Z999999";
     private static final Subject MOCK_SUBJECT = new Subject(IDENT, IdentType.InternBruker, SsoToken.oidcToken("asda", emptyMap()));
@@ -36,6 +44,10 @@ public class DecoratorRessursTest {
     EnheterService enheterService;
     @Mock
     VeilederService veilederService;
+    @Mock
+    AxsysService axsysService;
+    @Mock
+    FeatureToggle featureToggle;
 
     @InjectMocks
     DecoratorRessurs rest;
@@ -43,20 +55,25 @@ public class DecoratorRessursTest {
     @Test
     public void ingen_saksbehandlerident() {
         gitt_saksbehandler_i_ad();
-        assertThatThrownBy(() -> rest.hentSaksbehandlerInfoOgEnheter())
-                .isInstanceOf(WebApplicationException.class)
-                .hasMessage("Fant ingen subjecthandler");
+        shouldWorkRegardlessOfFeatureToggle(() ->
+                assertThatThrownBy(() -> rest.hentSaksbehandlerInfoOgEnheter())
+                        .isInstanceOf(WebApplicationException.class)
+                        .hasMessage("Fant ingen subjecthandler")
+        );
     }
 
     @Test
     public void feil_ved_henting_av_enheter() {
         gitt_saksbehandler_i_ad();
         when(enheterService.hentEnheter(IDENT)).thenReturn(Try.failure(new IllegalStateException("Noe gikk feil")));
+        when(axsysService.hentEnheter(IDENT)).thenReturn(Try.failure(new IllegalStateException("Noe gikk feil")));
 
-        assertThatThrownBy(() -> SubjectHandler.withSubject(MOCK_SUBJECT, () -> rest.hentSaksbehandlerInfoOgEnheter()))
-                .hasRootCauseInstanceOf(IllegalStateException.class)
-                .isInstanceOf(WebApplicationException.class)
-                .hasMessage("Kunne ikke hente data");
+        shouldWorkRegardlessOfFeatureToggle(() ->
+                assertThatThrownBy(() -> SubjectHandler.withSubject(MOCK_SUBJECT, () -> rest.hentSaksbehandlerInfoOgEnheter()))
+                        .hasRootCauseInstanceOf(IllegalStateException.class)
+                        .isInstanceOf(WebApplicationException.class)
+                        .hasMessage("Kunne ikke hente data")
+        );
     }
 
     @Test
@@ -64,13 +81,15 @@ public class DecoratorRessursTest {
         gitt_saksbehandler_i_ad();
         gitt_tilgang_til_enheter(emptyList());
 
-        SubjectHandler.withSubject(MOCK_SUBJECT, () -> {
-            DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
+        shouldWorkRegardlessOfFeatureToggle(() ->
+            SubjectHandler.withSubject(MOCK_SUBJECT, () -> {
+                DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
 
-            assertThat(decoratorConfig.ident).isEqualTo(IDENT);
-            assertThat(decoratorConfig.fornavn).isEqualTo("Fornavn");
-            assertThat(decoratorConfig.etternavn).isEqualTo("Etternavn");
-        });
+                assertThat(decoratorConfig.ident).isEqualTo(IDENT);
+                assertThat(decoratorConfig.fornavn).isEqualTo("Fornavn");
+                assertThat(decoratorConfig.etternavn).isEqualTo("Etternavn");
+            })
+        );
     }
 
 
@@ -83,14 +102,17 @@ public class DecoratorRessursTest {
                 enhet("0003", "Test 3")
         ));
 
-        SubjectHandler.withSubject(MOCK_SUBJECT, () -> {
-            DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
-            assertThat(decoratorConfig.enheter).hasSize(3);
-        });
+        shouldWorkRegardlessOfFeatureToggle(() ->
+            SubjectHandler.withSubject(MOCK_SUBJECT, () -> {
+                DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
+                assertThat(decoratorConfig.enheter).hasSize(3);
+            })
+        );
     }
 
     private void gitt_tilgang_til_enheter(List<DecoratorDomain.Enhet> data) {
         when(enheterService.hentEnheter(IDENT)).thenReturn(Try.of(() -> data));
+        when(axsysService.hentEnheter(IDENT)).thenReturn(Try.of(() -> data));
     }
 
     private void gitt_saksbehandler_i_ad() {
@@ -101,5 +123,12 @@ public class DecoratorRessursTest {
 
     private static DecoratorDomain.Enhet enhet(String id, String navn) {
         return new DecoratorDomain.Enhet(id, navn);
+    }
+
+    private void shouldWorkRegardlessOfFeatureToggle(Runnable executable) {
+        when(featureToggle.isAxsysEnabled()).thenReturn(false);
+        executable.run();
+        when(featureToggle.isAxsysEnabled()).thenReturn(true);
+        executable.run();
     }
 }
