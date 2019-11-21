@@ -45,6 +45,11 @@
             <version>${organisasjonenhet-v2.tjenestespesifikasjon.versjon}</version>
             <classifier>jaxws</classifier>
         </dependency>
+        <dependency>
+            <groupId>no.nav.tjenester</groupId>
+            <artifactId>axsys-api-v1</artifactId>
+            <version>0.5</version>
+        </dependency>
 
         <!-- kafka -->
         <dependency>
@@ -135,6 +140,10 @@
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>test-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.common</groupId>
+            <artifactId>rest</artifactId>
         </dependency>
 
         <!--spring-->

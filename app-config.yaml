@@ -38,6 +38,8 @@ fasitResources:
       resourceType: datasource
     - alias: virksomhet:OrganisasjonRessursEnhet_v1
       resourceType: webserviceendpoint
+    - alias: axsys.rest-api
+      resourceType: restservice
     - alias: virksomhet:OrganisasjonEnhet_v2
       resourceType: webserviceendpoint
     - alias: ldap
