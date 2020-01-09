@@ -3,9 +3,9 @@ package no.nav.sbl.rest.axsys;
 import io.vavr.control.Option;
 import no.nav.common.utils.IdUtils;
 import no.nav.log.MDCConstants;
+import no.nav.sbl.axsys.HttpRequestConstants;
 import no.nav.sbl.rest.RestUtils;
 import no.nav.sbl.service.AxsysTilgangResponse;
-import no.nav.tjenester.axsys.api.v1.HttpRequestConstants;
 import org.slf4j.MDC;
 
 import javax.ws.rs.client.WebTarget;

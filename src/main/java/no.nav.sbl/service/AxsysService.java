@@ -1,9 +1,9 @@
 package no.nav.sbl.service;
 
 import io.vavr.control.Try;
+import no.nav.sbl.axsys.tilgang.Enhet;
 import no.nav.sbl.rest.axsys.AxsysClient;
 import no.nav.sbl.rest.domain.DecoratorDomain;
-import no.nav.tjenester.axsys.api.v1.tilgang.Enhet;
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.inject.Inject;

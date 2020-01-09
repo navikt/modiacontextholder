@@ -40,15 +40,9 @@
             <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
         <dependency>
-            <groupId>no.nav.tjenester</groupId>
-            <artifactId>nav-organisasjonEnhet-v2-tjenestespesifikasjon</artifactId>
-            <version>${organisasjonenhet-v2.tjenestespesifikasjon.versjon}</version>
-            <classifier>jaxws</classifier>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.tjenester</groupId>
-            <artifactId>axsys-api-v1</artifactId>
-            <version>0.5</version>
+            <groupId>no.nav.tjenestespesifikasjoner</groupId>
+            <artifactId>organisasjonenhet-v2-tjenestespesifikasjon</artifactId>
+            <version>${tjenestespesifikasjoner.version}</version>
         </dependency>
 
         <!-- kafka -->
