@@ -2,9 +2,6 @@ package no.nav.sbl.service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.sbl.util.EnvironmentUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.naming.*;
@@ -20,6 +17,8 @@ import static java.util.Optional.ofNullable;
 @Slf4j
 @Service
 public class LdapService {
+    public static final String LDAP_USERNAME = "LDAP_USERNAME";
+    public static final String LDAP_PASSWORD = "LDAP_PASSWORD";
 
     private static Hashtable<String, String> env = new Hashtable<>();
     private static String SEARCHBASE;
@@ -28,8 +27,8 @@ public class LdapService {
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, EnvironmentUtils.getRequiredProperty("ldap.url", "LDAP_URL"));
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
-        env.put(Context.SECURITY_PRINCIPAL, EnvironmentUtils.getRequiredProperty("ldap.username", "LDAP_USERNAME"));
-        env.put(Context.SECURITY_CREDENTIALS, EnvironmentUtils.getRequiredProperty("ldap.password", "LDAP_PASSWORD"));
+        env.put(Context.SECURITY_PRINCIPAL, EnvironmentUtils.getRequiredProperty("ldap.username", LDAP_USERNAME));
+        env.put(Context.SECURITY_CREDENTIALS, EnvironmentUtils.getRequiredProperty("ldap.password", LDAP_PASSWORD));
 
         SEARCHBASE = "OU=Users,OU=NAV,OU=BusinessUnits," + EnvironmentUtils.getRequiredProperty("ldap.basedn", "LDAP_BASEDN");
     }

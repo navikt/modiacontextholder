@@ -7,7 +7,7 @@
     <parent>
         <groupId>no.nav.common</groupId>
         <artifactId>mor-pom</artifactId>
-        <version>1.2019.11.28-16.07-69bf339eebe8</version>
+        <version>1.2020.01.08-12.57-62d0c889ddb5</version>
     </parent>
 
     <artifactId>modiacontextholder</artifactId>
@@ -108,6 +108,10 @@
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.common</groupId>
+            <artifactId>nais</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>

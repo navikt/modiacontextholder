@@ -5,3 +5,5 @@ target
 !.idea/runConfigurations
 *.log
 *.txt
+
+.vault.properties
