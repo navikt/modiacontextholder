@@ -21,8 +21,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-cache-
       - name: Build using maven
-          run: |
-            mvn -P ci -B verify
+        run: |
+          mvn -P ci -B verify
 
   build-and-push:
     name: Build and push Docker container
