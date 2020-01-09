@@ -211,16 +211,5 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                    <usedDependencies>
-                        <dependency>com.oracle:ojdbc6</dependency>
-                    </usedDependencies>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 </project>
