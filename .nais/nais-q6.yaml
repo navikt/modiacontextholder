@@ -44,11 +44,11 @@ spec:
       mountPath: /var/run/secrets/nais.io/srvssolinux
     - kvPath: /oracle/data/dev/creds/modiacontextholder_q6-user
       mountPath: /var/run/secrets/nais.io/modiacontextholderDB
-    - kvPath: /credential/data/dev/isso-rp-user
+    - kvPath: /credential/data/dev/isso-rp-user-q6
       mountPath: /var/run/secrets/nais.io/isso-rp-user
     - kvPath: /credential/data/dev/aad_b2c_clientid
       mountPath: /var/run/secrets/nais.io/aad_b2c_clientid
-    - kvPath: /apikey/data/appdynamics/dev
+    - kvPath: /apikey/appdynamics/dev
       mountPath: /var/run/secrets/nais.io/appdynamics
   env:
   - name: SECURITYTOKENSERVICE_URL
