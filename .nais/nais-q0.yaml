@@ -1,0 +1,105 @@
+---
+kind: Application
+apiVersion: nais.io/v1alpha1
+metadata:
+  name: modiacontextholder
+  namespace: q0
+  labels:
+    team: personoversikt
+spec:
+  image: docker.adeo.no:5000/fo/modiacontextholder
+  port: 8080
+  webproxy: true
+  liveness:
+    path: modiacontextholder/internal/isAlive
+    port: 8080
+    initialDelay: 15
+  prometheus:
+    enabled: true
+    path: modiacontextholder/internal/metrics
+  readiness:
+    path: modiacontextholder/internal/isReady
+    port: 8080
+    initialDelay: 15
+  resources:
+    limits:
+      cpu: 3000m
+      memory: 768Mi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  ingresses:
+    - https://modapp-q0.adeo.no/modiacontextholder
+    - https://app-q0.adeo.no/modiacontextholder
+  replicas:
+    min: 2
+    max: 4
+    cpuThresholdPercentage: 50
+  vault:
+    enabled: true
+    paths:
+      - kvPath: /serviceuser/data/dev/srvmodiacontextholder
+        mountPath: /var/run/secrets/nais.io/service_user
+      - kvPath: /serviceuser/data/dev/srvssolinux
+        mountPath: /var/run/secrets/nais.io/srvssolinux
+      - kvPath: /oracle/data/dev/creds/modiacontextholder_q0-user
+        mountPath: /var/run/secrets/nais.io/modiacontextholderDB
+      - kvPath: /credential/data/dev/isso-rp-user-q0
+        mountPath: /var/run/secrets/nais.io/isso-rp-user
+      - kvPath: /credential/data/dev/aad_b2c_clientid
+        mountPath: /var/run/secrets/nais.io/aad_b2c_clientid
+      - kvPath: /apikey/appdynamics/dev
+        mountPath: /var/run/secrets/nais.io/appdynamics
+  env:
+    - name: SECURITYTOKENSERVICE_URL
+      value: "https://sts-q0.preprod.local/SecurityTokenServiceProvider/"
+    - name: MODIACONTEXTHOLDERDB_URL
+      value: "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=a01dbfl032.adeo.no)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=MODIACONTEXTHOLDERQ0)(INSTANCE_NAME=ccqf03)(UR=A)(SERVER=DEDICATED)))"
+    - name: MODIACONTEXTHOLDERDB_OEMENDPOINT
+      value: "/em/cloud/dbaas/pluggabledbplatforminstance/byrequest/161"
+    - name: VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_SECURITYTOKEN
+      value: "SAML"
+    - name: VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_ENDPOINTURL
+      value: "https://app-q0.adeo.no/norg2/ws/OrganisasjonRessursEnhet/v1"
+    - name: VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_WSDLURL
+      value: "http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-organisasjonRessursEnhet-v1-tjenestespesifikasjon/1.0.0/nav-organisasjonRessursEnhet-v1-tjenestespesifikasjon-1.0.0.zip"
+    - name: AXSYS_REST_API_URL
+      value: "https://axsys.nais.preprod.local/api"
+    - name: VIRKSOMHET_ORGANISASJONENHET_V2_SECURITYTOKEN
+      value: "SAML"
+    - name: VIRKSOMHET_ORGANISASJONENHET_V2_ENDPOINTURL
+      value: "https://app-q0.adeo.no/norg2/ws/OrganisasjonEnhet/v2"
+    - name: VIRKSOMHET_ORGANISASJONENHET_V2_WSDLURL
+      value: "http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-organisasjonEnhet-v2-tjenestespesifikasjon/2.1.0/nav-organisasjonEnhet-v2-tjenestespesifikasjon-2.1.0.zip"
+    - name: LDAP_BASEDN
+      value: "dc=preprod,dc=local"
+    - name: LDAP_URL
+      value: "ldaps://ldapgw.preprod.local"
+    - name: LDAP_USER_BASEDN
+      value: "ou=NAV,ou=BusinessUnits,dc=preprod,dc=local"
+    - name: LDAP_SERVICEUSER_BASEDN
+      value: "ou=ServiceAccounts,dc=preprod,dc=local"
+    - name: LDAP_DOMAIN
+      value: "PREPROD.LOCAL"
+    - name: UNLEASH_API_URL
+      value: "https://unleash.nais.adeo.no/api/"
+    - name: ISSO_HOST_URL
+      value: "https://isso-q.adeo.no/isso/oauth2"
+    - name: ISSO_JWKS_URL
+      value: "https://isso-q.adeo.no/isso/oauth2/connect/jwk_uri"
+    - name: ISSO_ISSUER_URL
+      value: "https://isso-q.adeo.no:443/isso/oauth2"
+    - name: ISSO_ISALIVE_URL
+      value: "https://isso-q.adeo.no/isso/isAlive.jsp"
+    - name: OIDC_REDIRECT_URL
+      value: "https://app-q0.adeo.no/veilarblogin/api/login"
+    - name: AAD_B2C_DISCOVERY_URL
+      value: "https://login.microsoftonline.com/NAVtestB2C.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten_ver1"
+    - name: LOGINSERVICE_OIDC_DISCOVERYURI
+      value: "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration"
+    - name: LOGINSERVICE_OIDC_CALLBACKURI
+      value: "https://loginservice.nais.preprod.local/callback"
+    - name: LOGINSERVICE_OIDC_CLIENTID
+      value: "38e07d31-659d-4595-939a-f18dce3446c5"
+    - name: KAFKA_BROKERS_URL
+      value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
