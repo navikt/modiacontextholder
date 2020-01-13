@@ -15,8 +15,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <tjenestespesifikasjoner.version>1.2019.04.03-23.09-56488320520a</tjenestespesifikasjoner.version>
-        <organisasjonenhet-v2.tjenestespesifikasjon.versjon>2.1.0</organisasjonenhet-v2.tjenestespesifikasjon.versjon>
+        <tjenestespesifikasjoner.version>1.2019.06.11-13.36-786a4cec3151</tjenestespesifikasjoner.version>
     </properties>
 
     <dependencyManagement>
