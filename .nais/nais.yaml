@@ -50,7 +50,7 @@ spec:
       - kvPath: /credential/data/prod/aad_b2c_clientid
         mountPath: /var/run/secrets/nais.io/aad_b2c_clientid
       - kvPath: /apikey/appdynamics/prod
-        mountPath: /var/run/secrets/nais.io/appdynamics
+        mountPath: /var/run/secrets/nais.io/vault
   env:
     - name: SECURITYTOKENSERVICE_URL
       value: "https://sts.adeo.no/SecurityTokenServiceProvider/"
