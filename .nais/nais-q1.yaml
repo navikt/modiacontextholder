@@ -12,15 +12,17 @@ spec:
   webproxy: true
   liveness:
     path: modiacontextholder/internal/isAlive
-    port: 8080
-    initialDelay: 15
+    initialDelay: 50
+    timeout: 1
+    periodSeconds: 5
+    failureThreshold: 10
   prometheus:
     enabled: true
     path: modiacontextholder/internal/metrics
   readiness:
     path: modiacontextholder/internal/isReady
-    port: 8080
-    initialDelay: 15
+    initialDelay: 50
+    timeout: 1
   resources:
     limits:
       cpu: 3000m
