@@ -29,6 +29,7 @@ spec:
       cpu: 200m
       memory: 512Mi
   ingresses:
+    - https://modiacontextholder-q1.nais.preprod.local/modiacontextholder
     - https://modapp-q1.adeo.no/modiacontextholder
     - https://app-q1.adeo.no/modiacontextholder
   replicas:
