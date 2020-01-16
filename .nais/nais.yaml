@@ -67,7 +67,7 @@ spec:
     - name: VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_WSDLURL
       value: "http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-organisasjonRessursEnhet-v1-tjenestespesifikasjon/1.0.0/nav-organisasjonRessursEnhet-v1-tjenestespesifikasjon-1.0.0.zip"
     - name: AXSYS_REST_API_URL
-      value: "https://axsys.nais.preprod.local/api"
+      value: "https://axsys.nais.adeo.no/api"
     - name: VIRKSOMHET_ORGANISASJONENHET_V2_SECURITYTOKEN
       value: "SAML"
     - name: VIRKSOMHET_ORGANISASJONENHET_V2_ENDPOINTURL
@@ -75,15 +75,15 @@ spec:
     - name: VIRKSOMHET_ORGANISASJONENHET_V2_WSDLURL
       value: "http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-organisasjonEnhet-v2-tjenestespesifikasjon/2.1.0/nav-organisasjonEnhet-v2-tjenestespesifikasjon-2.1.0.zip"
     - name: LDAP_BASEDN
-      value: "dc=preprod,dc=local"
+      value: "dc=adeo,dc=no"
     - name: LDAP_URL
-      value: "ldaps://ldapgw.preprod.local"
+      value: "ldaps://ldapgw.adeo.no"
     - name: LDAP_USER_BASEDN
-      value: "ou=NAV,ou=BusinessUnits,dc=preprod,dc=local"
+      value: "ou=NAV,ou=BusinessUnits,dc=adeo,dc=no"
     - name: LDAP_SERVICEUSER_BASEDN
-      value: "ou=ServiceAccounts,dc=preprod,dc=local"
+      value: "ou=ServiceAccounts,dc=adeo,dc=no"
     - name: LDAP_DOMAIN
-      value: "PREPROD.LOCAL"
+      value: "ADEO.NO"
     - name: UNLEASH_API_URL
       value: "https://unleash.nais.adeo.no/api/"
     - name: ISSO_HOST_URL
@@ -97,14 +97,14 @@ spec:
     - name: OIDC_REDIRECT_URL
       value: "https://app.adeo.no/veilarblogin/api/login"
     - name: AAD_B2C_DISCOVERY_URL
-      value: "https://login.microsoftonline.com/NAVtestB2C.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten_ver1"
+      value: "https://login.microsoftonline.com/navnob2c.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten"
     - name: LOGINSERVICE_OIDC_DISCOVERYURI
-      value: "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration"
+      value: "https://login.microsoftonline.com/navno.onmicrosoft.com/.well-known/openid-configuration"
     - name: LOGINSERVICE_OIDC_CALLBACKURI
-      value: "https://loginservice.nais.preprod.local/callback"
+      value: "https://loginservice.nais.adeo.no/callback"
     - name: LOGINSERVICE_OIDC_CLIENTID
-      value: "38e07d31-659d-4595-939a-f18dce3446c5"
+      value: "9b4e07a3-4f4c-4bab-b866-87f62dff480d"
     - name: KAFKA_BROKERS_URL
-      value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
+      value: "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443"
     - name: APP_ENVIRONMENT_NAME
       value: "p"
