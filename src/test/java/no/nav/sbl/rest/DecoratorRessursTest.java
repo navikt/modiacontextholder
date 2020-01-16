@@ -2,11 +2,9 @@ package no.nav.sbl.rest;
 
 import io.vavr.control.Try;
 import no.nav.brukerdialog.security.domain.IdentType;
-import no.nav.brukerdialog.tools.SecurityConstants;
 import no.nav.common.auth.SsoToken;
 import no.nav.common.auth.Subject;
 import no.nav.common.auth.SubjectHandler;
-import no.nav.sbl.config.AxsysConfig;
 import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;

@@ -2,10 +2,10 @@ package no.nav.sbl.service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.sbl.rest.domain.DecoratorDomain;
-import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.binding.OrganisasjonEnhetV2;
-import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.informasjon.Enhetsstatus;
-import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.meldinger.HentFullstendigEnhetListeRequest;
-import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.meldinger.HentFullstendigEnhetListeResponse;
+import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.OrganisasjonEnhetV2;
+import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.informasjon.WSEnhetsstatus;
+import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.meldinger.WSHentFullstendigEnhetListeRequest;
+import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.meldinger.WSHentFullstendigEnhetListeResponse;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.inject.Inject;
@@ -27,11 +27,11 @@ public class EnheterCache {
     @Scheduled(fixedRate = HVER_TOLVTE_TIME)
     private void refreshCache() {
         try {
-            HentFullstendigEnhetListeRequest request = new HentFullstendigEnhetListeRequest();
-            request.getInkluderEnhetsstatusListe().add(Enhetsstatus.AKTIV);
-            request.getInkluderEnhetsstatusListe().add(Enhetsstatus.UNDER_AVVIKLING);
+            WSHentFullstendigEnhetListeRequest request = new WSHentFullstendigEnhetListeRequest();
+            request.getInkluderEnhetsstatusListe().add(WSEnhetsstatus.AKTIV);
+            request.getInkluderEnhetsstatusListe().add(WSEnhetsstatus.UNDER_AVVIKLING);
 
-            HentFullstendigEnhetListeResponse response = organisasjonEnhetV2.hentFullstendigEnhetListe(request);
+            WSHentFullstendigEnhetListeResponse response = organisasjonEnhetV2.hentFullstendigEnhetListe(request);
 
             cache = unmodifiableMap(response.getEnhetListe()
                     .stream()
