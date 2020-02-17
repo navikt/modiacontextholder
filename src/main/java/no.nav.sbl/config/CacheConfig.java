@@ -25,6 +25,8 @@ public class CacheConfig implements CachingConfigurer {
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
         config.addCache(lagCacheConfig("enheterCache"));
         config.addCache(lagCacheConfig("veilederCache"));
+        config.addCache(lagCacheConfig("veilederRolleCache"));
+        config.addCache(lagCacheConfig("ldapCache"));
 
         return net.sf.ehcache.CacheManager.newInstance(config);
     }
