@@ -9,7 +9,9 @@ import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.meldinger.WSHentFullstend
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -47,5 +49,9 @@ public class EnheterCache {
 
     public Map<String, DecoratorDomain.Enhet> get() {
         return this.cache;
+    }
+
+    public List<DecoratorDomain.Enhet> getAll() {
+        return new ArrayList<>(this.cache.values());
     }
 }
