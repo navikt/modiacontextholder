@@ -38,4 +38,8 @@ public class EnheterService {
         })
                 .onFailure((exception) -> log.error("Kunne ikke hente enheter for {} fra NORG2", ident, exception));
     }
+
+    public List<DecoratorDomain.Enhet> hentAlleEnheter() {
+        return enheterCache.getAll();
+    }
 }

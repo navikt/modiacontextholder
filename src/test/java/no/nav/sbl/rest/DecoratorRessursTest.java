@@ -10,6 +10,7 @@ import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
 import no.nav.sbl.service.AxsysService;
 import no.nav.sbl.service.EnheterService;
+import no.nav.sbl.service.LdapService;
 import no.nav.sbl.service.VeilederService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,8 @@ public class DecoratorRessursTest {
     private static final String IDENT = "Z999999";
     private static final Subject MOCK_SUBJECT = new Subject(IDENT, IdentType.InternBruker, SsoToken.oidcToken("asda", emptyMap()));
 
+    @Mock
+    LdapService ldapService;
     @Mock
     EnheterService enheterService;
     @Mock
@@ -103,8 +106,35 @@ public class DecoratorRessursTest {
         );
     }
 
+    @Test
+    public void alle_enheter_om_saksbehandler_har_modia_admin() {
+        gitt_modia_admin_rolle();
+        gitt_saksbehandler_i_ad();
+        gitt_tilgang_til_enheter(asList(
+                enhet("0001", "Test 1")
+        ));
+
+        shouldWorkRegardlessOfFeatureToggle(() -> {
+            SubjectHandler.withSubject(MOCK_SUBJECT, () -> {
+                DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
+                assertThat(decoratorConfig.enheter).hasSize(5);
+            });
+        });
+    }
+
+    private void gitt_modia_admin_rolle() {
+        when(ldapService.hentVeilederRoller(anyString())).thenReturn(asList("0000-GA-Modia_Admin"));
+    }
+
     private void gitt_tilgang_til_enheter(List<DecoratorDomain.Enhet> data) {
         when(enheterService.hentEnheter(IDENT)).thenReturn(Try.of(() -> data));
+        when(enheterService.hentAlleEnheter()).thenReturn(asList(
+                enhet("0001", "Test 1"),
+                enhet("0002", "Test 2"),
+                enhet("0003", "Test 3"),
+                enhet("0004", "Test 4"),
+                enhet("0005", "Test 5")
+        ));
         when(axsysService.hentEnheter(IDENT)).thenReturn(Try.of(() -> data));
     }
 
