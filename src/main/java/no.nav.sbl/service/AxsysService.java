@@ -1,15 +1,14 @@
 package no.nav.sbl.service;
 
 import io.vavr.control.Try;
-import no.nav.sbl.axsys.tilgang.Enhet;
 import no.nav.sbl.rest.axsys.AxsysClient;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.inject.Inject;
+import java.util.Comparator;
 import java.util.List;
 
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 public class AxsysService {
@@ -23,8 +22,8 @@ public class AxsysService {
                 client.hentTilgang(ident)
                         .enheter
                         .stream()
-                        .sorted(comparing(Enhet::getEnhetId))
                         .map((enhet) -> new DecoratorDomain.Enhet(enhet.getEnhetId(), enhet.getNavn()))
+                        .sorted(Comparator.comparing(DecoratorDomain.Enhet::getEnhetId))
                         .collect(toList())
         );
     }

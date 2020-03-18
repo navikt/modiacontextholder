@@ -23,6 +23,10 @@ public class DecoratorDomain {
             this.enhetId = enhetId;
             this.navn = navn;
         }
+
+        public String getEnhetId() {
+            return enhetId;
+        }
     }
 
     public static class Saksbehandler {

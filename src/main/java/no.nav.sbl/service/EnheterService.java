@@ -8,6 +8,7 @@ import no.nav.tjeneste.virksomhet.organisasjonressursenhet.v1.meldinger.WSHentEn
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.inject.Inject;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,6 +35,7 @@ public class EnheterService {
                     .stream()
                     .map((enhet) -> aktiveEnheter.get(enhet.getEnhetId()))
                     .filter(Objects::nonNull)
+                    .sorted(Comparator.comparing(DecoratorDomain.Enhet::getEnhetId))
                     .collect(Collectors.toList());
         })
                 .onFailure((exception) -> log.error("Kunne ikke hente enheter for {} fra NORG2", ident, exception));
