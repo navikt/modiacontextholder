@@ -26,10 +26,10 @@ spec:
   resources:
     limits:
       cpu: 3000m
-      memory: 768Mi
+      memory: 1024Mi
     requests:
-      cpu: 200m
-      memory: 512Mi
+      cpu: 400m
+      memory: 768Mi
   ingresses:
     - https://modiacontextholder-q0.nais.preprod.local/modiacontextholder
     - https://modapp-q0.adeo.no/modiacontextholder
