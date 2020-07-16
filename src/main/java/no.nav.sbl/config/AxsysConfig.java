@@ -3,7 +3,6 @@ package no.nav.sbl.config;
 import no.nav.sbl.dialogarena.common.cxf.StsSecurityConstants;
 import no.nav.sbl.dialogarena.types.Pingable;
 import no.nav.sbl.rest.axsys.AxsysClient;
-import no.nav.sbl.service.AxsysService;
 import no.nav.sbl.util.EnvironmentUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,11 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AxsysConfig {
     public static final String AXSYS_URL_PROPERTY = "AXSYS_REST_API_URL";
-
-    @Bean
-    public AxsysService axsysService() {
-        return new AxsysService();
-    }
 
     @Bean
     public AxsysClient axsysClient() {

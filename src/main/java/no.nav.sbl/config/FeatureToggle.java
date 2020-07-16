@@ -16,8 +16,4 @@ public class FeatureToggle {
     public boolean isKafkaEnabled() {
         return unleashService.isEnabled("veilederflatehendelser.kafka");
     }
-
-    public boolean isAxsysEnabled() {
-        return unleashService.isEnabled("modiacontextholder.axsys");
-    }
 }

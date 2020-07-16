@@ -2,10 +2,8 @@ package no.nav.sbl.rest;
 
 import io.vavr.control.Try;
 import no.nav.common.auth.SubjectHandler;
-import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
-import no.nav.sbl.service.AxsysService;
 import no.nav.sbl.service.EnheterService;
 import no.nav.sbl.service.LdapService;
 import no.nav.sbl.service.VeilederService;
@@ -30,23 +28,18 @@ public class DecoratorRessurs {
     @Inject
     EnheterService enheterService;
     @Inject
-    AxsysService axsysService;
-    @Inject
     VeilederService veilederService;
-    @Inject
-    FeatureToggle featureToggle;
 
     @GET
     public DecoratorConfig hentSaksbehandlerInfoOgEnheter() {
-        String ident = getIdent();
-        return lagDecoratorConfig(ident, hentEnheter(ident));
+        return hentSaksbehandlerInfoOgEnheterFraAxsys();
     }
 
     @GET
     @Path("/v2")
     public DecoratorConfig hentSaksbehandlerInfoOgEnheterFraAxsys() {
         String ident = getIdent();
-        return lagDecoratorConfig(ident, hentEnheter(ident, true));
+        return lagDecoratorConfig(ident, hentEnheter(ident));
     }
 
     private DecoratorConfig lagDecoratorConfig(String ident, Try<List<DecoratorDomain.Enhet>> tryEnheter) {
@@ -56,18 +49,10 @@ public class DecoratorRessurs {
     }
 
     private Try<List<DecoratorDomain.Enhet>> hentEnheter(String ident) {
-        return hentEnheter(ident, false);
-    }
-
-    private Try<List<DecoratorDomain.Enhet>> hentEnheter(String ident, boolean forceAxsys) {
         if (ldapService.hentVeilederRoller(ident).contains(rolleModiaAdmin)) {
             return Try.success(enheterService.hentAlleEnheter());
         }
-        if (forceAxsys || featureToggle.isAxsysEnabled()) {
-            return axsysService.hentEnheter(ident);
-        } else {
-            return enheterService.hentEnheter(ident);
-        }
+        return enheterService.hentEnheter(ident);
     }
 
     private static String getIdent() {
