@@ -5,10 +5,8 @@ import no.nav.brukerdialog.security.domain.IdentType;
 import no.nav.common.auth.SsoToken;
 import no.nav.common.auth.Subject;
 import no.nav.common.auth.SubjectHandler;
-import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
-import no.nav.sbl.service.AxsysService;
 import no.nav.sbl.service.EnheterService;
 import no.nav.sbl.service.LdapService;
 import no.nav.sbl.service.VeilederService;
@@ -40,10 +38,6 @@ public class DecoratorRessursTest {
     EnheterService enheterService;
     @Mock
     VeilederService veilederService;
-    @Mock
-    AxsysService axsysService;
-    @Mock
-    FeatureToggle featureToggle;
 
     @InjectMocks
     DecoratorRessurs rest;
@@ -62,7 +56,6 @@ public class DecoratorRessursTest {
     public void feil_ved_henting_av_enheter() {
         gitt_saksbehandler_i_ad();
         when(enheterService.hentEnheter(IDENT)).thenReturn(Try.failure(new IllegalStateException("Noe gikk feil")));
-        when(axsysService.hentEnheter(IDENT)).thenReturn(Try.failure(new IllegalStateException("Noe gikk feil")));
 
         shouldWorkRegardlessOfFeatureToggle(() ->
                 assertThatThrownBy(() -> SubjectHandler.withSubject(MOCK_SUBJECT, () -> rest.hentSaksbehandlerInfoOgEnheter()))
@@ -135,7 +128,6 @@ public class DecoratorRessursTest {
                 enhet("0004", "Test 4"),
                 enhet("0005", "Test 5")
         ));
-        when(axsysService.hentEnheter(IDENT)).thenReturn(Try.of(() -> data));
     }
 
     private void gitt_saksbehandler_i_ad() {
@@ -149,9 +141,6 @@ public class DecoratorRessursTest {
     }
 
     private void shouldWorkRegardlessOfFeatureToggle(Runnable executable) {
-        when(featureToggle.isAxsysEnabled()).thenReturn(false);
-        executable.run();
-        when(featureToggle.isAxsysEnabled()).thenReturn(true);
         executable.run();
     }
 }

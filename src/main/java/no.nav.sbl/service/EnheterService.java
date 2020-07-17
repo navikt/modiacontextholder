@@ -2,9 +2,8 @@ package no.nav.sbl.service;
 
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.sbl.rest.axsys.AxsysClient;
 import no.nav.sbl.rest.domain.DecoratorDomain;
-import no.nav.tjeneste.virksomhet.organisasjonressursenhet.v1.OrganisasjonRessursEnhetV1;
-import no.nav.tjeneste.virksomhet.organisasjonressursenhet.v1.meldinger.WSHentEnhetListeRequest;
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.inject.Inject;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EnheterService {
     @Inject
-    private OrganisasjonRessursEnhetV1 enhetPorttype;
+    private AxsysClient client;
 
     @Inject
     private EnheterCache enheterCache;
@@ -25,20 +24,16 @@ public class EnheterService {
     @Cacheable("enheterCache")
     public Try<List<DecoratorDomain.Enhet>> hentEnheter(String ident) {
         Map<String, DecoratorDomain.Enhet> aktiveEnheter = enheterCache.get();
-        return Try.of(() -> {
-            WSHentEnhetListeRequest request = new WSHentEnhetListeRequest();
-            request.setRessursId(ident);
-
-            return enhetPorttype
-                    .hentEnhetListe(request)
-                    .getEnhetListe()
-                    .stream()
-                    .map((enhet) -> aktiveEnheter.get(enhet.getEnhetId()))
-                    .filter(Objects::nonNull)
-                    .sorted(Comparator.comparing(DecoratorDomain.Enhet::getEnhetId))
-                    .collect(Collectors.toList());
-        })
-                .onFailure((exception) -> log.error("Kunne ikke hente enheter for {} fra NORG2", ident, exception));
+        return Try.of(() ->
+                client.hentTilgang(ident)
+                        .enheter
+                        .stream()
+                        .map((enhet) -> aktiveEnheter.get(enhet.getEnhetId()))
+                        .filter(Objects::nonNull)
+                        .sorted(Comparator.comparing(DecoratorDomain.Enhet::getEnhetId))
+                        .collect(Collectors.toList())
+        )
+                .onFailure((exception) -> log.error("Kunne ikke hente enheter for {} fra AXSYS", ident, exception));
     }
 
     public List<DecoratorDomain.Enhet> hentAlleEnheter() {

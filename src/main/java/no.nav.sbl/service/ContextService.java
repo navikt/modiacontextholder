@@ -41,6 +41,13 @@ public class ContextService {
     }
 
     public void oppdaterVeiledersContext(RSNyContext nyContext, String veilederIdent) {
+        if (NY_AKTIV_BRUKER.name().equals(nyContext.eventType) && nyContext.verdi == null) {
+            nullstillAktivBruker(veilederIdent);
+            return;
+        } else if (nyContext.verdi == null) {
+            log.warn("Forsøk på å sette aktivEnhet til null, vil generere feil.");
+        }
+
         PEvent event = new PEvent()
                 .verdi(nyContext.verdi)
                 .eventType(nyContext.eventType)

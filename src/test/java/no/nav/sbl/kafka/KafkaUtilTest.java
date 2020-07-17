@@ -11,7 +11,7 @@ class KafkaUtilTest {
 
     @BeforeEach
     void setUp() {
-        System.setProperty("FASIT_ENVIRONMENT_NAME", this.getClass().getName());
+        System.setProperty("FASIT_ENVIRONMENT_NAME", "T");
     }
 
     @Test

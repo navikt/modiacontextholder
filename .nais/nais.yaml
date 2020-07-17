@@ -47,10 +47,6 @@ spec:
         mountPath: /var/run/secrets/nais.io/srvssolinux
       - kvPath: /oracle/data/prod/creds/modiacontextholder-user
         mountPath: /var/run/secrets/nais.io/modiacontextholderDB
-      - kvPath: /credential/data/prod/isso-rp-user
-        mountPath: /var/run/secrets/nais.io/isso-rp-user
-      - kvPath: /credential/data/prod/aad_b2c_clientid
-        mountPath: /var/run/secrets/nais.io/aad_b2c_clientid
       - kvPath: /apikey/appdynamics/prod
         mountPath: /var/run/secrets/nais.io/vault
   env:
@@ -86,22 +82,16 @@ spec:
       value: "ADEO.NO"
     - name: UNLEASH_API_URL
       value: "https://unleash.nais.adeo.no/api/"
-    - name: ISSO_HOST_URL
-      value: "https://isso.adeo.no/isso/oauth2"
-    - name: ISSO_JWKS_URL
-      value: "https://isso.adeo.no/isso/oauth2/connect/jwk_uri"
-    - name: ISSO_ISSUER_URL
-      value: "https://isso.adeo.no:443/isso/oauth2"
-    - name: ISSO_ISALIVE_URL
-      value: "https://isso.adeo.no/isso/isAlive.jsp"
-    - name: OIDC_REDIRECT_URL
-      value: "https://app.adeo.no/veilarblogin/api/login"
-    - name: AAD_B2C_DISCOVERY_URL
-      value: "https://login.microsoftonline.com/navnob2c.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten"
+    - name: ISSO_CLIENT_ID
+      value: "veilarblogin-p"
+    - name: FPSAK_CLIENT_ID
+      value: "fpsak-frontend-p"
+    - name: ISSO_DISCOVERY_URL
+      value: "https://isso.adeo.no/isso/oauth2/.well-known/openid-configuration"
+    - name: ISSO_REFRESH_URL
+      value: "https://app.adeo.no/veilarblogin/api/openam-refresh"
     - name: LOGINSERVICE_OIDC_DISCOVERYURI
       value: "https://login.microsoftonline.com/navno.onmicrosoft.com/.well-known/openid-configuration"
-    - name: LOGINSERVICE_OIDC_CALLBACKURI
-      value: "https://loginservice.nais.adeo.no/callback"
     - name: LOGINSERVICE_OIDC_CLIENTID
       value: "9b4e07a3-4f4c-4bab-b866-87f62dff480d"
     - name: KAFKA_BROKERS_URL
