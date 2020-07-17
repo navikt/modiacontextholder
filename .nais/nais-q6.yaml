@@ -50,6 +50,8 @@ spec:
     - kvPath: /apikey/appdynamics/dev
       mountPath: /var/run/secrets/nais.io/vault
   env:
+  - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
+    value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
   - name: SECURITYTOKENSERVICE_URL
     value: "https://sts-q6.preprod.local/SecurityTokenServiceProvider/"
   - name: MODIACONTEXTHOLDERDB_URL

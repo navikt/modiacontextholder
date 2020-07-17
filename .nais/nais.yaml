@@ -50,6 +50,8 @@ spec:
       - kvPath: /apikey/appdynamics/prod
         mountPath: /var/run/secrets/nais.io/vault
   env:
+    - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
+      value: "https://security-token-service.nais.adeo.no/rest/v1/sts/.well-known/openid-configuration"
     - name: SECURITYTOKENSERVICE_URL
       value: "https://sts.adeo.no/SecurityTokenServiceProvider/"
     - name: MODIACONTEXTHOLDERDB_URL

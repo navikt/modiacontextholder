@@ -16,6 +16,8 @@
 
     <properties>
         <tjenestespesifikasjoner.version>1.2019.06.11-13.36-786a4cec3151</tjenestespesifikasjoner.version>
+        <graphql-kotlin.version>3.3.0</graphql-kotlin.version>
+        <kotlin.version>1.3.72</kotlin.version>
     </properties>
 
     <dependencyManagement>
@@ -31,6 +33,38 @@
                 <groupId>com.oracle.ojdbc</groupId>
                 <artifactId>ojdbc8</artifactId>
                 <version>19.3.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-bom</artifactId>
+                <version>${kotlin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk7</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-reflect</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.expediagroup</groupId>
+                <artifactId>graphql-kotlin-client</artifactId>
+                <version>${graphql-kotlin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -196,6 +230,24 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- kotlin dependencies -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.expediagroup</groupId>
+            <artifactId>graphql-kotlin-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -206,5 +258,99 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/main/java</source>
+                                <source>target/generated-sources/graphql</source>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.expediagroup</groupId>
+                <artifactId>graphql-kotlin-maven-plugin</artifactId>
+                <version>${graphql-kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>download schema from github</id>
+                        <goals>
+                            <goal>download-sdl</goal>
+                        </goals>
+                        <configuration>
+                            <endpoint>https://navikt.github.io/pdl/pdl-api-sdl.graphqls</endpoint>
+                            <outputDirectory>src/main/resources/pdl</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate kotlin classes from schema + queries</id>
+                        <goals>
+                            <goal>generate-client</goal>
+                        </goals>
+                        <configuration>
+                            <schemaFile>src/main/resources/pdl/schema.graphql</schemaFile>
+                            <packageName>no.nav.sbl.pdl.generated</packageName>
+                            <queryFileDirectory>src/main/resources/pdl/queries</queryFileDirectory>
+                            <converters>
+                                <Long>
+                                    <type>kotlin.Long</type>
+                                    <converter>no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.LongScalarConverter</converter>
+                                </Long>
+                                <Date>
+                                    <type>java.time.LocalDate</type>
+                                    <converter>no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.DateScalarConverter</converter>
+                                </Date>
+                                <DateTime>
+                                    <type>java.time.LocalDateTime</type>
+                                    <converter>no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.DateTimeScalarConverter</converter>
+                                </DateTime>
+                            </converters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
