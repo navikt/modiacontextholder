@@ -1,9 +1,8 @@
 import lombok.extern.slf4j.Slf4j;
 import no.nav.apiapp.ApiApp;
-import no.nav.brukerdialog.security.Constants;
-import no.nav.brukerdialog.tools.SecurityConstants;
 import no.nav.common.nais.utils.NaisUtils;
 import no.nav.sbl.config.ApplicationConfig;
+import no.nav.sbl.dialogarena.common.cxf.StsSecurityConstants;
 import no.nav.sbl.util.EnvironmentUtils;
 
 import static no.nav.apiapp.rest.NavCorsFilter.CORS_ALLOWED_ORIGINS;
@@ -32,20 +31,12 @@ public class Main {
         NaisUtils.Credentials serviceUser = NaisUtils.getCredentials("service_user");
         EnvironmentUtils.setProperty(SRV_USERNAME, serviceUser.username, PUBLIC);
         EnvironmentUtils.setProperty(SRV_PASSWORD, serviceUser.password, SECRET);
-        EnvironmentUtils.setProperty(SecurityConstants.SYSTEMUSER_USERNAME, serviceUser.username, PUBLIC);
-        EnvironmentUtils.setProperty(SecurityConstants.SYSTEMUSER_PASSWORD, serviceUser.password, SECRET);
+        EnvironmentUtils.setProperty(StsSecurityConstants.SYSTEMUSER_USERNAME, serviceUser.username, PUBLIC);
+        EnvironmentUtils.setProperty(StsSecurityConstants.SYSTEMUSER_PASSWORD, serviceUser.password, SECRET);
 
         NaisUtils.Credentials srvssolinux = NaisUtils.getCredentials("srvssolinux");
         EnvironmentUtils.setProperty(LDAP_USERNAME, srvssolinux.username, PUBLIC);
         EnvironmentUtils.setProperty(LDAP_PASSWORD, srvssolinux.password, SECRET);
-
-        NaisUtils.Credentials issoRPUser = NaisUtils.getCredentials("isso-rp-user");
-        EnvironmentUtils.setProperty(Constants.ISSO_RP_USER_USERNAME_PROPERTY_NAME, issoRPUser.username, PUBLIC);
-        EnvironmentUtils.setProperty(Constants.ISSO_RP_USER_PASSWORD_PROPERTY_NAME, issoRPUser.password, SECRET);
-
-        NaisUtils.Credentials aadClientId = NaisUtils.getCredentials("aad_b2c_clientid");
-        EnvironmentUtils.setProperty("AAD_B2C_CLIENTID_USERNAME", aadClientId.username, PUBLIC);
-        EnvironmentUtils.setProperty("AAD_B2C_CLIENTID_PASSWORD", aadClientId.password, SECRET);
 
         NaisUtils.Credentials dbCredentials = NaisUtils.getCredentials("modiacontextholderDB");
         EnvironmentUtils.setProperty(MODIACONTEXTHOLDERDB_USERNAME, dbCredentials.username, PUBLIC);

@@ -1,9 +1,8 @@
 package no.nav.sbl.service;
 
+import no.nav.sbl.axsys.tilgang.Enhet;
+import no.nav.sbl.rest.axsys.AxsysClient;
 import no.nav.sbl.rest.domain.DecoratorDomain;
-import no.nav.tjeneste.virksomhet.organisasjonressursenhet.v1.OrganisasjonRessursEnhetV1;
-import no.nav.tjeneste.virksomhet.organisasjonressursenhet.v1.informasjon.WSEnhet;
-import no.nav.tjeneste.virksomhet.organisasjonressursenhet.v1.meldinger.WSHentEnhetListeResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -26,7 +26,7 @@ public class EnheterServiceTest {
     @Mock
     EnheterCache enhetCache;
     @Mock
-    OrganisasjonRessursEnhetV1 enhetPorttype;
+    private AxsysClient client;
 
     @InjectMocks
     EnheterService service;
@@ -36,9 +36,9 @@ public class EnheterServiceTest {
     @Test
     public void filterer_ut_inaktive_enheter() throws Exception {
         gitt_tilgang_til_enheter(asList(
-                new WSEnhet().withEnhetId("0001").withNavn("0001"),
-                new WSEnhet().withEnhetId("0002").withNavn("0002"),
-                new WSEnhet().withEnhetId("0003").withNavn("0003")
+                new Enhet("0001", emptySet(), "0001"),
+                new Enhet("0002", emptySet(), "0002"),
+                new Enhet("0003", emptySet(), "0003")
         ));
         gitt_aktive_enheter(asList(
                 new DecoratorDomain.Enhet("0002", "0002")
@@ -50,12 +50,11 @@ public class EnheterServiceTest {
         assertThat(enheter.get(0).enhetId).isEqualTo("0002");
     }
 
-    private void gitt_tilgang_til_enheter(List<WSEnhet> enheter) throws Exception {
-        WSHentEnhetListeResponse resp = new WSHentEnhetListeResponse();
-        resp.getEnhetListe()
-                .addAll(enheter);
+    private void gitt_tilgang_til_enheter(List<Enhet> enheter) throws Exception {
+        AxsysTilgangResponse resp = new AxsysTilgangResponse();
+        resp.enheter = enheter;
 
-        when(enhetPorttype.hentEnhetListe(any())).thenReturn(resp);
+        when(client.hentTilgang(any())).thenReturn(resp);
     }
 
     private void gitt_aktive_enheter(List<DecoratorDomain.Enhet> data) {
