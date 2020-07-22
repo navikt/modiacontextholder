@@ -29,6 +29,8 @@ public class DecoratorRessurs {
     EnheterService enheterService;
     @Inject
     VeilederService veilederService;
+    @Inject
+    PdlService pdlService;
 
     @GET
     public DecoratorConfig hentSaksbehandlerInfoOgEnheter() {
@@ -40,6 +42,19 @@ public class DecoratorRessurs {
     public DecoratorConfig hentSaksbehandlerInfoOgEnheterFraAxsys() {
         String ident = getIdent();
         return lagDecoratorConfig(ident, hentEnheter(ident));
+    }
+
+    @GET
+    @Path("/aktor/{fnr}")
+    public String hentAktorId(@PathParam("fnr") String fnr) {
+        return pdlService.hentIdent(fnr)
+                .getOrElseThrow((exception) -> {
+                    if (exception instanceof WebApplicationException) {
+                        throw (WebApplicationException) exception;
+                    } else {
+                        throw new BadRequestException(exception);
+                    }
+                });
     }
 
     private DecoratorConfig lagDecoratorConfig(String ident, Try<List<DecoratorDomain.Enhet>> tryEnheter) {
