@@ -4,6 +4,7 @@ import io.vavr.control.Try;
 import no.nav.common.auth.SubjectHandler;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
+import no.nav.sbl.rest.domain.DecoratorDomain.FnrAktorId;
 import no.nav.sbl.service.EnheterService;
 import no.nav.sbl.service.LdapService;
 import no.nav.sbl.service.VeilederService;
@@ -46,8 +47,9 @@ public class DecoratorRessurs {
 
     @GET
     @Path("/aktor/{fnr}")
-    public String hentAktorId(@PathParam("fnr") String fnr) {
+    public FnrAktorId hentAktorId(@PathParam("fnr") String fnr) {
         return pdlService.hentIdent(fnr)
+                .map((aktorId) -> new FnrAktorId(fnr, aktorId))
                 .getOrElseThrow((exception) -> {
                     if (exception instanceof WebApplicationException) {
                         throw (WebApplicationException) exception;
