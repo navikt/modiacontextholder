@@ -39,4 +39,13 @@ public class DecoratorDomain {
             this.navn = fornavn + " " + etternavn;
         }
     }
+
+    public static class FnrAktorId {
+        public final String fnr, aktorId;
+
+        public FnrAktorId(String fnr, String aktorId) {
+            this.fnr = fnr;
+            this.aktorId = aktorId;
+        }
+    }
 }
