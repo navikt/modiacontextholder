@@ -3,7 +3,7 @@ kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
   name: modiacontextholder
-  namespace: q0
+  namespace: {{ namespace }}
   labels:
     team: personoversikt
 spec:
@@ -31,9 +31,9 @@ spec:
       cpu: 400m
       memory: 768Mi
   ingresses:
-    - https://modiacontextholder-q0.nais.preprod.local/modiacontextholder
-    - https://modapp-q0.adeo.no/modiacontextholder
-    - https://app-q0.adeo.no/modiacontextholder
+    - https://modiacontextholder-{{ namespace }}.nais.preprod.local/modiacontextholder
+    - https://modapp-{{ namespace }}.adeo.no/modiacontextholder
+    - https://app-{{ namespace }}.adeo.no/modiacontextholder
   replicas:
     min: 2
     max: 4
@@ -45,7 +45,7 @@ spec:
         mountPath: /var/run/secrets/nais.io/service_user
       - kvPath: /serviceuser/data/dev/srvssolinux
         mountPath: /var/run/secrets/nais.io/srvssolinux
-      - kvPath: /oracle/data/dev/creds/modiacontextholder_q0-user
+      - kvPath: /oracle/data/dev/creds/modiacontextholder_{{ namespace }}-user
         mountPath: /var/run/secrets/nais.io/modiacontextholderDB
       - kvPath: /apikey/appdynamics/dev
         mountPath: /var/run/secrets/nais.io/vault
@@ -53,15 +53,15 @@ spec:
     - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
       value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
     - name: SECURITYTOKENSERVICE_URL
-      value: "https://sts-q0.preprod.local/SecurityTokenServiceProvider/"
+      value: "https://sts-{{ namespace }}.preprod.local/SecurityTokenServiceProvider/"
     - name: MODIACONTEXTHOLDERDB_URL
-      value: "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=a01dbfl032.adeo.no)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=MODIACONTEXTHOLDERQ0)(INSTANCE_NAME=ccqf03)(UR=A)(SERVER=DEDICATED)))"
+      value: "{{ dbUrl }}"
     - name: MODIACONTEXTHOLDERDB_OEMENDPOINT
       value: "/em/cloud/dbaas/pluggabledbplatforminstance/byrequest/161"
     - name: VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_SECURITYTOKEN
       value: "SAML"
     - name: VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_ENDPOINTURL
-      value: "https://app-q0.adeo.no/norg2/ws/OrganisasjonRessursEnhet/v1"
+      value: "https://app-{{ namespace }}.adeo.no/norg2/ws/OrganisasjonRessursEnhet/v1"
     - name: VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_WSDLURL
       value: "http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-organisasjonRessursEnhet-v1-tjenestespesifikasjon/1.0.0/nav-organisasjonRessursEnhet-v1-tjenestespesifikasjon-1.0.0.zip"
     - name: AXSYS_REST_API_URL
@@ -69,7 +69,7 @@ spec:
     - name: VIRKSOMHET_ORGANISASJONENHET_V2_SECURITYTOKEN
       value: "SAML"
     - name: VIRKSOMHET_ORGANISASJONENHET_V2_ENDPOINTURL
-      value: "https://app-q0.adeo.no/norg2/ws/OrganisasjonEnhet/v2"
+      value: "https://app-{{ namespace }}.adeo.no/norg2/ws/OrganisasjonEnhet/v2"
     - name: VIRKSOMHET_ORGANISASJONENHET_V2_WSDLURL
       value: "http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-organisasjonEnhet-v2-tjenestespesifikasjon/2.1.0/nav-organisasjonEnhet-v2-tjenestespesifikasjon-2.1.0.zip"
     - name: LDAP_BASEDN
@@ -85,13 +85,13 @@ spec:
     - name: UNLEASH_API_URL
       value: "https://unleash.nais.adeo.no/api/"
     - name: ISSO_CLIENT_ID
-      value: "veilarblogin-q0"
+      value: "veilarblogin-{{ namespace }}"
     - name: FPSAK_CLIENT_ID
-      value: "fpsak-frontend-q0"
+      value: "fpsak-frontend-{{ namespace }}"
     - name: ISSO_DISCOVERY_URL
       value: "https://isso-q.adeo.no/isso/oauth2/.well-known/openid-configuration"
     - name: ISSO_REFRESH_URL
-      value: "https://app-q0.adeo.no/veilarblogin/api/openam-refresh"
+      value: "https://app-{{ namespace }}.adeo.no/veilarblogin/api/openam-refresh"
     - name: LOGINSERVICE_OIDC_DISCOVERYURI
       value: "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration"
     - name: LOGINSERVICE_OIDC_CLIENTID
@@ -99,4 +99,6 @@ spec:
     - name: KAFKA_BROKERS_URL
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
     - name: APP_ENVIRONMENT_NAME
-      value: "q0"
+      value: "{{ namespace }}"
+    - name: PDL_API_URL
+      value: "https://pdl-api.nais.preprod.local/graphql"

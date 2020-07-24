@@ -19,11 +19,10 @@ import javax.ws.rs.NotFoundException
 typealias HeadersBuilder = HttpRequestBuilder.() -> Unit
 private data class RequestContext<V>(val fnr: V, val headers: HeadersBuilder)
 
+val pdlApiUrl: URL = EnvironmentUtils.getRequiredProperty("PDL_API_URL").let(::URL)
 class PdlService(private val stsService: SystemUserTokenProvider) {
     private val log = LoggerFactory.getLogger(PdlService::class.java)
-    private val graphQLClient = GraphQLClient(
-            url = URL(getEnvironmentUrl())
-    )
+    private val graphQLClient = GraphQLClient(url = pdlApiUrl)
 
     fun hentIdent(fnr: String): Try<String> = Try.of {
         prepareRequest(fnr)
@@ -66,12 +65,3 @@ class PdlService(private val stsService: SystemUserTokenProvider) {
         header("Tema", "GEN")
     }
 }
-
-private fun getEnvironmentUrl(): String {
-    return if ("p" == EnvironmentUtils.getRequiredProperty("APP_ENVIRONMENT_NAME").toLowerCase()) {
-        "https://pdl-api.nais.adeo.no/graphql"
-    } else {
-        "https://pdl-api.nais.preprod.local/graphql"
-    }
-}
-
