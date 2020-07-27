@@ -61,7 +61,8 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: dev-fss
-          RESOURCE: .nais/nais-${{ matrix.namespace }}.yaml
+          RESOURCE: .nais/qa-template.yaml
+          VARS: .nais/${{ matrix.namespace }}.json
 
   deploy-prod:
     name: Deploy to prod
