@@ -1,0 +1,43 @@
+package no.nav.sbl.rest.pdl
+
+import io.ktor.client.request.header
+import io.ktor.util.KtorExperimentalAPI
+import io.vavr.control.Try
+import kotlinx.coroutines.runBlocking
+import no.nav.common.auth.SsoToken
+import no.nav.common.auth.SubjectHandler
+import no.nav.common.oidc.SystemUserTokenProvider
+import no.nav.sbl.pdl.generated.HentIdent
+import no.nav.sbl.util.EnvironmentUtils
+import org.slf4j.LoggerFactory
+import java.net.URL
+import javax.ws.rs.NotFoundException
+
+val pdlApiUrl: URL = EnvironmentUtils.getRequiredProperty("PDL_API_URL").let(::URL)
+
+@KtorExperimentalAPI
+class PdlService(private val stsService: SystemUserTokenProvider) {
+    private val graphQLClient = PdlClient(url = pdlApiUrl)
+
+    fun hentIdent(fnr: String): Try<String> = Try.of {
+        runBlocking {
+            HentIdent(graphQLClient)
+                    .execute(HentIdent.Variables(fnr), userTokenHeaders)
+                    .data
+                    ?.hentIdenter
+                    ?.identer
+                    ?.first()
+                    ?.ident
+                    ?: throw NotFoundException("AktørId for $fnr ble ikke funnet")
+        }
+    }
+
+    private var userTokenHeaders: HeadersBuilder = {
+        val systemuserToken: String = stsService.systemUserAccessToken
+        val userToken: String = SubjectHandler.getSsoToken(SsoToken.Type.OIDC).orElseThrow { IllegalStateException("Kunne ikke hente ut veileders ssoTOken") }
+
+        header("Nav-Consumer-Token", "Bearer $systemuserToken")
+        header("Authorization", "Bearer $userToken")
+        header("Tema", "GEN")
+    }
+}

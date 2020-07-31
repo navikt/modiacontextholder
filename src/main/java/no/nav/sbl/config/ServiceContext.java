@@ -4,7 +4,7 @@ import no.nav.common.oidc.SystemUserTokenProvider;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.kafka.KafkaConfig;
-import no.nav.sbl.rest.PdlService;
+import no.nav.sbl.rest.pdl.PdlService;
 import no.nav.sbl.service.*;
 import no.nav.sbl.util.EnvironmentUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
