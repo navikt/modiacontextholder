@@ -58,12 +58,6 @@ spec:
       value: "{{ dbUrl }}"
     - name: MODIACONTEXTHOLDERDB_OEMENDPOINT
       value: "/em/cloud/dbaas/pluggabledbplatforminstance/byrequest/161"
-    - name: VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_SECURITYTOKEN
-      value: "SAML"
-    - name: VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_ENDPOINTURL
-      value: "https://app-{{ namespace }}.adeo.no/norg2/ws/OrganisasjonRessursEnhet/v1"
-    - name: VIRKSOMHET_ORGANISASJONRESSURSENHET_V1_WSDLURL
-      value: "http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-organisasjonRessursEnhet-v1-tjenestespesifikasjon/1.0.0/nav-organisasjonRessursEnhet-v1-tjenestespesifikasjon-1.0.0.zip"
     - name: AXSYS_REST_API_URL
       value: "https://axsys.nais.preprod.local/api"
     - name: VIRKSOMHET_ORGANISASJONENHET_V2_SECURITYTOKEN
