@@ -34,7 +34,7 @@ class PdlClient(
     ): GraphQLResponse<T> {
         val callId = getCallId()
         return try {
-            val mappedVariables = transformVariables?.invoke(variables)
+            val mappedVariables = transformVariables?.invoke(variables) ?: variables
             val mappedRequestBuilder: HeadersBuilder = {
                 requestBuilder.invoke(this)
                 header("Nav-Call-Id", callId)
