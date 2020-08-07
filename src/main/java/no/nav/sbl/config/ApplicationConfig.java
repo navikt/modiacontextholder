@@ -34,6 +34,7 @@ public class ApplicationConfig implements ApiApplication {
     private static final String fpsakClientId = EnvironmentUtils.getRequiredProperty("FPSAK_CLIENT_ID");
     private static final String azureADClientId = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_CLIENTID");
     private static final String azureADDiscoveryUrl = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_DISCOVERYURI");
+    private static final String azureADClientIdSupstonad = EnvironmentUtils.getRequiredProperty("SUPSTONAD_CLIENTID");
 
     @Override
     @SneakyThrows
@@ -54,6 +55,11 @@ public class ApplicationConfig implements ApiApplication {
                 .withRefreshUrl(issoRefreshUrl)
                 .withRefreshTokenCookieName(Constants.REFRESH_TOKEN_COOKIE_NAME);
 
+        OidcAuthenticatorConfig azureAdSupStonad = new OidcAuthenticatorConfig()
+                .withClientId(azureADClientIdSupstonad)
+                .withDiscoveryUrl(azureADDiscoveryUrl)
+                .withIdentType(IdentType.InternBruker);
+
         OidcAuthenticatorConfig azureAd = new OidcAuthenticatorConfig()
                 .withClientId(azureADClientId)
                 .withDiscoveryUrl(azureADDiscoveryUrl)
@@ -64,6 +70,7 @@ public class ApplicationConfig implements ApiApplication {
                 .addOidcAuthenticator(isso)
                 .addOidcAuthenticator(fpsak)
                 .addOidcAuthenticator(azureAd)
+                .addOidcAuthenticator(azureAdSupStonad)
                 .sts();
     }
 
