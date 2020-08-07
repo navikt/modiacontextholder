@@ -1,4 +1,4 @@
-package no.nav.sbl.axsys.tilgang;
+package no.nav.sbl.consumers.axsys.domain.tilgang;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

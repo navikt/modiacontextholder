@@ -5,7 +5,7 @@ import no.nav.common.auth.SubjectHandler;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
 import no.nav.sbl.rest.domain.DecoratorDomain.FnrAktorId;
-import no.nav.sbl.rest.pdl.PdlService;
+import no.nav.sbl.service.PdlService;
 import no.nav.sbl.service.EnheterService;
 import no.nav.sbl.service.LdapService;
 import no.nav.sbl.service.VeilederService;
