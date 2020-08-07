@@ -20,7 +20,6 @@ import static no.nav.sbl.util.EnvironmentUtils.*;
 @Import({
         KafkaConfig.class,
         FeatureToggleConfig.class,
-        VirksomhetOrganisasjonRessursEnhetV1Config.class,
         VirksomhetOrganisasjonEnhetV2Config.class,
         AxsysConfig.class
 })
