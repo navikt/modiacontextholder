@@ -1,13 +1,14 @@
 package no.nav.sbl.service;
 
-import no.nav.sbl.axsys.tilgang.Enhet;
-import no.nav.sbl.rest.axsys.AxsysClient;
+import no.nav.sbl.consumers.axsys.domain.tilgang.Enhet;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import no.nav.sbl.consumers.axsys.AxsysClient;
+import no.nav.sbl.consumers.axsys.domain.AxsysTilgangResponse;
 
 import java.util.List;
 import java.util.Map;

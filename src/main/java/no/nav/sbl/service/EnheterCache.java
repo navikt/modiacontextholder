@@ -1,11 +1,9 @@
 package no.nav.sbl.service;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.sbl.consumers.norg2.Norg2Client;
+import no.nav.sbl.consumers.norg2.domain.Norg2EnheterResponse;
 import no.nav.sbl.rest.domain.DecoratorDomain;
-import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.OrganisasjonEnhetV2;
-import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.informasjon.WSEnhetsstatus;
-import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.meldinger.WSHentFullstendigEnhetListeRequest;
-import no.nav.tjeneste.virksomhet.organisasjonenhet.v2.meldinger.WSHentFullstendigEnhetListeResponse;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.inject.Inject;
@@ -23,20 +21,16 @@ public class EnheterCache {
     private List<DecoratorDomain.Enhet> cacheList = unmodifiableList(new ArrayList<>());
 
     @Inject
-    OrganisasjonEnhetV2 organisasjonEnhetV2;
+    Norg2Client norg2Client;
 
     @Scheduled(fixedRate = HVER_TOLVTE_TIME)
     private void refreshCache() {
         try {
-            WSHentFullstendigEnhetListeRequest request = new WSHentFullstendigEnhetListeRequest();
-            request.getInkluderEnhetsstatusListe().add(WSEnhetsstatus.AKTIV);
-            request.getInkluderEnhetsstatusListe().add(WSEnhetsstatus.UNDER_AVVIKLING);
+            Norg2EnheterResponse response = norg2Client.hentAlleEnheter();
 
-            WSHentFullstendigEnhetListeResponse response = organisasjonEnhetV2.hentFullstendigEnhetListe(request);
-
-            cacheList = unmodifiableList(response.getEnhetListe()
+            cacheList = unmodifiableList(response.enheter
                     .stream()
-                    .map((enhet) -> new DecoratorDomain.Enhet(enhet.getEnhetId(), enhet.getEnhetNavn()))
+                    .map((enhet) -> new DecoratorDomain.Enhet(enhet.getEnhetNr(), enhet.getNavn()))
                     .sorted(Comparator.comparing(DecoratorDomain.Enhet::getEnhetId))
                     .collect(Collectors.toList())
             );
@@ -49,7 +43,7 @@ public class EnheterCache {
                     )));
 
         } catch (Exception e) {
-            log.error("Kunne ikke hente ut alle aktive enheter fra NORG", e);
+            log.error("Kunne ikke hente ut alle aktive enheter fra NORG2-rest", e);
         }
     }
 
