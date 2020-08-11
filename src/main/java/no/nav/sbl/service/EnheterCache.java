@@ -2,7 +2,7 @@ package no.nav.sbl.service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.sbl.consumers.norg2.Norg2Client;
-import no.nav.sbl.consumers.norg2.domain.Norg2EnheterResponse;
+import no.nav.sbl.consumers.norg2.domain.Enhet;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -26,9 +26,9 @@ public class EnheterCache {
     @Scheduled(fixedRate = HVER_TOLVTE_TIME)
     private void refreshCache() {
         try {
-            Norg2EnheterResponse response = norg2Client.hentAlleEnheter();
+            List<Enhet> enheter = norg2Client.hentAlleEnheter();
 
-            cacheList = unmodifiableList(response.enheter
+            cacheList = unmodifiableList(enheter
                     .stream()
                     .map((enhet) -> new DecoratorDomain.Enhet(enhet.getEnhetNr(), enhet.getNavn()))
                     .sorted(Comparator.comparing(DecoratorDomain.Enhet::getEnhetId))
