@@ -52,20 +52,16 @@ spec:
   env:
     - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
       value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
-    - name: SECURITYTOKENSERVICE_URL
-      value: "https://sts-{{ namespace }}.preprod.local/SecurityTokenServiceProvider/"
-    - name: MODIACONTEXTHOLDERDB_URL
-      value: "{{ dbUrl }}"
-    - name: MODIACONTEXTHOLDERDB_OEMENDPOINT
-      value: "/em/cloud/dbaas/pluggabledbplatforminstance/byrequest/161"
     - name: AXSYS_REST_API_URL
       value: "https://axsys.nais.preprod.local/api"
-    - name: VIRKSOMHET_ORGANISASJONENHET_V2_SECURITYTOKEN
-      value: "SAML"
-    - name: VIRKSOMHET_ORGANISASJONENHET_V2_ENDPOINTURL
-      value: "https://app-{{ namespace }}.adeo.no/norg2/ws/OrganisasjonEnhet/v2"
-    - name: VIRKSOMHET_ORGANISASJONENHET_V2_WSDLURL
-      value: "http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-organisasjonEnhet-v2-tjenestespesifikasjon/2.1.0/nav-organisasjonEnhet-v2-tjenestespesifikasjon-2.1.0.zip"
+    - name: PDL_API_URL
+      value: "https://pdl-api.nais.preprod.local/graphql"
+    - name: NORG2_API_URL
+      value: "https://app-{{ namespace }}.adeo.no/norg2/api"
+    - name: UNLEASH_API_URL
+      value: "https://unleash.nais.adeo.no/api/"
+    - name: MODIACONTEXTHOLDERDB_URL
+      value: "{{ dbUrl }}"
     - name: LDAP_BASEDN
       value: "dc=preprod,dc=local"
     - name: LDAP_URL
@@ -76,8 +72,6 @@ spec:
       value: "ou=ServiceAccounts,dc=preprod,dc=local"
     - name: LDAP_DOMAIN
       value: "PREPROD.LOCAL"
-    - name: UNLEASH_API_URL
-      value: "https://unleash.nais.adeo.no/api/"
     - name: ISSO_CLIENT_ID
       value: "veilarblogin-{{ namespace }}"
     - name: FPSAK_CLIENT_ID
@@ -94,5 +88,3 @@ spec:
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
     - name: APP_ENVIRONMENT_NAME
       value: "{{ namespace }}"
-    - name: PDL_API_URL
-      value: "https://pdl-api.nais.preprod.local/graphql"

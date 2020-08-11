@@ -1,4 +1,4 @@
-package no.nav.sbl.axsys;
+package no.nav.sbl.consumers.axsys.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

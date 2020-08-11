@@ -1,4 +1,4 @@
-package no.nav.sbl.rest.pdl
+package no.nav.sbl.service
 
 import io.ktor.client.request.header
 import io.ktor.util.KtorExperimentalAPI
@@ -7,9 +7,10 @@ import kotlinx.coroutines.runBlocking
 import no.nav.common.auth.SsoToken
 import no.nav.common.auth.SubjectHandler
 import no.nav.common.oidc.SystemUserTokenProvider
-import no.nav.sbl.pdl.generated.HentIdent
+import no.nav.sbl.consumers.pdl.HeadersBuilder
+import no.nav.sbl.consumers.pdl.PdlClient
+import no.nav.sbl.consumers.pdl.generated.HentIdent
 import no.nav.sbl.util.EnvironmentUtils
-import org.slf4j.LoggerFactory
 import java.net.URL
 import javax.ws.rs.NotFoundException
 

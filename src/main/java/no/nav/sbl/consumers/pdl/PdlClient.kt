@@ -1,4 +1,4 @@
-package no.nav.sbl.rest.pdl
+package no.nav.sbl.consumers.pdl
 
 import com.expediagroup.graphql.client.GraphQLClient
 import com.expediagroup.graphql.types.GraphQLError
