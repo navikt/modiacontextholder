@@ -73,8 +73,7 @@ public class ApplicationConfig implements ApiApplication {
                 .addOidcAuthenticator(isso)
                 .addOidcAuthenticator(fpsak)
                 .addOidcAuthenticator(azureAd)
-                .addOidcAuthenticator(azureAdSupStonad)
-                .sts();
+                .addOidcAuthenticator(azureAdSupStonad);
     }
 
     @Override
