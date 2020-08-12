@@ -2,14 +2,13 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.apiapp.ApiApp;
 import no.nav.common.nais.utils.NaisUtils;
 import no.nav.sbl.config.ApplicationConfig;
-import no.nav.sbl.dialogarena.common.cxf.StsSecurityConstants;
 import no.nav.sbl.util.EnvironmentUtils;
 
 import static no.nav.apiapp.rest.NavCorsFilter.CORS_ALLOWED_ORIGINS;
+import static no.nav.sbl.config.ApplicationConfig.SRV_PASSWORD_PROPERTY;
+import static no.nav.sbl.config.ApplicationConfig.SRV_USERNAME_PROPERTY;
 import static no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_PASSWORD;
 import static no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_USERNAME;
-import static no.nav.sbl.kafka.KafkaConfig.SRV_PASSWORD;
-import static no.nav.sbl.kafka.KafkaConfig.SRV_USERNAME;
 import static no.nav.sbl.service.LdapService.LDAP_PASSWORD;
 import static no.nav.sbl.service.LdapService.LDAP_USERNAME;
 import static no.nav.sbl.util.EnvironmentUtils.EnviromentClass.P;
@@ -29,10 +28,8 @@ public class Main {
 
     private static void setupVault() {
         NaisUtils.Credentials serviceUser = NaisUtils.getCredentials("service_user");
-        EnvironmentUtils.setProperty(SRV_USERNAME, serviceUser.username, PUBLIC);
-        EnvironmentUtils.setProperty(SRV_PASSWORD, serviceUser.password, SECRET);
-        EnvironmentUtils.setProperty(StsSecurityConstants.SYSTEMUSER_USERNAME, serviceUser.username, PUBLIC);
-        EnvironmentUtils.setProperty(StsSecurityConstants.SYSTEMUSER_PASSWORD, serviceUser.password, SECRET);
+        EnvironmentUtils.setProperty(SRV_USERNAME_PROPERTY, serviceUser.username, PUBLIC);
+        EnvironmentUtils.setProperty(SRV_PASSWORD_PROPERTY, serviceUser.password, SECRET);
 
         NaisUtils.Credentials srvssolinux = NaisUtils.getCredentials("srvssolinux");
         EnvironmentUtils.setProperty(LDAP_USERNAME, srvssolinux.username, PUBLIC);

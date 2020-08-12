@@ -1,4 +1,4 @@
-package no.nav.sbl.axsys.brukere;
+package no.nav.sbl.consumers.axsys.domain.brukere;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

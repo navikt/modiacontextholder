@@ -8,15 +8,14 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Properties;
 
+import static no.nav.sbl.config.ApplicationConfig.SRV_PASSWORD_PROPERTY;
+import static no.nav.sbl.config.ApplicationConfig.SRV_USERNAME_PROPERTY;
 import static no.nav.sbl.util.EnvironmentUtils.getRequiredProperty;
 import static org.apache.kafka.common.config.SaslConfigs.SASL_JAAS_CONFIG;
 
 @Configuration
 @Slf4j
 public class KafkaConfig {
-    public static String SRV_USERNAME = "SRVMODIACONTEXTHOLDER_USERNAME";
-    public static String SRV_PASSWORD = "SRVMODIACONTEXTHOLDER_PASSWORD";
-
     @Bean
     public static KafkaProducer<String, String> kafkaProducer() {
         return new KafkaProducer<>(producerConfigs(true));
@@ -29,8 +28,8 @@ public class KafkaConfig {
 
     @SneakyThrows
     private static Properties producerConfigs(boolean saslSslOn) {
-        String username = getRequiredProperty(SRV_USERNAME);
-        String password = getRequiredProperty(SRV_PASSWORD);
+        String username = getRequiredProperty(SRV_USERNAME_PROPERTY);
+        String password = getRequiredProperty(SRV_PASSWORD_PROPERTY);
         Properties properties = new Properties();
         properties.setProperty("client.id", "veilederflatehendelser.producer");
         properties.setProperty("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");

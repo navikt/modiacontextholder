@@ -2,9 +2,9 @@ package no.nav.sbl.service;
 
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.sbl.rest.axsys.AxsysClient;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import org.springframework.cache.annotation.Cacheable;
+import no.nav.sbl.consumers.axsys.AxsysClient;
 
 import javax.inject.Inject;
 import java.util.Comparator;
