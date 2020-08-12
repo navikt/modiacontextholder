@@ -9,7 +9,7 @@ fun main() {
     DataSourceConfiguration.migrateDb(configuration, dbConfig.adminDataSource())
 
     HttpServer.create("modiacontextholder", 7070) {
-        draftApp(
+        modiacontextholder(
                 configuration = configuration,
                 dataSource = dbConfig.userDataSource(),
                 useMock = false

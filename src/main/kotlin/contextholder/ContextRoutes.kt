@@ -1,4 +1,4 @@
-fun Route.draftRoutes(dao: DraftDAO) {
+fun Route.contextRoutes() {
     authenticate {
         route("/context") {
             get {
