@@ -7,8 +7,7 @@ import no.nav.sbl.util.EnvironmentUtils;
 import static no.nav.apiapp.rest.NavCorsFilter.CORS_ALLOWED_ORIGINS;
 import static no.nav.sbl.config.ApplicationConfig.SRV_PASSWORD_PROPERTY;
 import static no.nav.sbl.config.ApplicationConfig.SRV_USERNAME_PROPERTY;
-import static no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_PASSWORD;
-import static no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_USERNAME;
+import static no.nav.sbl.config.DatabaseConfig.*;
 import static no.nav.sbl.service.LdapService.LDAP_PASSWORD;
 import static no.nav.sbl.service.LdapService.LDAP_USERNAME;
 import static no.nav.sbl.util.EnvironmentUtils.EnviromentClass.P;
@@ -38,6 +37,9 @@ public class Main {
         NaisUtils.Credentials dbCredentials = NaisUtils.getCredentials("modiacontextholderDB");
         EnvironmentUtils.setProperty(MODIACONTEXTHOLDERDB_USERNAME, dbCredentials.username, PUBLIC);
         EnvironmentUtils.setProperty(MODIACONTEXTHOLDERDB_PASSWORD, dbCredentials.password, SECRET);
+
+        String dbUrl = NaisUtils.getFileContent("/var/run/secrets/nais.io/db_config/jdbc_url");
+        EnvironmentUtils.setProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY, dbUrl, PUBLIC);
     }
 
     public static void setCors() {

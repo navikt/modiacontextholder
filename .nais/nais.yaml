@@ -47,6 +47,8 @@ spec:
         mountPath: /var/run/secrets/nais.io/srvssolinux
       - kvPath: /oracle/data/prod/creds/modiacontextholder-user
         mountPath: /var/run/secrets/nais.io/modiacontextholderDB
+      - kvPath: /oracle/data/prod/config/modiacontextholder
+        mountPath: /var/run/secrets/nais.io/db_config
       - kvPath: /apikey/appdynamics/prod
         mountPath: /var/run/secrets/nais.io/vault
   env:
@@ -60,8 +62,6 @@ spec:
       value: "https://unleash.nais.adeo.no/api/"
     - name: NORG2_API_URL
       value: "https://app.adeo.no/norg2/api"
-    - name: MODIACONTEXTHOLDERDB_URL
-      value: "jdbc:oracle:thin:@(DESCRIPTION=(FAILOVER=on)(CONNECT_TIMEOUT= 15)(RETRY_COUNT=20)(RETRY_DELAY=3)(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=a01dbfl030.adeo.no)(PORT=1521))(ADDRESS=(PROTOCOL=TCP)(HOST=a01dbfl031.adeo.no)(PORT=1522)))(CONNECT_DATA=(SERVICE_NAME=modiacontextholder_ha)))"
     - name: LDAP_BASEDN
       value: "dc=adeo,dc=no"
     - name: LDAP_URL
