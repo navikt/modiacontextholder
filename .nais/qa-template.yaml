@@ -47,6 +47,8 @@ spec:
         mountPath: /var/run/secrets/nais.io/srvssolinux
       - kvPath: /oracle/data/dev/creds/modiacontextholder_{{ namespace }}-user
         mountPath: /var/run/secrets/nais.io/modiacontextholderDB
+      - kvPath: /oracle/data/dev/config/modiacontextholder_{{ namespace }}
+        mountPath: /var/run/secrets/nais.io/db_config
       - kvPath: /apikey/appdynamics/dev
         mountPath: /var/run/secrets/nais.io/vault
   env:
@@ -60,8 +62,6 @@ spec:
       value: "https://app-{{ namespace }}.adeo.no/norg2/api"
     - name: UNLEASH_API_URL
       value: "https://unleash.nais.adeo.no/api/"
-    - name: MODIACONTEXTHOLDERDB_URL
-      value: "{{ dbUrl }}"
     - name: LDAP_BASEDN
       value: "dc=preprod,dc=local"
     - name: LDAP_URL

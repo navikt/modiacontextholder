@@ -18,14 +18,14 @@ import static no.nav.sbl.util.EnvironmentUtils.getRequiredProperty;
 @EnableTransactionManagement
 public class DatabaseConfig {
 
-    public static final String MODIACONTEXTHOLDERDB_URL = "MODIACONTEXTHOLDERDB_URL";
+    public static final String MODIACONTEXTHOLDERDB_URL_PROPERTY = "MODIACONTEXTHOLDERDB_URL";
     public static final String MODIACONTEXTHOLDERDB_USERNAME = "MODIACONTEXTHOLDERDB_USERNAME";
     public static final String MODIACONTEXTHOLDERDB_PASSWORD = "MODIACONTEXTHOLDERDB_PASSWORD";
 
     @Bean
     public DataSource getDataSource() {
         return DataSourceFactory.dataSource()
-                .url(getRequiredProperty(MODIACONTEXTHOLDERDB_URL))
+                .url(getRequiredProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY))
                 .username(getRequiredProperty(MODIACONTEXTHOLDERDB_USERNAME))
                 .password(getRequiredProperty(MODIACONTEXTHOLDERDB_PASSWORD))
                 .maxPoolSize(300)
