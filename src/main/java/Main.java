@@ -4,6 +4,7 @@ import no.nav.common.nais.utils.NaisUtils;
 import no.nav.sbl.config.ApplicationConfig;
 import no.nav.sbl.util.EnvironmentUtils;
 
+import static no.nav.apiapp.rest.NavCorsFilter.CORS_ALLOWED_HEADERS;
 import static no.nav.apiapp.rest.NavCorsFilter.CORS_ALLOWED_ORIGINS;
 import static no.nav.sbl.config.ApplicationConfig.SRV_PASSWORD_PROPERTY;
 import static no.nav.sbl.config.ApplicationConfig.SRV_USERNAME_PROPERTY;
@@ -43,6 +44,7 @@ public class Main {
     }
 
     public static void setCors() {
+        setProperty(CORS_ALLOWED_HEADERS, "Accept,Accept-language,Content-Language,Content-Type,Authorization", PUBLIC);
         if (isEnvironmentClass(P)) {
             setProperty(CORS_ALLOWED_ORIGINS, ".adeo.no", PUBLIC);
         } else if (isEnvironmentClass(Q)) {
