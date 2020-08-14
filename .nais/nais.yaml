@@ -2,7 +2,7 @@
 kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
-  name: modiacontextholder
+  name: no.nav.sbl.modiacontextholder
   namespace: default
   labels:
     team: personoversikt
@@ -11,16 +11,16 @@ spec:
   port: 8080
   webproxy: true
   liveness:
-    path: modiacontextholder/internal/isAlive
+    path: no.nav.sbl.modiacontextholder/internal/isAlive
     initialDelay: 50
     timeout: 1
     periodSeconds: 5
     failureThreshold: 10
   prometheus:
     enabled: true
-    path: modiacontextholder/internal/metrics
+    path: no.nav.sbl.modiacontextholder/internal/metrics
   readiness:
-    path: modiacontextholder/internal/isReady
+    path: no.nav.sbl.modiacontextholder/internal/isReady
     initialDelay: 50
     timeout: 1
   resources:
@@ -31,9 +31,9 @@ spec:
       cpu: 400m
       memory: 768Mi
   ingresses:
-    - https://modiacontextholder.nais.adeo.no/modiacontextholder
-    - https://modapp.adeo.no/modiacontextholder
-    - https://app.adeo.no/modiacontextholder
+    - https://no.nav.sbl.modiacontextholder.nais.adeo.no/no.nav.sbl.modiacontextholder
+    - https://modapp.adeo.no/no.nav.sbl.modiacontextholder
+    - https://app.adeo.no/no.nav.sbl.modiacontextholder
   replicas:
     min: 2
     max: 4
@@ -45,7 +45,7 @@ spec:
         mountPath: /var/run/secrets/nais.io/service_user
       - kvPath: /serviceuser/data/prod/srvssolinux
         mountPath: /var/run/secrets/nais.io/srvssolinux
-      - kvPath: /oracle/data/prod/creds/modiacontextholder-user
+      - kvPath: /oracle/data/prod/creds/no.nav.sbl.modiacontextholder-user
         mountPath: /var/run/secrets/nais.io/modiacontextholderDB
       - kvPath: /apikey/appdynamics/prod
         mountPath: /var/run/secrets/nais.io/vault

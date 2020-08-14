@@ -13,7 +13,7 @@ public class FeatureToggleConfig {
     @Bean
     public UnleashService unleashService() {
         UnleashServiceConfig config = UnleashServiceConfig.builder()
-                .applicationName("modiacontextholder")
+                .applicationName("no.nav.sbl.modiacontextholder")
                 .unleashApiUrl(UNLEASH_API_URL)
                 .build();
 

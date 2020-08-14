@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 @EnableCaching
 public class CacheConfig implements CachingConfigurer {
 
-    private static int cacheSecondsInt = Integer.parseInt(System.getProperty("cache.config.seconds", "3600"));
+    private static int cacheSecondsInt = Integer.parseInt(System.getProperty("cache.no.nav.sbl.config.seconds", "3600"));
 
     @Bean
     public net.sf.ehcache.CacheManager ehCacheManager() {

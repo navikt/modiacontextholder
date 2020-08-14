@@ -4,6 +4,7 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import no.nav.sbl.log
 
 data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
 object HttpServer {

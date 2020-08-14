@@ -3,7 +3,7 @@ target
 *.iml
 .idea/*
 !.idea/runConfigurations
-*.log
+*.no.nav.sbl.getLog
 *.txt
 
 .vault.properties

@@ -1,3 +1,10 @@
+import javax.sql.DataSource
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import no.nav.sbl.log
+import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
+import org.flywaydb.core.Flyway
+
 class DataSourceConfiguration(val env: Configuration) {
     private var userDataSource = createDatasource("user")
     private var adminDataSource = createDatasource("admin")
@@ -31,7 +38,7 @@ class DataSourceConfiguration(val env: Configuration) {
     }
 
     companion object {
-        private fun dbRole(user: String): String = "modiacontextholder-$user"
+        private fun dbRole(user: String): String = "no.nav.sbl.modiacontextholder-$user"
 
         fun migrateDb(configuration: Configuration, dataSource: DataSource) {
             Flyway

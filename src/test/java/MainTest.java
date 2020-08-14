@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class MainTest {
 
-    private static final String APPLICATION_NAME = "modiacontextholder";
+    private static final String APPLICATION_NAME = "no.nav.sbl.modiacontextholder";
     private static final String TEST_PORT = "8290";
 
     public static void main(String[] args) throws IOException {

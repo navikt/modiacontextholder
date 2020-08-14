@@ -1,3 +1,6 @@
+import no.nav.sbl.log
+import io.ktor.auth.Authentication
+
 
 fun Authemvnntication.Configuration.setupMock(mockPrincipal: SubjectPrincipal) {
     mock {
@@ -9,7 +12,7 @@ fun Authentication.Configuration.setupJWT(jwksUrl: String) {
     jwt {
         authHeader(Security::useJwtFromCookie)
         verifier(Security.makeJwkProvider(jwksUrl))
-        realm = "modiacontextholder"
+        realm = "no.nav.sbl.modiacontextholder"
         validate { Security.validateJWT(it) }
     }
 }

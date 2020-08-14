@@ -2,7 +2,7 @@
 kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
-  name: modiacontextholder
+  name: no.nav.sbl.modiacontextholder
   namespace: {{ namespace }}
   labels:
     team: personoversikt
@@ -11,16 +11,16 @@ spec:
   port: 8080
   webproxy: true
   liveness:
-    path: modiacontextholder/internal/isAlive
+    path: no.nav.sbl.modiacontextholder/internal/isAlive
     initialDelay: 50
     timeout: 1
     periodSeconds: 5
     failureThreshold: 10
   prometheus:
     enabled: true
-    path: modiacontextholder/internal/metrics
+    path: no.nav.sbl.modiacontextholder/internal/metrics
   readiness:
-    path: modiacontextholder/internal/isReady
+    path: no.nav.sbl.modiacontextholder/internal/isReady
     initialDelay: 50
     timeout: 1
   resources:
@@ -31,9 +31,9 @@ spec:
       cpu: 400m
       memory: 768Mi
   ingresses:
-    - https://modiacontextholder-{{ namespace }}.nais.preprod.local/modiacontextholder
-    - https://modapp-{{ namespace }}.adeo.no/modiacontextholder
-    - https://app-{{ namespace }}.adeo.no/modiacontextholder
+    - https://no.nav.sbl.modiacontextholder-{{ namespace }}.nais.preprod.local/no.nav.sbl.modiacontextholder
+    - https://modapp-{{ namespace }}.adeo.no/no.nav.sbl.modiacontextholder
+    - https://app-{{ namespace }}.adeo.no/no.nav.sbl.modiacontextholder
   replicas:
     min: 2
     max: 4
