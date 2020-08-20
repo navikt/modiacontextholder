@@ -1,12 +1,19 @@
 import no.nav.sbl.log
 import io.ktor.auth.Authentication
-
-
-fun Authemvnntication.Configuration.setupMock(mockPrincipal: SubjectPrincipal) {
-    mock {
-        principal = mockPrincipal
-    }
-}
+import com.auth0.jwk.JwkProvider
+import com.auth0.jwk.JwkProviderBuilder
+import com.auth0.jwt.JWT
+import com.auth0.jwt.impl.JWTParser
+import com.auth0.jwt.interfaces.DecodedJWT
+import com.auth0.jwt.interfaces.Payload
+import io.ktor.application.ApplicationCall
+import io.ktor.auth.Principal
+import io.ktor.auth.jwt.JWTCredential
+import io.ktor.auth.jwt.jwt
+import io.ktor.http.auth.HttpAuthHeader
+import java.net.URL
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 fun Authentication.Configuration.setupJWT(jwksUrl: String) {
     jwt {

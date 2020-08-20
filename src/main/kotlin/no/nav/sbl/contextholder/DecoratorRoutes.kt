@@ -1,3 +1,8 @@
+import io.ktor.auth.authenticate
+import io.ktor.routing.Route
+import io.ktor.routing.get
+import io.ktor.routing.route
+
 fun Route.decoratorRoutes() {
     authenticate {
         route("/decorator") {

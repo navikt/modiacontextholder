@@ -1,41 +1,29 @@
-fun Route.contextRoutes() {
+import io.ktor.application.call
+import io.ktor.auth.authenticate
+import io.ktor.response.respond
+import io.ktor.routing.Route
+import io.ktor.routing.delete
+import io.ktor.routing.get
+import io.ktor.routing.route
+import no.nav.sbl.dao.ContextDAO
+import no.nav.sbl.dao.toDTO
+
+fun Route.contextRoutes(dao : ContextDAO) {
     authenticate {
         route("/context") {
-            get {
-                withSubject {subject ->
-                    val (exact, context) = call.request.queryParameters.parse()
-                    val dto = DraftIdentificatorDTO(subject, context)
-                    val result = dao.get(dto.fromDTO(), exact)
-                    call.respond(result.toDTO())
-
-
-                     SubjectHandler.getIdent()
-                            .map(contextService::hentVeiledersContext)
-                            .orElseThrow(() -> new NotAuthorizedException("Fant ikke saksbehandlers ident"));
-                }
                 get("/aktivbruker"){
-
+                    val result = dao.getAktivBruker()
                 }
-                get("/aktivenhet"){}
+                get("/aktivenhet"){
+                    val result = dao.getAktivEnhet()
+                    call.respond(result?.toDTO())
+                }
+
                 delete("/nullstill"){
+                    val result = dao.delete()
+                    call.respond(result)
                 }
             }
 
-            post {
-                withSubject { subject ->
-                    val dto: SaveDraftDTO = call.receive()
-                    val result = dao.save(dto.fromDTO(subject))
-                    call.respond(result.toDTO())
-                }
-            }
-
-            delete {
-                withSubject { subject ->
-                    val dto = DraftIdentificatorDTO(subject, call.receive())
-                    dao.delete(dto.fromDTO())
-                    call.respond(HttpStatusCode.OK)
-                }
-            }
-        }
     }
 }

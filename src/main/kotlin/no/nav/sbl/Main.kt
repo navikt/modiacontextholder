@@ -16,8 +16,7 @@ fun main() {
     HttpServer.create("no.nav.sbl.modiacontextholder", 7070) {
         modiacontextholder(
                 configuration = configuration,
-                dataSource = dbConfig.userDataSource(),
-                useMock = false
+                dataSource = dbConfig.userDataSource()
         )
     }.start(wait = true)
 }
