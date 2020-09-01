@@ -1,14 +1,13 @@
 package no.nav.sbl.config;
 
-import no.nav.sbl.featuretoggle.unleash.UnleashService;
-
-import javax.inject.Inject;
+import no.nav.common.featuretoggle.UnleashService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class FeatureToggle {
 
     private UnleashService unleashService;
 
-    @Inject
+    @Autowired
     public FeatureToggle(UnleashService unleashService) {
         this.unleashService = unleashService;
     }

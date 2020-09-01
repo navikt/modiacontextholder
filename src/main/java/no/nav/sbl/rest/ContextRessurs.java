@@ -1,76 +1,70 @@
 package no.nav.sbl.rest;
 
-import no.nav.common.auth.SubjectHandler;
-import no.nav.metrics.aspects.Timed;
+import io.micrometer.core.annotation.Timed;
+import no.nav.common.auth.subject.SubjectHandler;
 import no.nav.sbl.db.domain.EventType;
 import no.nav.sbl.rest.domain.RSContext;
 import no.nav.sbl.rest.domain.RSNyContext;
 import no.nav.sbl.service.ContextService;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
-@Controller
-@Path("/context")
-@Consumes(APPLICATION_JSON)
+@RestController
+@RequestMapping("/api/context")
 public class ContextRessurs {
 
-    @Inject
+    @Autowired
     private ContextService contextService;
 
-    @GET
+    @GetMapping
     @Timed
     public RSContext hentVeiledersContext() {
         return SubjectHandler.getIdent()
                 .map(contextService::hentVeiledersContext)
-                .orElseThrow(() -> new NotAuthorizedException("Fant ikke saksbehandlers ident"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
     }
 
-    @GET
-    @Path("/aktivbruker")
-    @Timed(name = "hentAktivBruker")
+    @GetMapping("/aktivbruker")
+    @Timed("hentAktivBruker")
     public RSContext hentAktivBruker() {
         return SubjectHandler.getIdent()
                 .map(contextService::hentAktivBruker)
-                .orElseThrow(() -> new NotAuthorizedException("Fant ikke saksbehandlers ident"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
     }
 
-    @GET
-    @Path("/aktivenhet")
-    @Timed(name = "hentAktivEnhet")
+    @GetMapping("/aktivenhet")
+    @Timed("hentAktivEnhet")
     public RSContext hentAktivEnhet() {
         return SubjectHandler.getIdent()
                 .map(contextService::hentAktivEnhet)
-                .orElseThrow(() -> new NotAuthorizedException("Fant ikke saksbehandlers ident"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
     }
 
-    @DELETE
-    @Timed(name = "nullstillContext")
+    @DeleteMapping
+    @Timed("nullstillContext")
     public void nullstillBrukerContext() {
         SubjectHandler.getIdent()
                 .ifPresent(contextService::nullstillContext);
     }
 
-    @DELETE
+    @DeleteMapping("/nullstill")
     @Deprecated
-    @Path("/nullstill")
     //migrer over til den som ligger på "/" da dette er mest riktig REST-semantisk.
     public void deprecatedNullstillContext() {
         nullstillBrukerContext();
     }
 
-    @DELETE
-    @Path("/aktivbruker")
-    @Timed(name = "nullstillAktivBrukerContext")
+    @DeleteMapping("/aktivbruker")
+    @Timed("nullstillAktivBrukerContext")
     public void nullstillAktivBrukerContext() {
         SubjectHandler.getIdent().ifPresent(contextService::nullstillAktivBruker);
     }
 
-    @POST
-    @Timed(name = "oppdaterVeiledersContext")
+    @PostMapping
+    @Timed("oppdaterVeiledersContext")
     public void oppdaterVeiledersContext(RSNyContext rsNyContext) {
         SubjectHandler.getIdent()
                 .ifPresent((ident) -> {

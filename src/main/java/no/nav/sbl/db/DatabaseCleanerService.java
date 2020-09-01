@@ -1,12 +1,11 @@
 package no.nav.sbl.db;
 
-import no.nav.metrics.aspects.Timed;
+import io.micrometer.core.annotation.Timed;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
-import no.nav.sbl.util.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import javax.inject.Inject;
 
 import java.util.List;
 
@@ -15,17 +14,17 @@ import static no.nav.sbl.db.domain.EventType.NY_AKTIV_ENHET;
 
 public class DatabaseCleanerService {
 
-    @Inject
+    @Autowired
     private EventDAO eventDAO;
 
     @Scheduled(cron = "0 0 2 * * *")
-    @Timed(name = "slettAlleNyAktivBrukerEvents")
+    @Timed("slettAlleNyAktivBrukerEvents")
     public void slettAlleNyAktivBrukerEvents() {
         eventDAO.slettAlleAvEventType(NY_AKTIV_BRUKER.name());
     }
 
     @Scheduled(cron = "0 0 3 * * *")
-    @Timed(name = "slettAlleUtenomSisteNyAktivEnhet")
+    @Timed("slettAlleUtenomSisteNyAktivEnhet")
     public void slettAlleUtenomSisteNyAktivEnhet() {
         eventDAO.hentUnikeVeilederIdenter()
                 .forEach(veilederIdent -> {

@@ -1,8 +1,7 @@
 package no.nav.sbl.config;
 
-import no.nav.sbl.dialogarena.types.Pingable;
+import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.consumers.axsys.AxsysClient;
-import no.nav.sbl.util.EnvironmentUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,25 +15,5 @@ public class AxsysConfig {
                 EnvironmentUtils.getRequiredProperty(AxsysConfig.AXSYS_URL_PROPERTY),
                 EnvironmentUtils.getRequiredProperty(ApplicationConfig.SRV_USERNAME_PROPERTY)
         );
-    }
-
-    @Bean
-    public Pingable axsysPing(AxsysClient axsysClient) {
-        String url = EnvironmentUtils.getRequiredProperty(AxsysConfig.AXSYS_URL_PROPERTY);
-        Pingable.Ping.PingMetadata metadata = new Pingable.Ping.PingMetadata(
-                "axsys",
-                "Axsys - via " + url,
-                "Ping mot Axsys.",
-                false
-        );
-
-        return () -> {
-            try {
-                axsysClient.ping();
-                return Pingable.Ping.lyktes(metadata);
-            } catch (Exception e) {
-                return Pingable.Ping.feilet(metadata, e);
-            }
-        };
     }
 }

@@ -2,14 +2,14 @@ package no.nav.sbl.kafka;
 
 import no.nav.sbl.db.domain.EventType;
 import no.nav.sbl.rest.domain.RSNyContext;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class KafkaUtilTest {
 
-    @BeforeEach
+    @Before
     void setUp() {
         System.setProperty("FASIT_ENVIRONMENT_NAME", "T");
     }

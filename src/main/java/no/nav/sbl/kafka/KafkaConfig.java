@@ -2,6 +2,7 @@ package no.nav.sbl.kafka;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.common.utils.EnvironmentUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,6 @@ import java.util.Properties;
 
 import static no.nav.sbl.config.ApplicationConfig.SRV_PASSWORD_PROPERTY;
 import static no.nav.sbl.config.ApplicationConfig.SRV_USERNAME_PROPERTY;
-import static no.nav.sbl.util.EnvironmentUtils.getRequiredProperty;
 import static org.apache.kafka.common.config.SaslConfigs.SASL_JAAS_CONFIG;
 
 @Configuration
@@ -28,8 +28,8 @@ public class KafkaConfig {
 
     @SneakyThrows
     private static Properties producerConfigs(boolean saslSslOn) {
-        String username = getRequiredProperty(SRV_USERNAME_PROPERTY);
-        String password = getRequiredProperty(SRV_PASSWORD_PROPERTY);
+        String username = EnvironmentUtils.getRequiredProperty(SRV_USERNAME_PROPERTY);
+        String password = EnvironmentUtils.getRequiredProperty(SRV_PASSWORD_PROPERTY);
         Properties properties = new Properties();
         properties.setProperty("client.id", "veilederflatehendelser.producer");
         properties.setProperty("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");

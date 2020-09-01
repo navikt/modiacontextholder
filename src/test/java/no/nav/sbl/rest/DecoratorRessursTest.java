@@ -1,10 +1,10 @@
 package no.nav.sbl.rest;
 
 import io.vavr.control.Try;
-import no.nav.brukerdialog.security.domain.IdentType;
-import no.nav.common.auth.SsoToken;
-import no.nav.common.auth.Subject;
-import no.nav.common.auth.SubjectHandler;
+import no.nav.common.auth.subject.IdentType;
+import no.nav.common.auth.subject.SsoToken;
+import no.nav.common.auth.subject.Subject;
+import no.nav.common.auth.subject.SubjectHandler;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
 import no.nav.sbl.service.EnheterService;
@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.ws.rs.WebApplicationException;
 import java.util.List;
@@ -47,8 +48,8 @@ public class DecoratorRessursTest {
         gitt_saksbehandler_i_ad();
         shouldWorkRegardlessOfFeatureToggle(() ->
                 assertThatThrownBy(() -> rest.hentSaksbehandlerInfoOgEnheter())
-                        .isInstanceOf(WebApplicationException.class)
-                        .hasMessage("Fant ingen subjecthandler")
+                        .isInstanceOf(ResponseStatusException.class)
+                        .hasMessage("500 INTERNAL_SERVER_ERROR \"Fant ingen subjecthandler\"")
         );
     }
 
@@ -60,8 +61,8 @@ public class DecoratorRessursTest {
         shouldWorkRegardlessOfFeatureToggle(() ->
                 assertThatThrownBy(() -> SubjectHandler.withSubject(MOCK_SUBJECT, () -> rest.hentSaksbehandlerInfoOgEnheter()))
                         .hasRootCauseInstanceOf(IllegalStateException.class)
-                        .isInstanceOf(WebApplicationException.class)
-                        .hasMessage("Kunne ikke hente data")
+                        .isInstanceOf(ResponseStatusException.class)
+                        .hasMessageStartingWith("500 INTERNAL_SERVER_ERROR \"Kunne ikke hente data\"")
         );
     }
 

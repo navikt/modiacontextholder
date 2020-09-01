@@ -1,7 +1,7 @@
 package no.nav.sbl.config;
 
-import no.nav.sbl.featuretoggle.unleash.UnleashService;
-import no.nav.sbl.featuretoggle.unleash.UnleashServiceConfig;
+import no.nav.common.featuretoggle.UnleashService;
+import no.nav.common.featuretoggle.UnleashServiceConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

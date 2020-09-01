@@ -55,13 +55,11 @@ spec:
     - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
       value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
     - name: AXSYS_REST_API_URL
-      value: "https://axsys.nais.preprod.local/api"
+      value: "https://axsys.nais.preprod.local"
     - name: PDL_API_URL
       value: "https://pdl-api.nais.preprod.local/graphql"
     - name: NORG2_API_URL
-      value: "https://app-{{ namespace }}.adeo.no/norg2/api"
-    - name: UNLEASH_API_URL
-      value: "https://unleash.nais.adeo.no/api/"
+      value: "https://app-{{ namespace }}.adeo.no/norg2"
     - name: LDAP_BASEDN
       value: "dc=preprod,dc=local"
     - name: LDAP_URL

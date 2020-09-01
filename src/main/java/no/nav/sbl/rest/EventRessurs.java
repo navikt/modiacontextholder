@@ -1,28 +1,22 @@
 package no.nav.sbl.rest;
 
-import no.nav.metrics.aspects.Timed;
 import no.nav.sbl.rest.domain.RSEvents;
 import no.nav.sbl.service.EventService;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
-
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
-@Controller
-@Path("/events")
-@Consumes(APPLICATION_JSON)
-@Produces(APPLICATION_JSON)
+@RestController
+@RequestMapping("/api/events")
 public class EventRessurs {
 
-    @Inject
+    @Autowired
     private EventService eventService;
 
-    @GET
-    @Timed(name = "hentNyeEvents")
-    @Path("{eventId}")
-    public RSEvents hentNyeEvents(@PathParam("eventId") String eventId) {
+    @GetMapping("{eventId}")
+    public RSEvents hentNyeEvents(@PathVariable("eventId") String eventId) {
         return new RSEvents().events(eventService.hentEventerEtterId(Long.parseLong(eventId)));
     }
 }
