@@ -79,7 +79,7 @@ public class ApplicationConfig {
     @Bean
     public FilterRegistrationBean logFilterRegistrationBean() {
         FilterRegistrationBean<LogFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new LogFilter("modiapersonoversikt-api", isDevelopment().orElse(false)));
+        registration.setFilter(new LogFilter("modiacontextholder", isDevelopment().orElse(false)));
         registration.setOrder(2);
         registration.addUrlPatterns("/*");
         return registration;
