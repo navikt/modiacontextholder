@@ -23,6 +23,7 @@ import static no.nav.common.utils.EnvironmentUtils.isDevelopment;
 @EnableScheduling
 @ComponentScan("no.nav.sbl.rest")
 @Import({
+        CorsConfig.class,
         CacheConfig.class,
         DatabaseConfig.class,
         ServiceContext.class

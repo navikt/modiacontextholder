@@ -19,7 +19,6 @@ public class MainTest {
         SystemProperties.setFrom(".vault.properties");
         NaisYamlUtils.loadFromYaml(".nais/nais-q0.yaml");
         SSLTestUtils.disableCertificateChecks();
-        Main.setCors();
     }
 
     public static void main(String[] args) throws IOException {

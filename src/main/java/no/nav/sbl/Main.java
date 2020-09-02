@@ -20,7 +20,6 @@ import static no.nav.sbl.service.LdapService.LDAP_USERNAME;
 public class Main {
     public static void main(String... args) {
         setupVault();
-        setCors();
         SpringApplication.run(Main.class, args);
     }
 
@@ -39,16 +38,5 @@ public class Main {
 
         String dbUrl = NaisUtils.getFileContent("/var/run/secrets/nais.io/db_config/jdbc_url");
         setProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY, dbUrl, PUBLIC);
-    }
-
-    public static void setCors() {
-//        setProperty(CORS_ALLOWED_HEADERS, "Accept,Accept-language,Content-Language,Content-Type,Authorization", PUBLIC);
-//        if (isEnvironmentClass(P)) {
-//            setProperty(CORS_ALLOWED_ORIGINS, ".adeo.no", PUBLIC);
-//        } else if (isEnvironmentClass(Q)) {
-//            String subDomain = ".preprod.local";
-//            log.info("Setting CORS-headers to {}, YOU SHOULD NOT SEE THIS IN PRODUCTION!!!", subDomain);
-//            setProperty(CORS_ALLOWED_ORIGINS, subDomain, PUBLIC);
-//        }
     }
 }
