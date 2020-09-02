@@ -16,7 +16,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.slf4j.MDC;
 
-public class AxsysClient implements Pingable {
+public class AxsysClient {
     private final String systemUser;
     private final String url;
     private final OkHttpClient client = RestClient.baseClient();
@@ -45,22 +45,10 @@ public class AxsysClient implements Pingable {
     }
 
     @SneakyThrows
-    public void checkHealth() {
+    public void ping() {
         int status = client.newCall(new Request.Builder().url("${url}/internal/isAlive").build()).execute().code();
         if (status != 200) {
             throw new RuntimeException("Axsys /isAlive status: " + status);
         }
-    }
-
-    @Override
-    public SelfTestCheck ping() {
-        return new SelfTestCheck("Axsys via " + url, false, () -> {
-            try {
-                checkHealth();
-                return HealthCheckResult.healthy();
-            } catch (Exception e) {
-                return HealthCheckResult.unhealthy(e);
-            }
-        });
     }
 }

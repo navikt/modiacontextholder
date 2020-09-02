@@ -1,5 +1,8 @@
 package no.nav.sbl.config;
 
+import no.nav.common.health.HealthCheck;
+import no.nav.common.health.HealthCheckResult;
+import no.nav.common.health.selftest.SelfTestCheck;
 import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.consumers.axsys.AxsysClient;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +22,19 @@ public class AxsysConfig {
 
     @Bean
     public Pingable axsysPing(AxsysClient client) {
-        return client::ping;
+        String url = EnvironmentUtils.getRequiredProperty(AxsysConfig.AXSYS_URL_PROPERTY);
+        HealthCheck check = () -> {
+            try {
+                client.ping();
+                return HealthCheckResult.healthy();
+            } catch (Exception e) {
+                return HealthCheckResult.unhealthy(e);
+            }
+        };
+        return () -> new SelfTestCheck(
+                "Axsys - via " + url,
+                false,
+                check
+        );
     }
 }
