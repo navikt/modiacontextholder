@@ -7,15 +7,14 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class KafkaUtilTest {
-
+public class KafkaUtilTest {
     @Before
-    void setUp() {
+    public void setUp() {
         System.setProperty("FASIT_ENVIRONMENT_NAME", "T");
     }
 
     @Test
-    void skal_finne_riktig_topic_basert_paa_eventtype() {
+    public void skal_finne_riktig_topic_basert_paa_eventtype() {
         RSNyContext nyAktivEnhetTopic = new RSNyContext().eventType(EventType.NY_AKTIV_ENHET.name());
         String topic = KafkaUtil.asTopic(nyAktivEnhetTopic);
         assertThat(topic).isEqualTo(KafkaUtil.getAktivEnhetTopic());

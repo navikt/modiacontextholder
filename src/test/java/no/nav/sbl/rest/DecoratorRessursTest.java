@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.ws.rs.WebApplicationException;
 import java.util.List;
 
 import static java.util.Arrays.asList;
