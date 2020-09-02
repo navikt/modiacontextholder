@@ -16,4 +16,9 @@ public class AxsysConfig {
                 EnvironmentUtils.getRequiredProperty(ApplicationConfig.SRV_USERNAME_PROPERTY)
         );
     }
+
+    @Bean
+    public Pingable axsysPing(AxsysClient client) {
+        return client::ping;
+    }
 }
