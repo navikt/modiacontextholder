@@ -12,12 +12,16 @@ import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 
 public class MainTest {
     static {
         setupRestClient();
         SystemProperties.setFrom(".vault.properties");
-        NaisYamlUtils.loadFromYaml(".nais/nais-q0.yaml");
+        NaisYamlUtils.NaiseratorSpec naisConfig = NaisYamlUtils.getTemplatedConfig(".nais/qa-template.yaml", new HashMap<>() {{
+            put("namespace", "q0");
+        }});
+        NaisYamlUtils.loadFromYaml(naisConfig);
         SSLTestUtils.disableCertificateChecks();
     }
 

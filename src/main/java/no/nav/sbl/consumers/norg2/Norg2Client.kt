@@ -1,6 +1,7 @@
 package no.nav.sbl.consumers.norg2
 
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.common.log.MDCConstants
 import no.nav.common.rest.client.RestClient
@@ -16,6 +17,7 @@ private val Norg2EnheterResponse = object : TypeReference<List<Enhet>>() {}
 
 class Norg2Client(private val url: String, private val systemUser: String) {
     private val objectmapper = jacksonObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     private val client: OkHttpClient = RestClient.baseClient()
 
     fun hentAlleEnheter(): List<Enhet> {
@@ -26,7 +28,7 @@ class Norg2Client(private val url: String, private val systemUser: String) {
                 .newCall(
                         Request.Builder()
                                 .url(HttpUrl
-                                        .get("${url}/api/enhet")
+                                        .get("${url}/api/v1/enhet")
                                         .newBuilder()
                                         .addQueryParameter("enhetStatusListe", "AKTIV")
                                         .addQueryParameter("enhetStatusListe", "UNDER_ETABLERING")

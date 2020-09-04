@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/internal")
 class NaisController {
     @Autowired
-    lateinit var checks : List<SelfTestCheck>
-    @Autowired
     lateinit var pingables : List<Pingable>
 
     @GetMapping("/isReady")
@@ -27,7 +25,7 @@ class NaisController {
 
     @GetMapping("/selftest")
     fun selftest(): ResponseEntity<String> {
-        val result = SelfTestUtils.checkAll(checks.plus(pingables.map { it.ping() }))
+        val result = SelfTestUtils.checkAll(pingables.map { it.ping() })
         return ResponseEntity
                 .status(SelfTestUtils.findHttpStatusCode(result))
                 .contentType(MediaType.TEXT_HTML)

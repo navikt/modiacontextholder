@@ -7,9 +7,7 @@ import no.nav.common.health.selftest.SelfTestCheck;
 import no.nav.sbl.config.Pingable;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 @Slf4j
 public class KafkaHelsesjekk implements HealthCheck, Pingable {
 

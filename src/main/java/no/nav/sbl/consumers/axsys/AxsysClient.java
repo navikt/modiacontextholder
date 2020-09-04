@@ -46,7 +46,7 @@ public class AxsysClient {
 
     @SneakyThrows
     public void ping() {
-        int status = client.newCall(new Request.Builder().url("${url}/internal/isAlive").build()).execute().code();
+        int status = client.newCall(new Request.Builder().url(url + "/internal/isAlive").build()).execute().code();
         if (status != 200) {
             throw new RuntimeException("Axsys /isAlive status: " + status);
         }

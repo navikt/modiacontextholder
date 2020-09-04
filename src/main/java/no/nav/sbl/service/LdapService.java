@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.common.utils.EnvironmentUtils;
 import no.nav.common.utils.fn.UnsafeConsumer;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
 
 import javax.naming.*;
 import javax.naming.directory.*;
@@ -17,7 +16,6 @@ import static java.util.Optional.ofNullable;
 //må bruke Hashtable i InitiallLdapContext dessverre.
 @SuppressWarnings({"squid:S1149"})
 @Slf4j
-@Service
 public class LdapService {
     public static final String LDAP_USERNAME = "LDAP_USERNAME";
     public static final String LDAP_PASSWORD = "LDAP_PASSWORD";
