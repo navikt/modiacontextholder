@@ -65,7 +65,7 @@ public class ContextRessurs {
 
     @PostMapping
     @Timed("oppdaterVeiledersContext")
-    public void oppdaterVeiledersContext(RSNyContext rsNyContext) {
+    public void oppdaterVeiledersContext(@RequestBody RSNyContext rsNyContext) {
         SubjectHandler.getIdent()
                 .ifPresent((ident) -> {
                     RSNyContext context = new RSNyContext()
