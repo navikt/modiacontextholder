@@ -1,8 +1,8 @@
 package no.nav.sbl.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.sbl.util.EnvironmentUtils;
-import no.nav.sbl.util.fn.UnsafeConsumer;
+import no.nav.common.utils.EnvironmentUtils;
+import no.nav.common.utils.fn.UnsafeConsumer;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 

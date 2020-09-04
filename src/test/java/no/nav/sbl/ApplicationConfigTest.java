@@ -1,6 +1,6 @@
 package no.nav.sbl;
 
-import no.nav.common.nais.utils.NaisYamlUtils;
+import no.nav.common.nais.NaisYamlUtils;
 import org.junit.Test;
 
 import java.net.URL;

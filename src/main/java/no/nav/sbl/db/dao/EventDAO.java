@@ -1,12 +1,12 @@
 package no.nav.sbl.db.dao;
 
 import no.nav.sbl.db.domain.PEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -20,9 +20,9 @@ import static no.nav.sbl.db.dao.DbUtil.*;
 @Transactional
 public class EventDAO {
 
-    @Inject
+    @Autowired
     private JdbcTemplate jdbcTemplate;
-    @Inject
+    @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public long save(PEvent pEvent) {

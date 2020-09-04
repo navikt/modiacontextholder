@@ -1,21 +1,20 @@
 package no.nav.sbl.kafka;
 
 import lombok.SneakyThrows;
+import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.domain.EventType;
 import no.nav.sbl.rest.domain.RSNyContext;
 
-import static no.nav.sbl.util.EnvironmentUtils.getRequiredProperty;
-import static no.nav.sbl.util.EnvironmentUtils.requireEnvironmentName;
 
 
 public class KafkaUtil {
 
     static String getAktivEnhetTopic() {
-        return String.format("aapen-modia-nyAktivEnhet-v1-%s", requireEnvironmentName());
+        return String.format("aapen-modia-nyAktivEnhet-v1-%s", EnvironmentUtils.getRequiredProperty("APP_ENVIRONMENT_NAME"));
     }
 
     static String getAktivBrukerTopic() {
-        return String.format("aapen-modia-nyAktivBruker-v1-%s", requireEnvironmentName());
+        return String.format("aapen-modia-nyAktivBruker-v1-%s", EnvironmentUtils.getRequiredProperty("APP_ENVIRONMENT_NAME"));
     }
 
     @SneakyThrows
@@ -33,7 +32,7 @@ public class KafkaUtil {
     }
 
     static String getKafkaBrokersUrl() {
-        return getRequiredProperty("KAFKA_BROKERS_URL");
+        return EnvironmentUtils.getRequiredProperty("KAFKA_BROKERS_URL");
     }
 
 }

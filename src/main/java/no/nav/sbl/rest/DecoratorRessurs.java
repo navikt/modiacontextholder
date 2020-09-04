@@ -1,7 +1,7 @@
 package no.nav.sbl.rest;
 
 import io.vavr.control.Try;
-import no.nav.common.auth.SubjectHandler;
+import no.nav.common.auth.subject.SubjectHandler;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
 import no.nav.sbl.rest.domain.DecoratorDomain.FnrAktorId;
@@ -9,53 +9,52 @@ import no.nav.sbl.service.PdlService;
 import no.nav.sbl.service.EnheterService;
 import no.nav.sbl.service.LdapService;
 import no.nav.sbl.service.VeilederService;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
 
 import java.util.List;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@Controller
-@Path("/decorator")
-@Consumes(APPLICATION_JSON)
-@Produces(APPLICATION_JSON)
+@RestController
+@RequestMapping("/api/decorator")
 public class DecoratorRessurs {
     private static final String rolleModiaAdmin = "0000-GA-Modia_Admin";
 
-    @Inject
+    @Autowired
     LdapService ldapService;
-    @Inject
+    @Autowired
     EnheterService enheterService;
-    @Inject
+    @Autowired
     VeilederService veilederService;
-    @Inject
+    @Autowired
     PdlService pdlService;
 
-    @GET
+    @GetMapping
     public DecoratorConfig hentSaksbehandlerInfoOgEnheter() {
         return hentSaksbehandlerInfoOgEnheterFraAxsys();
     }
 
-    @GET
-    @Path("/v2")
+    @GetMapping("/v2")
     public DecoratorConfig hentSaksbehandlerInfoOgEnheterFraAxsys() {
         String ident = getIdent();
         return lagDecoratorConfig(ident, hentEnheter(ident));
     }
 
-    @GET
-    @Path("/aktor/{fnr}")
-    public FnrAktorId hentAktorId(@PathParam("fnr") String fnr) {
+    @GetMapping("/aktor/{fnr}")
+    public FnrAktorId hentAktorId(@PathVariable("fnr") String fnr) {
         return pdlService.hentIdent(fnr)
                 .map((aktorId) -> new FnrAktorId(fnr, aktorId))
                 .getOrElseThrow((exception) -> {
-                    if (exception instanceof WebApplicationException) {
-                        throw (WebApplicationException) exception;
+                    if (exception instanceof ResponseStatusException) {
+                        throw (ResponseStatusException) exception;
                     } else {
-                        throw new BadRequestException(exception);
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error", exception);
                     }
                 });
     }
@@ -75,13 +74,13 @@ public class DecoratorRessurs {
 
     private static String getIdent() {
         return SubjectHandler.getIdent()
-                .orElseThrow(() -> new WebApplicationException("Fant ingen subjecthandler", 500));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fant ingen subjecthandler"));
     }
 
-    private static WebApplicationException exceptionHandler(Throwable throwable) {
-        if (throwable instanceof WebApplicationException) {
-            return (WebApplicationException) throwable;
+    private static ResponseStatusException exceptionHandler(Throwable throwable) {
+        if (throwable instanceof ResponseStatusException) {
+            return (ResponseStatusException) throwable;
         }
-        return new WebApplicationException("Kunne ikke hente data", throwable, 500);
+        return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Kunne ikke hente data", throwable);
     }
 }

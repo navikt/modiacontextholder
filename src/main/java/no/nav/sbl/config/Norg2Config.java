@@ -1,8 +1,10 @@
 package no.nav.sbl.config;
 
+import no.nav.common.health.HealthCheck;
+import no.nav.common.health.HealthCheckResult;
+import no.nav.common.health.selftest.SelfTestCheck;
+import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.consumers.norg2.Norg2Client;
-import no.nav.sbl.dialogarena.types.Pingable;
-import no.nav.sbl.util.EnvironmentUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,20 +23,15 @@ public class Norg2Config {
     @Bean
     public Pingable organisasjonEnhetV2Ping(Norg2Client norg2Client) {
         String url = EnvironmentUtils.getRequiredProperty(AxsysConfig.AXSYS_URL_PROPERTY);
-        Pingable.Ping.PingMetadata metadata = new Pingable.Ping.PingMetadata(
-                "norg2",
-                "Norg2 - via " + url,
-                "Ping mot Norg2.",
-                false
-        );
-
-        return () -> {
+        HealthCheck check = () -> {
             try {
                 norg2Client.ping();
-                return Pingable.Ping.lyktes(metadata);
+                return HealthCheckResult.healthy();
             } catch (Exception e) {
-                return Pingable.Ping.feilet(metadata, e);
+                return HealthCheckResult.unhealthy(e);
             }
         };
+
+        return () -> new SelfTestCheck("Norg2 via " + url, false, check);
     }
 }

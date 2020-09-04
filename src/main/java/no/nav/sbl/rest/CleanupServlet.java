@@ -1,7 +1,7 @@
 package no.nav.sbl.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.common.auth.SubjectHandler;
+import no.nav.common.auth.subject.SubjectHandler;
 import no.nav.sbl.db.DatabaseCleanerService;
 
 import javax.servlet.ServletException;
@@ -10,7 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static no.nav.sbl.util.StringUtils.notNullOrEmpty;
+import static no.nav.common.utils.StringUtils.notNullOrEmpty;
+
 
 @Slf4j
 public class CleanupServlet extends HttpServlet {

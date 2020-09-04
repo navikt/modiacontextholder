@@ -1,16 +1,16 @@
 package no.nav.sbl.service;
 
 import no.nav.sbl.rest.domain.DecoratorDomain;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 
-import javax.inject.Inject;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
 
 public class VeilederService {
 
-    @Inject
+    @Autowired
     LdapService ldapService;
 
 

@@ -1,18 +1,18 @@
 package no.nav.sbl.config;
 
-import no.nav.common.oidc.SystemUserTokenProvider;
+import no.nav.common.sts.NaisSystemUserTokenProvider;
+import no.nav.common.sts.SystemUserTokenProvider;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.db.dao.EventDAO;
-import no.nav.sbl.kafka.KafkaConfig;
 import no.nav.sbl.service.PdlService;
 import no.nav.sbl.service.*;
-import no.nav.sbl.util.EnvironmentUtils;
+import no.nav.sbl.kafka.KafkaConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import static no.nav.sbl.util.EnvironmentUtils.*;
+import static no.nav.common.utils.EnvironmentUtils.getRequiredProperty;
 
 @Configuration
 @Import({
@@ -22,7 +22,7 @@ import static no.nav.sbl.util.EnvironmentUtils.*;
         Norg2Config.class
 })
 public class ServiceContext {
-    public static final String SECURITY_TOKEN_SERVICE_DISCOVERYURL = EnvironmentUtils.getRequiredProperty("SECURITY_TOKEN_SERVICE_DISCOVERY_URL");
+    public static final String SECURITY_TOKEN_SERVICE_DISCOVERYURL = getRequiredProperty("SECURITY_TOKEN_SERVICE_DISCOVERY_URL");
 
     @Bean
     public ContextService contextService(EventDAO eventDAO, KafkaProducer<String, String> kafka, FeatureToggle featureToggle) {
@@ -61,10 +61,10 @@ public class ServiceContext {
 
     @Bean
     public SystemUserTokenProvider systemUserTokenProvider() {
-        return new SystemUserTokenProvider(
+        return new NaisSystemUserTokenProvider(
                 SECURITY_TOKEN_SERVICE_DISCOVERYURL,
-                getRequiredProperty(ApplicationConfig.SRV_USERNAME_PROPERTY, resolveSrvUserPropertyName()),
-                getRequiredProperty(ApplicationConfig.SRV_PASSWORD_PROPERTY, resolverSrvPasswordPropertyName())
+                getRequiredProperty(ApplicationConfig.SRV_USERNAME_PROPERTY),
+                getRequiredProperty(ApplicationConfig.SRV_PASSWORD_PROPERTY)
         );
     }
 

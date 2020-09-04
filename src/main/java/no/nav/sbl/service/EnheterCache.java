@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.sbl.consumers.norg2.Norg2Client;
 import no.nav.sbl.consumers.norg2.domain.Enhet;
 import no.nav.sbl.rest.domain.DecoratorDomain;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import javax.inject.Inject;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ public class EnheterCache {
     private Map<String, DecoratorDomain.Enhet> cache = unmodifiableMap(new HashMap<>());
     private List<DecoratorDomain.Enhet> cacheList = unmodifiableList(new ArrayList<>());
 
-    @Inject
+    @Autowired
     Norg2Client norg2Client;
 
     @Scheduled(fixedRate = HVER_TOLVTE_TIME)
