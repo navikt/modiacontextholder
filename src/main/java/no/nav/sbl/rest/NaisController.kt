@@ -1,6 +1,5 @@
 package no.nav.sbl.rest
 
-import no.nav.common.health.selftest.SelfTestCheck
 import no.nav.common.health.selftest.SelfTestUtils
 import no.nav.common.health.selftest.SelftestHtmlGenerator
 import no.nav.sbl.config.Pingable

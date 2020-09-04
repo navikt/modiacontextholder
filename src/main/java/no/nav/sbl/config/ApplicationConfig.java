@@ -21,7 +21,6 @@ import static no.nav.common.utils.EnvironmentUtils.isDevelopment;
 @Configuration
 @EnableAspectJAutoProxy
 @EnableScheduling
-@ComponentScan("no.nav.sbl.rest")
 @Import({
         CorsConfig.class,
         CacheConfig.class,
@@ -72,7 +71,7 @@ public class ApplicationConfig {
         FilterRegistrationBean<OidcAuthenticationFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new OidcAuthenticationFilter(OidcAuthenticator.fromConfigs(isso, fpsak, azureAd, azureAdSupStonad)));
         registration.setOrder(1);
-        registration.addUrlPatterns("/rest/*");
+        registration.addUrlPatterns("/api/*");
         return registration;
     }
 

@@ -5,7 +5,6 @@ import no.nav.common.rest.client.RestClient;
 import no.nav.common.test.SystemProperties;
 import no.nav.common.test.ssl.SSLTestUtils;
 import no.nav.common.test.ssl.TrustAllSSLSocketFactory;
-import no.nav.sbl.config.ApplicationConfig;
 import org.springframework.boot.SpringApplication;
 
 import javax.net.ssl.X509TrustManager;

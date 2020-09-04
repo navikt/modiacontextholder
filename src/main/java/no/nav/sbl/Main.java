@@ -1,6 +1,5 @@
 package no.nav.sbl;
 
-import lombok.extern.slf4j.Slf4j;
 import no.nav.common.utils.Credentials;
 import no.nav.common.utils.NaisUtils;
 import no.nav.common.utils.SslUtils;
@@ -16,7 +15,6 @@ import static no.nav.sbl.config.DatabaseConfig.*;
 import static no.nav.sbl.service.LdapService.LDAP_PASSWORD;
 import static no.nav.sbl.service.LdapService.LDAP_USERNAME;
 
-@Slf4j
 @SpringBootApplication
 public class Main {
     public static void main(String... args) {
