@@ -3,6 +3,7 @@ package no.nav.sbl;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.common.utils.Credentials;
 import no.nav.common.utils.NaisUtils;
+import no.nav.common.utils.SslUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -20,6 +21,7 @@ import static no.nav.sbl.service.LdapService.LDAP_USERNAME;
 public class Main {
     public static void main(String... args) {
         setupVault();
+        SslUtils.setupTruststore();
         SpringApplication.run(Main.class, args);
     }
 
