@@ -17,12 +17,12 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                String origins = isProduction()
+                String[] origins = isProduction()
                         .filter(Boolean::booleanValue)
-                        .map((i) -> ".adeo.no")
+                        .map((i) -> new String[]{".adeo.no"})
                         .orElseGet(() -> {
                             log.info("Setting CORS-headers to .preprod.local, YOU SHOULD NOT SEE THIS IN PRODUCTION!!!");
-                            return ".preprod.local";
+                            return new String[]{ ".preprod.local", ".adeo.no" };
                         });
 
                 registry.addMapping("/api/**")
