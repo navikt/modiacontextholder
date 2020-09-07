@@ -18,7 +18,7 @@ spec:
     failureThreshold: 10
   prometheus:
     enabled: true
-    path: modiacontextholder/internal/metrics
+    path: modiacontextholder/internal/prometheus
   readiness:
     path: modiacontextholder/internal/isReady
     initialDelay: 50
