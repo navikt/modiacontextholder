@@ -5,16 +5,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>no.nav.common</groupId>
-        <artifactId>mor-pom</artifactId>
-        <version>1.2020.07.14_09.10-c90ff81f6194</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.1.RELEASE</version>
     </parent>
 
+    <groupId>no.nav.sbl</groupId>
     <artifactId>modiacontextholder</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <properties>
+        <java.version>11</java.version>
+        <kafka.version>2.0.0</kafka.version>
+        <common.version>2.2020.08.24_12.17-ce8722430a1d</common.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <kotlin.version>1.3.72</kotlin.version>
     </properties>
@@ -24,7 +28,7 @@
             <dependency>
                 <groupId>no.nav.common</groupId>
                 <artifactId>bom</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${common.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -74,15 +78,18 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
+            <version>${kafka.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.11</artifactId>
+            <version>${kafka.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.11</artifactId>
+            <version>${kafka.version}</version>
             <classifier>test</classifier>
             <scope>test</scope>
         </dependency>
@@ -90,43 +97,28 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.hk2.external</groupId>
-            <artifactId>javax.inject</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>0.9.0</version>
+        </dependency>
 
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-        </dependency>
 
         <!--fellesbiblioteker-->
         <dependency>
             <groupId>no.nav.common</groupId>
-            <artifactId>api-app</artifactId>
+            <artifactId>util</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
-            <artifactId>util</artifactId>
+            <artifactId>sts</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
@@ -134,11 +126,7 @@
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
-            <artifactId>oidc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.common</groupId>
-            <artifactId>jdbc</artifactId>
+            <artifactId>auth</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
@@ -158,33 +146,41 @@
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
-            <artifactId>test-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.common</groupId>
             <artifactId>rest</artifactId>
         </dependency>
 
         <!--spring-->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
         <dependency>
@@ -192,13 +188,10 @@
             <artifactId>ojdbc8</artifactId>
         </dependency>
         <dependency>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <groupId>javax.ws.rs</groupId>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
         </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
+
 
         <!-- test -->
 
@@ -239,43 +232,7 @@
 
     <build>
         <finalName>${project.artifactId}</finalName>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/main/java</source>
-                                <source>target/generated-sources/graphql</source>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>process-test-sources</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jvmTarget>1.8</jvmTarget>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>com.expediagroup</groupId>
                 <artifactId>graphql-kotlin-maven-plugin</artifactId>
@@ -319,24 +276,38 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <phase>compile</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/main/java</source>
+                                <source>target/generated-sources/graphql</source>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                     <execution>
-                        <id>testCompile</id>
-                        <phase>test-compile</phase>
+                        <id>test-compile</id>
+                        <phase>process-test-sources</phase>
                         <goals>
-                            <goal>testCompile</goal>
+                            <goal>test-compile</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <jvmTarget>11</jvmTarget>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

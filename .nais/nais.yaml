@@ -18,7 +18,7 @@ spec:
     failureThreshold: 10
   prometheus:
     enabled: true
-    path: modiacontextholder/internal/metrics
+    path: modiacontextholder/internal/prometheus
   readiness:
     path: modiacontextholder/internal/isReady
     initialDelay: 50
@@ -55,13 +55,11 @@ spec:
     - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
       value: "https://security-token-service.nais.adeo.no/rest/v1/sts/.well-known/openid-configuration"
     - name: AXSYS_REST_API_URL
-      value: "https://axsys.nais.adeo.no/api"
+      value: "https://axsys.nais.adeo.no"
     - name: PDL_API_URL
       value: "https://pdl-api.nais.adeo.no/graphql"
-    - name: UNLEASH_API_URL
-      value: "https://unleash.nais.adeo.no/api/"
     - name: NORG2_API_URL
-      value: "https://app.adeo.no/norg2/api"
+      value: "https://app.adeo.no/norg2"
     - name: LDAP_BASEDN
       value: "dc=adeo,dc=no"
     - name: LDAP_URL

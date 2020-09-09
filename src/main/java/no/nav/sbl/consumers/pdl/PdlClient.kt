@@ -9,7 +9,7 @@ import io.ktor.client.engine.cio.CIOEngineConfig
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.header
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.log.MDCConstants
+import no.nav.common.log.MDCConstants
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import java.net.URL

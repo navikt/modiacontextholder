@@ -3,10 +3,10 @@ package no.nav.sbl.service;
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.sbl.rest.domain.DecoratorDomain;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import no.nav.sbl.consumers.axsys.AxsysClient;
 
-import javax.inject.Inject;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class EnheterService {
-    @Inject
+    @Autowired
     private AxsysClient client;
 
-    @Inject
+    @Autowired
     private EnheterCache enheterCache;
 
     @Cacheable("enheterCache")

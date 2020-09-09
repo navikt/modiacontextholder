@@ -2,20 +2,19 @@ package no.nav.sbl.kafka;
 
 import no.nav.sbl.db.domain.EventType;
 import no.nav.sbl.rest.domain.RSNyContext;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class KafkaUtilTest {
-
-    @BeforeEach
-    void setUp() {
+public class KafkaUtilTest {
+    @Before
+    public void setUp() {
         System.setProperty("FASIT_ENVIRONMENT_NAME", "T");
     }
 
     @Test
-    void skal_finne_riktig_topic_basert_paa_eventtype() {
+    public void skal_finne_riktig_topic_basert_paa_eventtype() {
         RSNyContext nyAktivEnhetTopic = new RSNyContext().eventType(EventType.NY_AKTIV_ENHET.name());
         String topic = KafkaUtil.asTopic(nyAktivEnhetTopic);
         assertThat(topic).isEqualTo(KafkaUtil.getAktivEnhetTopic());

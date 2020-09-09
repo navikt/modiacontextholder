@@ -1,8 +1,10 @@
 package no.nav.sbl.config;
 
-import no.nav.sbl.dialogarena.types.Pingable;
+import no.nav.common.health.HealthCheck;
+import no.nav.common.health.HealthCheckResult;
+import no.nav.common.health.selftest.SelfTestCheck;
+import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.consumers.axsys.AxsysClient;
-import no.nav.sbl.util.EnvironmentUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,22 +21,20 @@ public class AxsysConfig {
     }
 
     @Bean
-    public Pingable axsysPing(AxsysClient axsysClient) {
+    public Pingable axsysPing(AxsysClient client) {
         String url = EnvironmentUtils.getRequiredProperty(AxsysConfig.AXSYS_URL_PROPERTY);
-        Pingable.Ping.PingMetadata metadata = new Pingable.Ping.PingMetadata(
-                "axsys",
-                "Axsys - via " + url,
-                "Ping mot Axsys.",
-                false
-        );
-
-        return () -> {
+        HealthCheck check = () -> {
             try {
-                axsysClient.ping();
-                return Pingable.Ping.lyktes(metadata);
+                client.ping();
+                return HealthCheckResult.healthy();
             } catch (Exception e) {
-                return Pingable.Ping.feilet(metadata, e);
+                return HealthCheckResult.unhealthy(e);
             }
         };
+        return () -> new SelfTestCheck(
+                "Axsys - via " + url,
+                false,
+                check
+        );
     }
 }

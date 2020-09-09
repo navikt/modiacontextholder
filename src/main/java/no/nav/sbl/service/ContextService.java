@@ -1,7 +1,7 @@
 package no.nav.sbl.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.json.JsonUtils;
+import no.nav.common.json.JsonUtils;
 import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
@@ -11,8 +11,8 @@ import no.nav.sbl.rest.domain.RSContext;
 import no.nav.sbl.rest.domain.RSNyContext;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 
 import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
@@ -27,7 +27,7 @@ public class ContextService {
 
     private final FeatureToggle featureToggle;
 
-    @Inject
+    @Autowired
     public ContextService(EventDAO eventDAO, KafkaProducer<String, String> kafka, FeatureToggle featureToggle) {
         this.eventDAO = eventDAO;
         this.kafka = kafka;
