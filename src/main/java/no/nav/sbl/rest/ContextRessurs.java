@@ -1,11 +1,11 @@
 package no.nav.sbl.rest;
 
 import io.micrometer.core.annotation.Timed;
-import no.nav.common.auth.subject.SubjectHandler;
 import no.nav.sbl.db.domain.EventType;
 import no.nav.sbl.rest.domain.RSContext;
 import no.nav.sbl.rest.domain.RSNyContext;
 import no.nav.sbl.service.ContextService;
+import no.nav.sbl.util.AuthContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +22,7 @@ public class ContextRessurs {
     @GetMapping
     @Timed
     public RSContext hentVeiledersContext() {
-        return SubjectHandler.getIdent()
+        return AuthContextUtils.getIdent()
                 .map(contextService::hentVeiledersContext)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
     }
@@ -30,7 +30,7 @@ public class ContextRessurs {
     @GetMapping("/aktivbruker")
     @Timed("hentAktivBruker")
     public RSContext hentAktivBruker() {
-        return SubjectHandler.getIdent()
+        return AuthContextUtils.getIdent()
                 .map(contextService::hentAktivBruker)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
     }
@@ -38,7 +38,7 @@ public class ContextRessurs {
     @GetMapping("/aktivenhet")
     @Timed("hentAktivEnhet")
     public RSContext hentAktivEnhet() {
-        return SubjectHandler.getIdent()
+        return AuthContextUtils.getIdent()
                 .map(contextService::hentAktivEnhet)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
     }
@@ -46,7 +46,7 @@ public class ContextRessurs {
     @DeleteMapping
     @Timed("nullstillContext")
     public void nullstillBrukerContext() {
-        SubjectHandler.getIdent()
+        AuthContextUtils.getIdent()
                 .ifPresent(contextService::nullstillContext);
     }
 
@@ -60,13 +60,13 @@ public class ContextRessurs {
     @DeleteMapping("/aktivbruker")
     @Timed("nullstillAktivBrukerContext")
     public void nullstillAktivBrukerContext() {
-        SubjectHandler.getIdent().ifPresent(contextService::nullstillAktivBruker);
+        AuthContextUtils.getIdent().ifPresent(contextService::nullstillAktivBruker);
     }
 
     @PostMapping
     @Timed("oppdaterVeiledersContext")
     public void oppdaterVeiledersContext(@RequestBody RSNyContext rsNyContext) {
-        SubjectHandler.getIdent()
+        AuthContextUtils.getIdent()
                 .ifPresent((ident) -> {
                     RSNyContext context = new RSNyContext()
                             .verdi(rsNyContext.verdi)

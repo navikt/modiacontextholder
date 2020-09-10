@@ -4,13 +4,12 @@ import io.ktor.client.request.header
 import io.ktor.util.KtorExperimentalAPI
 import io.vavr.control.Try
 import kotlinx.coroutines.runBlocking
-import no.nav.common.auth.subject.SsoToken
-import no.nav.common.auth.subject.SubjectHandler
 import no.nav.common.sts.SystemUserTokenProvider
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.consumers.pdl.HeadersBuilder
 import no.nav.sbl.consumers.pdl.PdlClient
 import no.nav.sbl.consumers.pdl.generated.HentIdent
+import no.nav.sbl.util.AuthContextUtils
 import java.net.URL
 import javax.ws.rs.NotFoundException
 
@@ -35,7 +34,7 @@ class PdlService(private val stsService: SystemUserTokenProvider) {
 
     private var userTokenHeaders: HeadersBuilder = {
         val systemuserToken: String = stsService.systemUserToken
-        val userToken: String = SubjectHandler.getSsoToken(SsoToken.Type.OIDC).orElseThrow { IllegalStateException("Kunne ikke hente ut veileders ssoTOken") }
+        val userToken: String = AuthContextUtils.requireIdToken()
 
         header("Nav-Consumer-Token", "Bearer $systemuserToken")
         header("Authorization", "Bearer $userToken")

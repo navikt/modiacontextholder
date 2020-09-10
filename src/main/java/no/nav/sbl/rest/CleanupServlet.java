@@ -1,16 +1,15 @@
 package no.nav.sbl.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.common.auth.subject.SubjectHandler;
 import no.nav.sbl.db.DatabaseCleanerService;
+import no.nav.sbl.util.AuthContextUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-import static no.nav.common.utils.StringUtils.notNullOrEmpty;
+import java.util.Optional;
 
 
 @Slf4j
@@ -24,8 +23,8 @@ public class CleanupServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String ident = SubjectHandler.getIdent().orElse(null);
-        if (notNullOrEmpty(ident)) {
+        Optional<String> ident = AuthContextUtils.getIdent();
+        if (ident.isPresent()) {
             log.info("{} sletter context", ident);
             databaseCleanerService.slettAlleNyAktivBrukerEvents();
             databaseCleanerService.slettAlleUtenomSisteNyAktivEnhet();

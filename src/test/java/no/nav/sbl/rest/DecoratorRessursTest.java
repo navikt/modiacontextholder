@@ -1,10 +1,11 @@
 package no.nav.sbl.rest;
 
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import io.vavr.control.Try;
-import no.nav.common.auth.subject.IdentType;
-import no.nav.common.auth.subject.SsoToken;
-import no.nav.common.auth.subject.Subject;
-import no.nav.common.auth.subject.SubjectHandler;
+import no.nav.common.auth.context.AuthContext;
+import no.nav.common.auth.context.AuthContextHolder;
+import no.nav.common.auth.context.UserRole;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
 import no.nav.sbl.service.EnheterService;
@@ -21,7 +22,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
+import static no.nav.sbl.util.AuthContextUtils.AAD_NAV_IDENT_CLAIM;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,7 +31,14 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DecoratorRessursTest {
     private static final String IDENT = "Z999999";
-    private static final Subject MOCK_SUBJECT = new Subject(IDENT, IdentType.InternBruker, SsoToken.oidcToken("asda", emptyMap()));
+    private static final AuthContext OPENAM_AUTH_CONTEXT = new AuthContext(
+            UserRole.INTERN,
+            new PlainJWT(new JWTClaimsSet.Builder().subject(IDENT).build())
+    );
+    private static final AuthContext AAD_V1_AUTH_CONTEXT = new AuthContext(
+            UserRole.INTERN,
+            new PlainJWT(new JWTClaimsSet.Builder().claim(AAD_NAV_IDENT_CLAIM, IDENT).build())
+    );
 
     @Mock
     LdapService ldapService;
@@ -58,7 +66,7 @@ public class DecoratorRessursTest {
         when(enheterService.hentEnheter(IDENT)).thenReturn(Try.failure(new IllegalStateException("Noe gikk feil")));
 
         shouldWorkRegardlessOfFeatureToggle(() ->
-                assertThatThrownBy(() -> SubjectHandler.withSubject(MOCK_SUBJECT, () -> rest.hentSaksbehandlerInfoOgEnheter()))
+                assertThatThrownBy(() -> AuthContextHolder.withContext(OPENAM_AUTH_CONTEXT, () -> rest.hentSaksbehandlerInfoOgEnheter()))
                         .hasRootCauseInstanceOf(IllegalStateException.class)
                         .isInstanceOf(ResponseStatusException.class)
                         .hasMessageStartingWith("500 INTERNAL_SERVER_ERROR \"Kunne ikke hente data\"")
@@ -71,13 +79,23 @@ public class DecoratorRessursTest {
         gitt_tilgang_til_enheter(emptyList());
 
         shouldWorkRegardlessOfFeatureToggle(() ->
-            SubjectHandler.withSubject(MOCK_SUBJECT, () -> {
+            AuthContextHolder.withContext(OPENAM_AUTH_CONTEXT, () -> {
                 DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
 
                 assertThat(decoratorConfig.ident).isEqualTo(IDENT);
                 assertThat(decoratorConfig.fornavn).isEqualTo("Fornavn");
                 assertThat(decoratorConfig.etternavn).isEqualTo("Etternavn");
             })
+        );
+
+        shouldWorkRegardlessOfFeatureToggle(() ->
+                AuthContextHolder.withContext(AAD_V1_AUTH_CONTEXT, () -> {
+                    DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
+
+                    assertThat(decoratorConfig.ident).isEqualTo(IDENT);
+                    assertThat(decoratorConfig.fornavn).isEqualTo("Fornavn");
+                    assertThat(decoratorConfig.etternavn).isEqualTo("Etternavn");
+                })
         );
     }
 
@@ -92,7 +110,7 @@ public class DecoratorRessursTest {
         ));
 
         shouldWorkRegardlessOfFeatureToggle(() ->
-            SubjectHandler.withSubject(MOCK_SUBJECT, () -> {
+            AuthContextHolder.withContext(OPENAM_AUTH_CONTEXT, () -> {
                 DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
                 assertThat(decoratorConfig.enheter).hasSize(3);
             })
@@ -108,7 +126,7 @@ public class DecoratorRessursTest {
         ));
 
         shouldWorkRegardlessOfFeatureToggle(() -> {
-            SubjectHandler.withSubject(MOCK_SUBJECT, () -> {
+            AuthContextHolder.withContext(OPENAM_AUTH_CONTEXT, () -> {
                 DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
                 assertThat(decoratorConfig.enheter).hasSize(5);
             });

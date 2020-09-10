@@ -1,7 +1,6 @@
 package no.nav.sbl.rest;
 
 import io.vavr.control.Try;
-import no.nav.common.auth.subject.SubjectHandler;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
 import no.nav.sbl.rest.domain.DecoratorDomain.FnrAktorId;
@@ -9,6 +8,7 @@ import no.nav.sbl.service.PdlService;
 import no.nav.sbl.service.EnheterService;
 import no.nav.sbl.service.LdapService;
 import no.nav.sbl.service.VeilederService;
+import no.nav.sbl.util.AuthContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,7 +73,7 @@ public class DecoratorRessurs {
     }
 
     private static String getIdent() {
-        return SubjectHandler.getIdent()
+        return AuthContextUtils.getIdent()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fant ingen subjecthandler"));
     }
 
