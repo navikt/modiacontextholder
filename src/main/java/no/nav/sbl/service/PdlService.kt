@@ -9,7 +9,6 @@ import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.consumers.pdl.HeadersBuilder
 import no.nav.sbl.consumers.pdl.PdlClient
 import no.nav.sbl.consumers.pdl.generated.HentIdent
-import no.nav.sbl.util.AuthContextUtils
 import java.net.URL
 import javax.ws.rs.NotFoundException
 
@@ -34,7 +33,7 @@ class PdlService(private val stsService: SystemUserTokenProvider) {
 
     private var userTokenHeaders: HeadersBuilder = {
         val systemuserToken: String = stsService.systemUserToken
-        val userToken: String = AuthContextUtils.requireIdToken()
+        val userToken: String = AuthContextService.requireIdToken()
 
         header("Nav-Consumer-Token", "Bearer $systemuserToken")
         header("Authorization", "Bearer $userToken")

@@ -11,6 +11,7 @@ import no.nav.common.rest.filter.SetStandardHttpHeadersFilter;
 import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.rest.CleanupServlet;
+import no.nav.sbl.service.AuthContextService;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.*;
@@ -88,8 +89,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ServletRegistrationBean<CleanupServlet> cleanupServletServletRegistrationBean(DatabaseCleanerService databaseCleanerService) {
-        CleanupServlet cleanupServlet = new CleanupServlet(databaseCleanerService);
+    public ServletRegistrationBean<CleanupServlet> cleanupServletServletRegistrationBean(DatabaseCleanerService databaseCleanerService, AuthContextService authContextService) {
+        CleanupServlet cleanupServlet = new CleanupServlet(databaseCleanerService, authContextService);
         return new ServletRegistrationBean<>(cleanupServlet, "/internal/cleanup");
     }
 }

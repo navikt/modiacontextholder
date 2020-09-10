@@ -1,13 +1,9 @@
 package no.nav.sbl.rest;
 
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
 import io.vavr.control.Try;
-import no.nav.common.auth.context.AuthContext;
-import no.nav.common.auth.context.AuthContextHolder;
-import no.nav.common.auth.context.UserRole;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
+import no.nav.sbl.service.AuthContextService;
 import no.nav.sbl.service.EnheterService;
 import no.nav.sbl.service.LdapService;
 import no.nav.sbl.service.VeilederService;
@@ -19,10 +15,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static no.nav.sbl.util.AuthContextUtils.AAD_NAV_IDENT_CLAIM;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -31,14 +27,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DecoratorRessursTest {
     private static final String IDENT = "Z999999";
-    private static final AuthContext OPENAM_AUTH_CONTEXT = new AuthContext(
-            UserRole.INTERN,
-            new PlainJWT(new JWTClaimsSet.Builder().subject(IDENT).build())
-    );
-    private static final AuthContext AAD_V1_AUTH_CONTEXT = new AuthContext(
-            UserRole.INTERN,
-            new PlainJWT(new JWTClaimsSet.Builder().claim(AAD_NAV_IDENT_CLAIM, IDENT).build())
-    );
 
     @Mock
     LdapService ldapService;
@@ -46,6 +34,8 @@ public class DecoratorRessursTest {
     EnheterService enheterService;
     @Mock
     VeilederService veilederService;
+    @Mock
+    AuthContextService authContextService;
 
     @InjectMocks
     DecoratorRessurs rest;
@@ -62,11 +52,12 @@ public class DecoratorRessursTest {
 
     @Test
     public void feil_ved_henting_av_enheter() {
+        gitt_logget_inn();
         gitt_saksbehandler_i_ad();
         when(enheterService.hentEnheter(IDENT)).thenReturn(Try.failure(new IllegalStateException("Noe gikk feil")));
 
         shouldWorkRegardlessOfFeatureToggle(() ->
-                assertThatThrownBy(() -> AuthContextHolder.withContext(OPENAM_AUTH_CONTEXT, () -> rest.hentSaksbehandlerInfoOgEnheter()))
+                assertThatThrownBy(() -> rest.hentSaksbehandlerInfoOgEnheter())
                         .hasRootCauseInstanceOf(IllegalStateException.class)
                         .isInstanceOf(ResponseStatusException.class)
                         .hasMessageStartingWith("500 INTERNAL_SERVER_ERROR \"Kunne ikke hente data\"")
@@ -75,33 +66,31 @@ public class DecoratorRessursTest {
 
     @Test
     public void returnerer_saksbehandlernavn() {
+        gitt_logget_inn();
         gitt_saksbehandler_i_ad();
         gitt_tilgang_til_enheter(emptyList());
 
-        shouldWorkRegardlessOfFeatureToggle(() ->
-            AuthContextHolder.withContext(OPENAM_AUTH_CONTEXT, () -> {
+        shouldWorkRegardlessOfFeatureToggle(() -> {
                 DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
 
                 assertThat(decoratorConfig.ident).isEqualTo(IDENT);
                 assertThat(decoratorConfig.fornavn).isEqualTo("Fornavn");
                 assertThat(decoratorConfig.etternavn).isEqualTo("Etternavn");
-            })
-        );
+        });
 
-        shouldWorkRegardlessOfFeatureToggle(() ->
-                AuthContextHolder.withContext(AAD_V1_AUTH_CONTEXT, () -> {
+        shouldWorkRegardlessOfFeatureToggle(() -> {
                     DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
 
                     assertThat(decoratorConfig.ident).isEqualTo(IDENT);
                     assertThat(decoratorConfig.fornavn).isEqualTo("Fornavn");
                     assertThat(decoratorConfig.etternavn).isEqualTo("Etternavn");
-                })
-        );
+        });
     }
 
 
     @Test
     public void bare_aktive_enheter() {
+        gitt_logget_inn();
         gitt_saksbehandler_i_ad();
         gitt_tilgang_til_enheter(asList(
                 enhet("0001", "Test 1"),
@@ -109,16 +98,15 @@ public class DecoratorRessursTest {
                 enhet("0003", "Test 3")
         ));
 
-        shouldWorkRegardlessOfFeatureToggle(() ->
-            AuthContextHolder.withContext(OPENAM_AUTH_CONTEXT, () -> {
+        shouldWorkRegardlessOfFeatureToggle(() -> {
                 DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
                 assertThat(decoratorConfig.enheter).hasSize(3);
-            })
-        );
+        });
     }
 
     @Test
     public void alle_enheter_om_saksbehandler_har_modia_admin() {
+        gitt_logget_inn();
         gitt_modia_admin_rolle();
         gitt_saksbehandler_i_ad();
         gitt_tilgang_til_enheter(asList(
@@ -126,10 +114,8 @@ public class DecoratorRessursTest {
         ));
 
         shouldWorkRegardlessOfFeatureToggle(() -> {
-            AuthContextHolder.withContext(OPENAM_AUTH_CONTEXT, () -> {
                 DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
                 assertThat(decoratorConfig.enheter).hasSize(5);
-            });
         });
     }
 
@@ -152,6 +138,10 @@ public class DecoratorRessursTest {
         when(veilederService.hentVeilederNavn(anyString())).thenReturn(
                 new DecoratorDomain.Saksbehandler(IDENT, "Fornavn", "Etternavn")
         );
+    }
+
+    private void gitt_logget_inn() {
+        when(authContextService.getIdent()).thenReturn(Optional.of(IDENT));
     }
 
     private static DecoratorDomain.Enhet enhet(String id, String navn) {

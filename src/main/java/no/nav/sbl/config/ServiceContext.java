@@ -1,7 +1,11 @@
 package no.nav.sbl.config;
 
+import no.nav.common.client.msgraph.CachedMsGraphClient;
+import no.nav.common.client.msgraph.MsGraphClient;
+import no.nav.common.client.msgraph.MsGraphHttpClient;
 import no.nav.common.sts.NaisSystemUserTokenProvider;
 import no.nav.common.sts.SystemUserTokenProvider;
+import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.service.PdlService;
@@ -71,5 +75,18 @@ public class ServiceContext {
     @Bean
     public PdlService pdlService(SystemUserTokenProvider sts) {
         return new PdlService(sts);
+    }
+
+
+    @Bean
+    public MsGraphClient msGraphClient() {
+        return new CachedMsGraphClient(
+                new MsGraphHttpClient(EnvironmentUtils.getRequiredProperty("MS_GRAPH_CLIENT_URL"))
+        );
+    }
+
+    @Bean
+    public AuthContextService authContextService(MsGraphClient msGraphClient) {
+        return new AuthContextService(msGraphClient);
     }
 }
