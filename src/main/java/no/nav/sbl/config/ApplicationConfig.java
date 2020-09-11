@@ -34,17 +34,20 @@ public class ApplicationConfig {
     public static String SRV_USERNAME_PROPERTY = "SRVMODIACONTEXTHOLDER_USERNAME";
     public static String SRV_PASSWORD_PROPERTY = "SRVMODIACONTEXTHOLDER_PASSWORD";
 
-    private static final String issoClientId = EnvironmentUtils.getRequiredProperty("ISSO_CLIENT_ID");
     private static final String issoDiscoveryUrl = EnvironmentUtils.getRequiredProperty("ISSO_DISCOVERY_URL");
+    private static final String azureADDiscoveryUrl = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_DISCOVERYURI");
+    private static final String azureADV2DiscoveryUrl = EnvironmentUtils.getRequiredProperty("AAD_V2_DISCOVERURI");
+
+    private static final String issoClientId = EnvironmentUtils.getRequiredProperty("ISSO_CLIENT_ID");
     private static final String issoRefreshUrl = EnvironmentUtils.getRequiredProperty("ISSO_REFRESH_URL");
     private static final String fpsakClientId = EnvironmentUtils.getRequiredProperty("FPSAK_CLIENT_ID");
     private static final String azureADClientId = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_CLIENTID");
-    private static final String azureADDiscoveryUrl = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_DISCOVERYURI");
-    private static final String azureADClientIdSupstonad = EnvironmentUtils.getRequiredProperty("SUPSTONAD_CLIENTID");
+    private static final String supstonadClientId = EnvironmentUtils.getRequiredProperty("SUPSTONAD_CLIENTID");
+    private static final String syfoSmregClientId = EnvironmentUtils.getRequiredProperty("SYFO_SMREG_CLIENTID");
 
     @Bean
     public FilterRegistrationBean authenticationFilterRegistration() {
-        OidcAuthenticatorConfig isso = new OidcAuthenticatorConfig()
+        OidcAuthenticatorConfig openAm = new OidcAuthenticatorConfig()
                 .withClientIds(asList(issoClientId, fpsakClientId))
                 .withDiscoveryUrl(issoDiscoveryUrl)
                 .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
@@ -52,19 +55,20 @@ public class ApplicationConfig {
                 .withRefreshUrl(issoRefreshUrl)
                 .withRefreshTokenCookieName(Constants.REFRESH_TOKEN_COOKIE_NAME);
 
-        OidcAuthenticatorConfig azureAdSupStonad = new OidcAuthenticatorConfig()
-                .withClientId(azureADClientIdSupstonad)
-                .withDiscoveryUrl(azureADDiscoveryUrl)
-                .withUserRole(UserRole.INTERN);
-
         OidcAuthenticatorConfig azureAd = new OidcAuthenticatorConfig()
                 .withClientId(azureADClientId)
                 .withDiscoveryUrl(azureADDiscoveryUrl)
                 .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN);
 
+        OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
+                .withClientIds(asList(syfoSmregClientId, supstonadClientId))
+                .withDiscoveryUrl(azureADV2DiscoveryUrl)
+                .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
+                .withUserRole(UserRole.INTERN);
+
         FilterRegistrationBean<OidcAuthenticationFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new OidcAuthenticationFilter(OidcAuthenticator.fromConfigs(isso, azureAd, azureAdSupStonad)));
+        registration.setFilter(new OidcAuthenticationFilter(OidcAuthenticator.fromConfigs(openAm, azureAd, azureAdV2)));
         registration.setOrder(1);
         registration.addUrlPatterns("/api/*");
         return registration;
