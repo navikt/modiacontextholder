@@ -70,6 +70,8 @@ spec:
       value: "ou=ServiceAccounts,dc=adeo,dc=no"
     - name: LDAP_DOMAIN
       value: "ADEO.NO"
+    - name: MS_GRAPH_CLIENT_URL
+      value: "https://graph.microsoft.com/v1.0"
     - name: ISSO_CLIENT_ID
       value: "veilarblogin-p"
     - name: FPSAK_CLIENT_ID

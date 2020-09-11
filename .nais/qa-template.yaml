@@ -70,6 +70,8 @@ spec:
       value: "ou=ServiceAccounts,dc=preprod,dc=local"
     - name: LDAP_DOMAIN
       value: "PREPROD.LOCAL"
+    - name: MS_GRAPH_CLIENT_URL
+      value: "https://graph.microsoft.com/v1.0"
     - name: ISSO_CLIENT_ID
       value: "veilarblogin-{{ namespace }}"
     - name: FPSAK_CLIENT_ID

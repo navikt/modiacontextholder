@@ -18,7 +18,7 @@
     <properties>
         <java.version>11</java.version>
         <kafka.version>2.0.0</kafka.version>
-        <common.version>2.2020.08.24_12.17-ce8722430a1d</common.version>
+        <common.version>2.2020.09.10_12.21-5ce9f2fa2fca</common.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <kotlin.version>1.3.72</kotlin.version>
     </properties>
@@ -147,6 +147,10 @@
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.common</groupId>
+            <artifactId>client</artifactId>
         </dependency>
 
         <!--spring-->

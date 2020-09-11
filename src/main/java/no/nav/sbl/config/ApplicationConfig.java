@@ -2,19 +2,22 @@ package no.nav.sbl.config;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.common.auth.Constants;
+import no.nav.common.auth.context.UserRole;
 import no.nav.common.auth.oidc.filter.OidcAuthenticationFilter;
 import no.nav.common.auth.oidc.filter.OidcAuthenticator;
 import no.nav.common.auth.oidc.filter.OidcAuthenticatorConfig;
-import no.nav.common.auth.subject.IdentType;
 import no.nav.common.log.LogFilter;
 import no.nav.common.rest.filter.SetStandardHttpHeadersFilter;
 import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.rest.CleanupServlet;
+import no.nav.sbl.service.AuthContextService;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.*;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import static java.util.Arrays.asList;
 import static no.nav.common.utils.EnvironmentUtils.isDevelopment;
 
 @Slf4j
@@ -42,34 +45,26 @@ public class ApplicationConfig {
     @Bean
     public FilterRegistrationBean authenticationFilterRegistration() {
         OidcAuthenticatorConfig isso = new OidcAuthenticatorConfig()
-                .withClientId(issoClientId)
+                .withClientIds(asList(issoClientId, fpsakClientId))
                 .withDiscoveryUrl(issoDiscoveryUrl)
                 .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
-                .withIdentType(IdentType.InternBruker)
-                .withRefreshUrl(issoRefreshUrl)
-                .withRefreshTokenCookieName(Constants.REFRESH_TOKEN_COOKIE_NAME);
-
-        OidcAuthenticatorConfig fpsak = new OidcAuthenticatorConfig()
-                .withClientId(fpsakClientId)
-                .withDiscoveryUrl(issoDiscoveryUrl)
-                .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
-                .withIdentType(IdentType.InternBruker)
+                .withUserRole(UserRole.INTERN)
                 .withRefreshUrl(issoRefreshUrl)
                 .withRefreshTokenCookieName(Constants.REFRESH_TOKEN_COOKIE_NAME);
 
         OidcAuthenticatorConfig azureAdSupStonad = new OidcAuthenticatorConfig()
                 .withClientId(azureADClientIdSupstonad)
                 .withDiscoveryUrl(azureADDiscoveryUrl)
-                .withIdentType(IdentType.InternBruker);
+                .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig azureAd = new OidcAuthenticatorConfig()
                 .withClientId(azureADClientId)
                 .withDiscoveryUrl(azureADDiscoveryUrl)
                 .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
-                .withIdentType(IdentType.InternBruker);
+                .withUserRole(UserRole.INTERN);
 
         FilterRegistrationBean<OidcAuthenticationFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new OidcAuthenticationFilter(OidcAuthenticator.fromConfigs(isso, fpsak, azureAd, azureAdSupStonad)));
+        registration.setFilter(new OidcAuthenticationFilter(OidcAuthenticator.fromConfigs(isso, azureAd, azureAdSupStonad)));
         registration.setOrder(1);
         registration.addUrlPatterns("/api/*");
         return registration;
@@ -94,8 +89,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ServletRegistrationBean<CleanupServlet> cleanupServletServletRegistrationBean(DatabaseCleanerService databaseCleanerService) {
-        CleanupServlet cleanupServlet = new CleanupServlet(databaseCleanerService);
+    public ServletRegistrationBean<CleanupServlet> cleanupServletServletRegistrationBean(DatabaseCleanerService databaseCleanerService, AuthContextService authContextService) {
+        CleanupServlet cleanupServlet = new CleanupServlet(databaseCleanerService, authContextService);
         return new ServletRegistrationBean<>(cleanupServlet, "/internal/cleanup");
     }
 }
