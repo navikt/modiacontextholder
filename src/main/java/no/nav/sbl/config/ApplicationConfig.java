@@ -58,13 +58,13 @@ public class ApplicationConfig {
         OidcAuthenticatorConfig azureAd = new OidcAuthenticatorConfig()
                 .withClientId(azureADClientId)
                 .withDiscoveryUrl(azureADDiscoveryUrl)
-                .withIdTokenCookieName(Constants.AZURE_AD_ACCESS_TOKEN_COOKIE_NAME)
+                .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
                 .withClientIds(asList(syfoSmregClientId, supstonadClientId))
                 .withDiscoveryUrl(azureADV2DiscoveryUrl)
-                .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
+                .withIdTokenCookieName(Constants.AZURE_AD_ACCESS_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN);
 
         FilterRegistrationBean<OidcAuthenticationFilter> registration = new FilterRegistrationBean<>();
