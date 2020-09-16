@@ -62,7 +62,7 @@ public class ApplicationConfig {
                 .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
-                .withClientIds(asList("https://graph.microsoft.com", syfoSmregClientId, supstonadClientId))
+                .withClientIds(asList(syfoSmregClientId, supstonadClientId))
                 .withDiscoveryUrl(azureADV2DiscoveryUrl)
                 .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN);
