@@ -86,8 +86,6 @@ spec:
       value: "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration"
     - name: LOGINSERVICE_OIDC_CLIENTID
       value: "9b4e07a3-4f4c-4bab-b866-87f62dff480d"
-    - name: SUPSTONAD_CLIENTID
-      value: "478cbd3e-e28a-4da6-bf41-27cd0f21cc1d"
     - name: SYFO_SMREG_CLIENTID
       value: "ab2d8ca9-7af1-45bb-af07-0f4793695e63"
     - name: KAFKA_BROKERS_URL
