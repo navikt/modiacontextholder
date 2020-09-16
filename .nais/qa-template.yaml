@@ -70,6 +70,8 @@ spec:
       value: "ou=ServiceAccounts,dc=preprod,dc=local"
     - name: LDAP_DOMAIN
       value: "PREPROD.LOCAL"
+    - name: MS_GRAPH_CLIENT_URL
+      value: "https://graph.microsoft.com/v1.0"
     - name: ISSO_CLIENT_ID
       value: "veilarblogin-{{ namespace }}"
     - name: FPSAK_CLIENT_ID
@@ -80,10 +82,12 @@ spec:
       value: "https://app-{{ namespace }}.adeo.no/veilarblogin/api/openam-refresh"
     - name: LOGINSERVICE_OIDC_DISCOVERYURI
       value: "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration"
+    - name: AAD_V2_DISCOVERURI
+      value: "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration"
     - name: LOGINSERVICE_OIDC_CLIENTID
       value: "38e07d31-659d-4595-939a-f18dce3446c5"
-    - name: SUPSTONAD_CLIENTID
-      value: "24ea4acb-547e-45de-a6d3-474bd8bed46e"
+    - name: SYFO_SMREG_CLIENTID
+      value: "6d29c845-6662-4c2c-a3b8-46a1e1967855"
     - name: KAFKA_BROKERS_URL
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
     - name: APP_ENVIRONMENT_NAME
