@@ -64,7 +64,7 @@ public class ApplicationConfig {
         OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
                 .withClientIds(asList("https://graph.microsoft.com", syfoSmregClientId, supstonadClientId))
                 .withDiscoveryUrl(azureADV2DiscoveryUrl)
-                .withIdTokenCookieName(Constants.AZURE_AD_ACCESS_TOKEN_COOKIE_NAME)
+                .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN);
 
         FilterRegistrationBean<OidcAuthenticationFilter> registration = new FilterRegistrationBean<>();
