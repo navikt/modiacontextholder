@@ -42,6 +42,7 @@ public class ApplicationConfig {
     private static final String issoRefreshUrl = EnvironmentUtils.getRequiredProperty("ISSO_REFRESH_URL");
     private static final String fpsakClientId = EnvironmentUtils.getRequiredProperty("FPSAK_CLIENT_ID");
     private static final String azureADClientId = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_CLIENTID");
+    private static final String veilarbloginAADClientId = EnvironmentUtils.getRequiredProperty("VEILARBLOGIN_AAD_CLIENT_ID");
     private static final String syfoSmregClientId = EnvironmentUtils.getRequiredProperty("SYFO_SMREG_CLIENTID");
 
     @Bean
@@ -61,7 +62,7 @@ public class ApplicationConfig {
                 .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
-                .withClientIds(asList(syfoSmregClientId))
+                .withClientIds(asList(syfoSmregClientId, veilarbloginAADClientId))
                 .withDiscoveryUrl(azureADV2DiscoveryUrl)
                 .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN);
