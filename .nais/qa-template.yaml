@@ -86,6 +86,8 @@ spec:
       value: "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration"
     - name: LOGINSERVICE_OIDC_CLIENTID
       value: "38e07d31-659d-4595-939a-f18dce3446c5"
+    - name: VEILARBLOGIN_AAD_CLIENT_ID
+      value: "2edd96a2-fb5a-4dfa-8f36-848ae306f9b1"
     - name: SYFO_SMREG_CLIENTID
       value: "6d29c845-6662-4c2c-a3b8-46a1e1967855"
     - name: KAFKA_BROKERS_URL
