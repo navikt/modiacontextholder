@@ -2,6 +2,7 @@ package no.nav.sbl.service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.common.json.JsonUtils;
+import no.nav.common.utils.StringUtils;
 import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
+import static no.nav.common.utils.StringUtils.nullOrEmpty;
 import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
 import static no.nav.sbl.mappers.EventMapper.toRSEvent;
 
@@ -41,10 +43,10 @@ public class ContextService {
     }
 
     public void oppdaterVeiledersContext(RSNyContext nyContext, String veilederIdent) {
-        if (NY_AKTIV_BRUKER.name().equals(nyContext.eventType) && nyContext.verdi == null) {
+        if (NY_AKTIV_BRUKER.name().equals(nyContext.eventType) && nullOrEmpty(nyContext.verdi)) {
             nullstillAktivBruker(veilederIdent);
             return;
-        } else if (nyContext.verdi == null) {
+        } else if (nullOrEmpty(nyContext.verdi)) {
             log.warn("Forsøk på å sette aktivEnhet til null, vil generere feil.");
         }
 
