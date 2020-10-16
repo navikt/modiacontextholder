@@ -90,6 +90,8 @@ spec:
       value: "2edd96a2-fb5a-4dfa-8f36-848ae306f9b1"
     - name: SYFO_SMREG_CLIENTID
       value: "6d29c845-6662-4c2c-a3b8-46a1e1967855"
+    - name: SYFO_SMMANUELL_CLIENTID
+      value: "7c079d88-1038-4cb3-af45-a09fe5a67d6f"
     - name: KAFKA_BROKERS_URL
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
     - name: APP_ENVIRONMENT_NAME
