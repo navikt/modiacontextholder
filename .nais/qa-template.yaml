@@ -32,6 +32,7 @@ spec:
       memory: 768Mi
   ingresses:
     - https://modiacontextholder-{{ namespace }}.nais.preprod.local/modiacontextholder
+    - https://modiacontextholder-{{ namespace }}.dev.adeo.no/modiacontextholder
     - https://modapp-{{ namespace }}.adeo.no/modiacontextholder
     - https://app-{{ namespace }}.adeo.no/modiacontextholder
   replicas:
