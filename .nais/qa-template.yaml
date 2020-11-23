@@ -58,6 +58,8 @@ spec:
       value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
     - name: AXSYS_REST_API_URL
       value: "https://axsys.nais.preprod.local"
+    - name: UNLEASH_API_URL
+      value: "https://unleash.nais.io/api/"
     - name: PDL_API_URL
       value: "https://pdl-api.nais.preprod.local/graphql"
     - name: NORG2_API_URL
