@@ -33,6 +33,7 @@ spec:
   ingresses:
     - https://modiacontextholder-{{ namespace }}.nais.preprod.local/modiacontextholder
     - https://modiacontextholder-{{ namespace }}.dev.adeo.no/modiacontextholder
+    - https://app-{{ namespace }}.dev.adeo.no/modiacontextholder
     - https://modapp-{{ namespace }}.adeo.no/modiacontextholder
     - https://app-{{ namespace }}.adeo.no/modiacontextholder
   replicas:
@@ -57,6 +58,8 @@ spec:
       value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
     - name: AXSYS_REST_API_URL
       value: "https://axsys.nais.preprod.local"
+    - name: UNLEASH_API_URL
+      value: "https://unleash.nais.io/api/"
     - name: PDL_API_URL
       value: "https://pdl-api.nais.preprod.local/graphql"
     - name: NORG2_API_URL
@@ -93,6 +96,8 @@ spec:
       value: "6d29c845-6662-4c2c-a3b8-46a1e1967855"
     - name: SYFO_SMMANUELL_CLIENTID
       value: "7c079d88-1038-4cb3-af45-a09fe5a67d6f"
+    - name: SOSIALHJELP_MODIA_CLIENTID
+      value: "6f661f36-1adb-42c3-9e10-294a10007880"
     - name: KAFKA_BROKERS_URL
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
     - name: APP_ENVIRONMENT_NAME
