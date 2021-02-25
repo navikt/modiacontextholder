@@ -51,6 +51,8 @@ spec:
         mountPath: /var/run/secrets/nais.io/db_config
       - kvPath: /apikey/appdynamics/prod
         mountPath: /var/run/secrets/nais.io/vault
+  secureLogs:
+    enabled: true
   env:
     - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
       value: "https://security-token-service.nais.adeo.no/rest/v1/sts/.well-known/openid-configuration"
