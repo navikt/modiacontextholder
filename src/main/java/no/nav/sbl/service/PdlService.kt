@@ -21,13 +21,13 @@ class PdlService(private val stsService: SystemUserTokenProvider) {
     fun hentIdent(fnr: String): Try<String> = Try.of {
         runBlocking {
             HentIdent(graphQLClient)
-                    .execute(HentIdent.Variables(fnr), userTokenHeaders)
-                    .data
-                    ?.hentIdenter
-                    ?.identer
-                    ?.first()
-                    ?.ident
-                    ?: throw NotFoundException("AktørId for $fnr ble ikke funnet")
+                .execute(HentIdent.Variables(fnr), userTokenHeaders)
+                .data
+                ?.hentIdenter
+                ?.identer
+                ?.first()
+                ?.ident
+                ?: throw NotFoundException("AktørId for $fnr ble ikke funnet")
         }
     }
 
