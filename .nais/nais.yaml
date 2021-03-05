@@ -34,6 +34,7 @@ spec:
     - https://modiacontextholder.nais.adeo.no/modiacontextholder
     - https://modapp.adeo.no/modiacontextholder
     - https://app.adeo.no/modiacontextholder
+    - https://modia.adeo.no/modiacontextholder
   replicas:
     min: 2
     max: 4
@@ -78,6 +79,8 @@ spec:
       value: "https://graph.microsoft.com/v1.0"
     - name: ISSO_CLIENT_ID
       value: "veilarblogin-p"
+    - name: MODIA_CLIENT_ID
+      value: "modialogin-p"
     - name: FPSAK_CLIENT_ID
       value: "fpsak-frontend-p"
     - name: ISSO_DISCOVERY_URL

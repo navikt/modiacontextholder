@@ -39,6 +39,7 @@ public class ApplicationConfig {
     private static final String azureADV2DiscoveryUrl = EnvironmentUtils.getRequiredProperty("AAD_V2_DISCOVERURI");
 
     private static final String issoClientId = EnvironmentUtils.getRequiredProperty("ISSO_CLIENT_ID");
+    private static final String modiaClientId = EnvironmentUtils.getRequiredProperty("MODIA_CLIENT_ID");
     private static final String issoRefreshUrl = EnvironmentUtils.getRequiredProperty("ISSO_REFRESH_URL");
     private static final String fpsakClientId = EnvironmentUtils.getRequiredProperty("FPSAK_CLIENT_ID");
     private static final String azureADClientId = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_CLIENTID");
@@ -50,7 +51,7 @@ public class ApplicationConfig {
     @Bean
     public FilterRegistrationBean authenticationFilterRegistration() {
         OidcAuthenticatorConfig openAm = new OidcAuthenticatorConfig()
-                .withClientIds(asList(issoClientId, fpsakClientId))
+                .withClientIds(asList(issoClientId, modiaClientId, fpsakClientId))
                 .withDiscoveryUrl(issoDiscoveryUrl)
                 .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN)
