@@ -33,9 +33,10 @@ spec:
   ingresses:
     - https://modiacontextholder-{{ namespace }}.nais.preprod.local/modiacontextholder
     - https://modiacontextholder-{{ namespace }}.dev.adeo.no/modiacontextholder
-    - https://app-{{ namespace }}.dev.adeo.no/modiacontextholder
     - https://modapp-{{ namespace }}.adeo.no/modiacontextholder
     - https://app-{{ namespace }}.adeo.no/modiacontextholder
+    - https://app-{{ namespace }}.dev.adeo.no/modiacontextholder
+    - https://modia-{{ namespace }}.dev.adeo.no/modiacontextholder
   replicas:
     min: 2
     max: 4
@@ -80,6 +81,8 @@ spec:
       value: "https://graph.microsoft.com/v1.0"
     - name: ISSO_CLIENT_ID
       value: "veilarblogin-{{ namespace }}"
+    - name: MODIA_CLIENT_ID
+      value: "modialogin-{{ namespace }}"
     - name: FPSAK_CLIENT_ID
       value: "fpsak-frontend-{{ namespace }}"
     - name: ISSO_DISCOVERY_URL
