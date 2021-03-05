@@ -17,6 +17,8 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.*;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.List;
+
 import static java.util.Arrays.asList;
 import static no.nav.common.utils.EnvironmentUtils.isDevelopment;
 
@@ -39,8 +41,9 @@ public class ApplicationConfig {
     private static final String azureADV2DiscoveryUrl = EnvironmentUtils.getRequiredProperty("AAD_V2_DISCOVERURI");
 
     private static final String issoClientId = EnvironmentUtils.getRequiredProperty("ISSO_CLIENT_ID");
-    private static final String modiaClientId = EnvironmentUtils.getRequiredProperty("MODIA_CLIENT_ID");
     private static final String issoRefreshUrl = EnvironmentUtils.getRequiredProperty("ISSO_REFRESH_URL");
+    private static final String modiaClientId = EnvironmentUtils.getRequiredProperty("MODIA_CLIENT_ID");
+    private static final String modiaRefreshUrl = EnvironmentUtils.getRequiredProperty("MODIA_REFRESH_URL");
     private static final String fpsakClientId = EnvironmentUtils.getRequiredProperty("FPSAK_CLIENT_ID");
     private static final String azureADClientId = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_CLIENTID");
     private static final String veilarbloginAADClientId = EnvironmentUtils.getRequiredProperty("VEILARBLOGIN_AAD_CLIENT_ID");
@@ -51,12 +54,26 @@ public class ApplicationConfig {
     @Bean
     public FilterRegistrationBean authenticationFilterRegistration() {
         OidcAuthenticatorConfig openAm = new OidcAuthenticatorConfig()
-                .withClientIds(asList(issoClientId, modiaClientId, fpsakClientId))
+                .withClientId(issoClientId)
                 .withDiscoveryUrl(issoDiscoveryUrl)
                 .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN)
                 .withRefreshUrl(issoRefreshUrl)
                 .withRefreshTokenCookieName(Constants.REFRESH_TOKEN_COOKIE_NAME);
+
+        OidcAuthenticatorConfig openAmModia = new OidcAuthenticatorConfig()
+                .withClientId(modiaClientId)
+                .withDiscoveryUrl(issoDiscoveryUrl)
+                .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
+                .withUserRole(UserRole.INTERN)
+                .withRefreshUrl(modiaRefreshUrl)
+                .withRefreshTokenCookieName(Constants.REFRESH_TOKEN_COOKIE_NAME);
+
+        OidcAuthenticatorConfig openAmFpsak = new OidcAuthenticatorConfig()
+                .withClientId(fpsakClientId)
+                .withDiscoveryUrl(issoDiscoveryUrl)
+                .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
+                .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig azureAd = new OidcAuthenticatorConfig()
                 .withClientId(azureADClientId)
@@ -71,7 +88,14 @@ public class ApplicationConfig {
                 .withUserRole(UserRole.INTERN);
 
         FilterRegistrationBean<OidcAuthenticationFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new OidcAuthenticationFilter(OidcAuthenticator.fromConfigs(openAm, azureAd, azureAdV2)));
+        List<OidcAuthenticator> authenticators = OidcAuthenticator.fromConfigs(
+                openAm,
+                openAmModia,
+                openAmFpsak,
+                azureAd,
+                azureAdV2
+        );
+        registration.setFilter(new OidcAuthenticationFilter(authenticators));
         registration.setOrder(1);
         registration.addUrlPatterns("/api/*");
         return registration;
