@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class KafkaUtilTest {
     @Before
     public void setUp() {
-        System.setProperty("FASIT_ENVIRONMENT_NAME", "T");
+        System.setProperty("APP_ENVIRONMENT_NAME", "T");
     }
 
     @Test

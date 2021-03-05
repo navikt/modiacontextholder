@@ -20,17 +20,17 @@ typealias VariablesTransform = (Any?) -> Any?
 
 @KtorExperimentalAPI
 class PdlClient(
-        url: URL,
-        private val transformVariables: VariablesTransform? = null
+    url: URL,
+    private val transformVariables: VariablesTransform? = null
 ) : GraphQLClient<CIOEngineConfig>(url, CIO, jacksonObjectMapper(), {}) {
     private val log = LoggerFactory.getLogger(PdlClient::class.java)
 
     override suspend fun <T> execute(
-            query: String,
-            operationName: String?,
-            variables: Any?,
-            resultType: Class<T>,
-            requestBuilder: HeadersBuilder
+        query: String,
+        operationName: String?,
+        variables: Any?,
+        resultType: Class<T>,
+        requestBuilder: HeadersBuilder
     ): GraphQLResponse<T> {
         val callId = getCallId()
         return try {
