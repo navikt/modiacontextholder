@@ -36,7 +36,6 @@ spec:
     - https://modapp-{{ namespace }}.adeo.no/modiacontextholder
     - https://app-{{ namespace }}.adeo.no/modiacontextholder
     - https://app-{{ namespace }}.dev.adeo.no/modiacontextholder
-    - https://modia-{{ namespace }}.dev.adeo.no/modiacontextholder
   replicas:
     min: 2
     max: 4
@@ -90,7 +89,7 @@ spec:
     - name: ISSO_REFRESH_URL
       value: "https://app-{{ namespace }}.adeo.no/veilarblogin/api/openam-refresh"
     - name: MODIA_REFRESH_URL
-      value: "https://modia-{{ namespace }}.dev.adeo.no/modialogin/api/refresh"
+      value: "https://app-{{ namespace }}.adeo.no/modialogin/api/refresh"
     - name: LOGINSERVICE_OIDC_DISCOVERYURI
       value: "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration"
     - name: AAD_V2_DISCOVERURI

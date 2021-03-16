@@ -64,10 +64,10 @@ public class ApplicationConfig {
         OidcAuthenticatorConfig openAmModia = new OidcAuthenticatorConfig()
                 .withClientId(modiaClientId)
                 .withDiscoveryUrl(issoDiscoveryUrl)
-                .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
+                .withIdTokenCookieName("modia_ID_token")
                 .withUserRole(UserRole.INTERN)
                 .withRefreshUrl(modiaRefreshUrl)
-                .withRefreshTokenCookieName(Constants.REFRESH_TOKEN_COOKIE_NAME);
+                .withRefreshTokenCookieName("modia_refresh_token");
 
         OidcAuthenticatorConfig openAmFpsak = new OidcAuthenticatorConfig()
                 .withClientId(fpsakClientId)
