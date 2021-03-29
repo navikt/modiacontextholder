@@ -41,9 +41,7 @@ public class ApplicationConfig {
     private static final String azureADV2DiscoveryUrl = EnvironmentUtils.getRequiredProperty("AAD_V2_DISCOVERURI");
 
     private static final String issoClientId = EnvironmentUtils.getRequiredProperty("ISSO_CLIENT_ID");
-    private static final String issoRefreshUrl = EnvironmentUtils.getRequiredProperty("ISSO_REFRESH_URL");
     private static final String modiaClientId = EnvironmentUtils.getRequiredProperty("MODIA_CLIENT_ID");
-    private static final String modiaRefreshUrl = EnvironmentUtils.getRequiredProperty("MODIA_REFRESH_URL");
     private static final String fpsakClientId = EnvironmentUtils.getRequiredProperty("FPSAK_CLIENT_ID");
     private static final String azureADClientId = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_CLIENTID");
     private static final String veilarbloginAADClientId = EnvironmentUtils.getRequiredProperty("VEILARBLOGIN_AAD_CLIENT_ID");
@@ -57,17 +55,13 @@ public class ApplicationConfig {
                 .withClientId(issoClientId)
                 .withDiscoveryUrl(issoDiscoveryUrl)
                 .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
-                .withUserRole(UserRole.INTERN)
-                .withRefreshUrl(issoRefreshUrl)
-                .withRefreshTokenCookieName(Constants.REFRESH_TOKEN_COOKIE_NAME);
+                .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig openAmModia = new OidcAuthenticatorConfig()
                 .withClientId(modiaClientId)
                 .withDiscoveryUrl(issoDiscoveryUrl)
                 .withIdTokenCookieName("modia_ID_token")
-                .withUserRole(UserRole.INTERN)
-                .withRefreshUrl(modiaRefreshUrl)
-                .withRefreshTokenCookieName("modia_refresh_token");
+                .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig openAmFpsak = new OidcAuthenticatorConfig()
                 .withClientId(fpsakClientId)
