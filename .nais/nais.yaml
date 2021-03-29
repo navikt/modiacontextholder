@@ -84,10 +84,6 @@ spec:
       value: "fpsak-frontend-p"
     - name: ISSO_DISCOVERY_URL
       value: "https://isso.adeo.no/isso/oauth2/.well-known/openid-configuration"
-    - name: ISSO_REFRESH_URL
-      value: "https://app.adeo.no/veilarblogin/api/openam-refresh"
-    - name: MODIA_REFRESH_URL
-      value: "https://app.adeo.no/modialogin/api/refresh"
     - name: LOGINSERVICE_OIDC_DISCOVERYURI
       value: "https://login.microsoftonline.com/navno.onmicrosoft.com/.well-known/openid-configuration"
     - name: AAD_V2_DISCOVERURI
