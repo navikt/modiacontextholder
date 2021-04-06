@@ -3,6 +3,7 @@ package no.nav.sbl.service
 import io.ktor.client.request.header
 import io.ktor.util.KtorExperimentalAPI
 import io.vavr.control.Try
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import no.nav.common.sts.SystemUserTokenProvider
 import no.nav.common.utils.EnvironmentUtils
@@ -21,8 +22,11 @@ class PdlService(private val stsService: SystemUserTokenProvider) {
 
     fun hentIdent(fnr: String): Try<String> = Try.of {
         runBlocking {
-            HentIdent(graphQLClient)
-                .execute(HentIdent.Variables(fnr), userTokenHeaders)
+            val response = HentIdent(graphQLClient).execute(HentIdent.Variables(fnr), userTokenHeaders)
+            if (response.errors != null) {
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, response.errors.toString())
+            }
+            response
                 .data
                 ?.hentIdenter
                 ?.identer
