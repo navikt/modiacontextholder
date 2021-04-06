@@ -3,14 +3,16 @@ package no.nav.sbl.service
 import io.ktor.client.request.header
 import io.ktor.util.KtorExperimentalAPI
 import io.vavr.control.Try
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import no.nav.common.sts.SystemUserTokenProvider
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.consumers.pdl.HeadersBuilder
 import no.nav.sbl.consumers.pdl.PdlClient
 import no.nav.sbl.consumers.pdl.generated.HentIdent
+import org.springframework.http.HttpStatus
+import org.springframework.web.server.ResponseStatusException
 import java.net.URL
-import javax.ws.rs.NotFoundException
 
 val pdlApiUrl: URL = EnvironmentUtils.getRequiredProperty("PDL_API_URL").let(::URL)
 
@@ -20,14 +22,17 @@ class PdlService(private val stsService: SystemUserTokenProvider) {
 
     fun hentIdent(fnr: String): Try<String> = Try.of {
         runBlocking {
-            HentIdent(graphQLClient)
-                .execute(HentIdent.Variables(fnr), userTokenHeaders)
+            val response = HentIdent(graphQLClient).execute(HentIdent.Variables(fnr), userTokenHeaders)
+            if (response.errors != null) {
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, response.errors.toString())
+            }
+            response
                 .data
                 ?.hentIdenter
                 ?.identer
                 ?.first()
                 ?.ident
-                ?: throw NotFoundException("AktørId for $fnr ble ikke funnet")
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "AktørId for $fnr ble ikke funnet")
         }
     }
 
