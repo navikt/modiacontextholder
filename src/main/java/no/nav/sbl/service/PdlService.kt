@@ -22,7 +22,7 @@ class PdlService(private val stsService: SystemUserTokenProvider) {
 
     fun hentIdent(fnr: String): Try<String> = Try.of {
         runBlocking {
-            val response = HentIdent(graphQLClient).execute(HentIdent.Variables(fnr), userTokenHeaders)
+            val response = HentIdent(graphQLClient).execute(HentIdent.Variables(fnr), systemTokenHeaders)
             if (response.errors != null) {
                 throw ResponseStatusException(HttpStatus.BAD_REQUEST, response.errors.toString())
             }
@@ -36,12 +36,11 @@ class PdlService(private val stsService: SystemUserTokenProvider) {
         }
     }
 
-    private var userTokenHeaders: HeadersBuilder = {
+    private var systemTokenHeaders: HeadersBuilder = {
         val systemuserToken: String = stsService.systemUserToken
-        val userToken: String = AuthContextService.requireIdToken()
 
         header("Nav-Consumer-Token", "Bearer $systemuserToken")
-        header("Authorization", "Bearer $userToken")
+        header("Authorization", "Bearer $systemuserToken")
         header("Tema", "GEN")
     }
 }
