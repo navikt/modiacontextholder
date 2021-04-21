@@ -13,7 +13,7 @@ class Audit {
     }
 
     interface AuditDescriptor<T> {
-        fun log(resource: T)
+        fun log(resource: T?)
         fun denied(reason: String)
         fun failed(exception: Throwable)
 
@@ -24,9 +24,9 @@ class Audit {
         private val subject: Optional<String>,
         private val action: Action,
         private val resourceType: AuditResource,
-        private val extractIdentifiers: (T) -> List<Pair<AuditIdentifier, String?>>
+        private val extractIdentifiers: (T?) -> List<Pair<AuditIdentifier, String?>>
     ) : AuditDescriptor<T> {
-        override fun log(resource: T) {
+        override fun log(resource: T?) {
             val identifiers = extractIdentifiers(resource).toTypedArray()
             logInternal(subject, action, resourceType, identifiers)
         }
@@ -41,7 +41,7 @@ class Audit {
     }
 
     internal class NoopDescriptor<T> : AuditDescriptor<T> {
-        override fun log(resource: T) {}
+        override fun log(resource: T?) {}
         override fun denied(reason: String) {}
         override fun failed(exception: Throwable) {}
     }
@@ -52,7 +52,7 @@ class Audit {
         private val resourceType: AuditResource,
         private val identifiers: Array<out Pair<AuditIdentifier, String?>>
     ) : AuditDescriptor<Any> {
-        override fun log(resource: Any) {
+        override fun log(resource: Any?) {
             logInternal(subject, action, resourceType, identifiers)
         }
 
@@ -77,7 +77,7 @@ class Audit {
         }
 
         @JvmStatic
-        fun <T> describe(subject: Optional<String>, action: Action, resourceType: AuditResource, extractIdentifiers: (T) -> List<Pair<AuditIdentifier, String?>>): AuditDescriptor<T> {
+        fun <T> describe(subject: Optional<String>, action: Action, resourceType: AuditResource, extractIdentifiers: (T?) -> List<Pair<AuditIdentifier, String?>>): AuditDescriptor<T> {
             return ParameterizedDescriptor(subject, action, resourceType, extractIdentifiers)
         }
 
