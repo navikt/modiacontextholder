@@ -95,6 +95,8 @@ spec:
       value: "109c7064-47c9-4e34-b735-8cdc0d383cc1"
     - name: SYFO_FINNFASTLEGE_CLIENTID
       value: "916a8191-f241-4227-be1a-4b820657254f"
+    - name: SYFO_SYFOMODIAPERSON_CLIENTID
+      value: "a04bb3b5-8051-40bb-a5f0-f9f4a409b07a"
     - name: SYFO_SYFOMOTEOVERSIKT_CLIENTID
       value: "cd1456a1-b2cd-449d-8fc1-ffe55fe63b61"
     - name: SYFO_SYFOOVERSIKT_CLIENTID
