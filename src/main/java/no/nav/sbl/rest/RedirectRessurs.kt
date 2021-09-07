@@ -35,7 +35,7 @@ class RedirectRessurs @Autowired constructor(
         val aktivBruker: String = context?.aktivBruker ?: return aaRegisteretBaseUrl
         return try {
             val request = Request.Builder()
-                .url("$aaRegisteretBaseUrl/api/v2/redirect/arbeidstaker")
+                .url("$aaRegisteretBaseUrl/api/v2/redirect/sok/arbeidstaker")
                 .addHeader("Nav-Personident", aktivBruker)
                 .build()
             val response = client
