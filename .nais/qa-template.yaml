@@ -111,3 +111,5 @@ spec:
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
     - name: APP_ENVIRONMENT_NAME
       value: "{{ namespace }}"
+    - name: AAREG_URL
+      value: "https://arbeid-og-inntekt-{{ namespace }}.dev.adeo.no"
