@@ -114,4 +114,4 @@ spec:
     - name: APP_ENVIRONMENT_NAME
       value: "{{ namespace }}"
     - name: AAREG_URL
-      value: "https://arbeid-og-inntekt.dev.adeo.no"
+      value: "https://arbeid-og-inntekt-q1.dev.adeo.no"
