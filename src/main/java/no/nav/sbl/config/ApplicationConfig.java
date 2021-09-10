@@ -96,6 +96,7 @@ public class ApplicationConfig {
         registration.setFilter(new OidcAuthenticationFilter(authenticators));
         registration.setOrder(1);
         registration.addUrlPatterns("/api/*");
+        registration.addUrlPatterns("/redirect/*");
         return registration;
     }
 
