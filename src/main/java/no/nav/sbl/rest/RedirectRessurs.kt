@@ -43,11 +43,7 @@ class RedirectRessurs @Autowired constructor(
                 .newCall(request)
                 .execute()
 
-            requireNotNull(response.body())
-                .string()
-                .also {
-                    log.info("[AAREG] Byttet ut brukercontext for url: $it")
-                }
+            requireNotNull(response.body()).string()
         } catch (e: Throwable) {
             aaRegisteretBaseUrl.also {
                 log.error("[AAREG] Bytte av brukercontext til url feilet", e)
