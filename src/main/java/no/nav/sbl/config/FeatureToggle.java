@@ -15,7 +15,4 @@ public class FeatureToggle {
     public boolean isKafkaEnabled() {
         return unleashService.isEnabled("veilederflatehendelser.kafka");
     }
-    public boolean useNewAARegUrl() {
-        return unleashService.isEnabled("modiacontextholder.newAaregUrl");
-    }
 }

@@ -21,9 +21,9 @@ import java.net.URI
 @RequestMapping("/redirect")
 class RedirectRessurs @Autowired constructor(
     private val authContextUtils: AuthContextService,
-    private val contextService: ContextService,
-    private val featureToggle: FeatureToggle
+    private val contextService: ContextService
 ) {
+    private val aaRegisteretBaseUrl = EnvironmentUtils.getRequiredProperty("AAREG_URL")
     private val client: OkHttpClient = RestClient.baseClient()
     private val log = LoggerFactory.getLogger(RedirectRessurs::class.java)
 
@@ -32,14 +32,7 @@ class RedirectRessurs @Autowired constructor(
         return temporaryRedirect(aaRegisteretUrl(aktivContext()))
     }
 
-    private val aaRegisteretBaseUrl = EnvironmentUtils.getRequiredProperty("AAREG_URL")
-    private val aaRegisteretLegacyBaseUrl = EnvironmentUtils.getRequiredProperty("AAREG_LEGACY_URL")
     private fun aaRegisteretUrl(context: RSContext?): String {
-        if (!featureToggle.useNewAARegUrl()) {
-            val fnrQueryParam = context?.aktivBruker?.let { "ident=$it" } ?: ""
-            return aaRegisteretLegacyBaseUrl + fnrQueryParam
-        }
-
         val aktivBruker: String = context?.aktivBruker ?: return aaRegisteretBaseUrl
         return try {
             val request = Request.Builder()
@@ -50,11 +43,7 @@ class RedirectRessurs @Autowired constructor(
                 .newCall(request)
                 .execute()
 
-            requireNotNull(response.body())
-                .string()
-                .also {
-                    log.info("[AAREG] Byttet ut brukercontext for url: $it")
-                }
+            requireNotNull(response.body()).string()
         } catch (e: Throwable) {
             aaRegisteretBaseUrl.also {
                 log.error("[AAREG] Bytte av brukercontext til url feilet", e)
