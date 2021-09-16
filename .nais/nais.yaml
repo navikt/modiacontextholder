@@ -113,5 +113,3 @@ spec:
       value: "p"
     - name: AAREG_URL
       value: "https://arbeid-og-inntekt.nais.adeo.no"
-    - name: AAREG_LEGACY_URL
-      value: "https://modapp.adeo.no/aareg-web/?rolle=arbeidstaker&"
