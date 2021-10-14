@@ -50,8 +50,8 @@ public class ApplicationConfig {
     private static final String syfoSyfomoteoversiktClientId = EnvironmentUtils.getRequiredProperty("SYFO_SYFOMOTEOVERSIKT_CLIENTID");
     private static final String syfoSyfooversiktClientId = EnvironmentUtils.getRequiredProperty("SYFO_SYFOOVERSIKT_CLIENTID");
     private static final String syfoSmregClientId = EnvironmentUtils.getRequiredProperty("SYFO_SMREG_CLIENTID");
+    private static final String syfoSmregNewClientId = EnvironmentUtils.getRequiredProperty("SYFO_SMREG_NEW_CLIENTID");
     private static final String syfoSmmanuellClientId = EnvironmentUtils.getRequiredProperty("SYFO_SMMANUELL_CLIENTID");
-    private static final String syfoSmmanuellNextClientId = EnvironmentUtils.getRequiredProperty("SYFO_SMMANUELL_NEXT_CLIENTID");
     private static final String sosialhjelpModiaClientId = EnvironmentUtils.getRequiredProperty("SOSIALHJELP_MODIA_CLIENTID");
 
     @Bean
@@ -81,7 +81,7 @@ public class ApplicationConfig {
                 .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
-                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId, syfoSmregClientId, syfoSmmanuellClientId, sosialhjelpModiaClientId, veilarbloginAADClientId, syfoSmmanuellNextClientId))
+                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId, syfoSmregClientId, sosialhjelpModiaClientId, veilarbloginAADClientId, syfoSmmanuellClientId, syfoSmregNewClientId))
                 .withDiscoveryUrl(azureADV2DiscoveryUrl)
                 .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN);
