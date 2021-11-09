@@ -57,7 +57,7 @@ public class ContextRessurs {
 
     @DeleteMapping
     @Timed("nullstillContext")
-    public void nullstillBrukerContext(@RequestHeader("referer") String referer) {
+    public void nullstillBrukerContext(@RequestHeader(value = "referer", required = false) String referer) {
         Optional<String> ident = authContextUtils.getIdent();
         Pair<AuditIdentifier, String> url = new Pair<>(AuditIdentifier.REFERER, referer);
         withAudit(describe(ident, DELETE, AuditResources.NullstillKontekst, url), () -> {
@@ -69,13 +69,13 @@ public class ContextRessurs {
     @DeleteMapping("/nullstill")
     @Deprecated
     //migrer over til den som ligger på "/" da dette er mest riktig REST-semantisk.
-    public void deprecatedNullstillContext(@RequestHeader("referer") String referer) {
+    public void deprecatedNullstillContext(@RequestHeader(value = "referer", required = false) String referer) {
         nullstillBrukerContext(referer);
     }
 
     @DeleteMapping("/aktivbruker")
     @Timed("nullstillAktivBrukerContext")
-    public void nullstillAktivBrukerContext(@RequestHeader("referer") String referer) {
+    public void nullstillAktivBrukerContext(@RequestHeader(value = "referer", required = false) String referer) {
         Optional<String> ident = authContextUtils.getIdent();
         Pair<AuditIdentifier, String> url = new Pair<>(AuditIdentifier.REFERER, referer);
         withAudit(describe(ident, DELETE, AuditResources.NullstillBrukerIKontekst, url), () -> {
@@ -86,7 +86,7 @@ public class ContextRessurs {
 
     @PostMapping
     @Timed("oppdaterVeiledersContext")
-    public void oppdaterVeiledersContext(@RequestHeader("referer") String referer, @RequestBody RSNyContext rsNyContext) {
+    public void oppdaterVeiledersContext(@RequestHeader(value = "referer", required = false) String referer, @RequestBody RSNyContext rsNyContext) {
         Optional<String> ident = authContextUtils.getIdent();
         RSNyContext context = new RSNyContext()
                 .verdi(rsNyContext.verdi)
