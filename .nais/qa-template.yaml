@@ -111,6 +111,8 @@ spec:
       value: "9f5e5e25-248b-4931-9645-433b845b1a83"
     - name: SOSIALHJELP_MODIA_CLIENTID
       value: "6f661f36-1adb-42c3-9e10-294a10007880"
+    - name: SPINNSYN_FRONTEND_INTERNE_CLIENTID
+      value: "300fd59d-c575-473a-bd6a-9b0fd51b28ad"
     - name: KAFKA_BROKERS_URL
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
     - name: APP_ENVIRONMENT_NAME
