@@ -79,6 +79,10 @@ public class ContextService {
                 log.info("KAFKA SEND OK: topic={} offset={} veileder={} partisjon={}", metadata.topic(), metadata.offset(), veilederIdent, metadata.partition());
             }
         });
+        if (featureToggle.isRedisEnabled()) {
+            Redis.Message message = Redis.createMessage(topic, veilederIdent, eventJson);
+            redis.publishMessage(message);
+        }
     }
 
     public RSContext hentAktivBruker(String veilederIdent) {
