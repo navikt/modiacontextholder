@@ -32,10 +32,10 @@ public class ContextService {
     private final FeatureToggle featureToggle;
 
     @Autowired
-    public ContextService(EventDAO eventDAO, KafkaProducer<String, String> kafka, FeatureToggle featureToggle) {
+    public ContextService(EventDAO eventDAO, KafkaProducer<String, String> kafka, FeatureToggle featureToggle, Redis.Publisher redis) {
         this.eventDAO = eventDAO;
         this.kafka = kafka;
-        this.redis = Redis.createPublisher();
+        this.redis = redis;
         this.featureToggle = featureToggle;
     }
 
@@ -63,6 +63,10 @@ public class ContextService {
         if (featureToggle.isKafkaEnabled()) {
             sendToKafka(nyContext, veilederIdent, event.id(id));
         }
+
+        if (featureToggle.isRedisEnabled()) {
+            redis.publishMessage("ContextOppdatering", JsonUtils.toJson(toRSEvent(event)));
+        }
     }
 
     private long saveToDb(PEvent event) {
@@ -79,10 +83,6 @@ public class ContextService {
                 log.info("KAFKA SEND OK: topic={} offset={} veileder={} partisjon={}", metadata.topic(), metadata.offset(), veilederIdent, metadata.partition());
             }
         });
-        if (featureToggle.isRedisEnabled()) {
-            Redis.Message message = Redis.createMessage(topic, veilederIdent, eventJson);
-            redis.publishMessage(message);
-        }
     }
 
     public RSContext hentAktivBruker(String veilederIdent) {
