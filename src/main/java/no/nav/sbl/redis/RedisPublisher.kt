@@ -1,48 +1,36 @@
 package no.nav.sbl.redis
 
-import no.nav.common.utils.EnvironmentUtils
-import no.nav.sbl.config.ApplicationConfig
-import redis.clients.jedis.DefaultJedisClientConfig
+import no.nav.common.health.HealthCheck
+import no.nav.common.health.HealthCheckResult
+import no.nav.common.health.selftest.SelfTestCheck
+import no.nav.sbl.config.Pingable
 import redis.clients.jedis.HostAndPort
 import redis.clients.jedis.Jedis
 
-
 object Redis {
-    data class Message(val message: String, val channel: String)
     
-    class Publisher(host: String, port: Int)  {
+    class Publisher(private val hostAndPort: HostAndPort) : HealthCheck, Pingable   {
+        private val jedis = Jedis(hostAndPort)
         
-        val jedis = Jedis(HostAndPort(host, port), setupConfig(true))
-        
-        fun publishMessage(redisMessage: Message) {
-            jedis.publish(redisMessage.channel, redisMessage.message)
+        fun publishMessage(channel: String, message: String) {
+            jedis.publish(channel, message)
         }
-        
+    
+        override fun checkHealth(): HealthCheckResult {
+            return try {
+                jedis.ping()
+                HealthCheckResult.healthy()
+            } catch (e: Exception) {
+                HealthCheckResult.unhealthy(e)
+            }
+        }
+    
+        override fun ping(): SelfTestCheck {
+            return SelfTestCheck(
+                "Redis - via ${hostAndPort.host}",
+                false,
+                this
+            )
+        }
     }
-    
-    @JvmStatic
-    fun setupConfig(isUsingSaslSsl: Boolean): DefaultJedisClientConfig {
-        val configBuilder = DefaultJedisClientConfig.builder()
-        val username = EnvironmentUtils.getRequiredProperty(ApplicationConfig.SRV_USERNAME_PROPERTY)
-        val password = EnvironmentUtils.getRequiredProperty(ApplicationConfig.SRV_PASSWORD_PROPERTY)
-        configBuilder
-            .user(username)
-            .password(password)
-            .ssl(isUsingSaslSsl)
-        return configBuilder.build()
-    }
-    
-    // TODO: Håndtere verdier for host og port
-    @JvmStatic
-    fun createPublisher() = Publisher("localhost", 6379)
-    
-    @JvmStatic
-    fun createMessage(topic: String, veilederIdent: String, eventJson: String): Message {
-        // TODO("Lag correct mapping til en melding")
-        return Message(
-            message = eventJson,
-            channel = topic
-        )
-    }
-    
 }
