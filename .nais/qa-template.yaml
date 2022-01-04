@@ -119,3 +119,5 @@ spec:
       value: "{{ namespace }}"
     - name: AAREG_URL
       value: "https://arbeid-og-inntekt-q1.dev.adeo.no"
+    - name: REDIS_HOST
+      value: "modiacontextholder-redis-personoversikt.personoversikt.svc.nais.local"
