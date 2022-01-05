@@ -3,6 +3,7 @@ package no.nav.sbl.service;
 import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
+import no.nav.sbl.redis.Redis;
 import no.nav.sbl.rest.domain.RSContext;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.Before;
@@ -32,7 +33,8 @@ public class ContextServiceTest {
         eventDAO = mock(EventDAO.class);
         FeatureToggle featureToggle = mock(FeatureToggle.class);
         KafkaProducer kafka = (KafkaProducer<String, String>) mock(KafkaProducer.class);
-        contextService = new ContextService(eventDAO, kafka, featureToggle);
+        Redis.Publisher redis = mock(Redis.Publisher.class);
+        contextService = new ContextService(eventDAO, kafka, featureToggle, redis);
     }
 
     @Test
