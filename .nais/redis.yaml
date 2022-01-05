@@ -1,6 +1,6 @@
 ---
 apiVersion: "nais.io/v1alpha1"
-kind: Redis
+kind: Application
 metadata:
   labels:
     team: personoversikt
