@@ -65,7 +65,7 @@ public class ContextService {
         }
 
         if (featureToggle.isRedisEnabled()) {
-            redis.publishMessage("ContextOppdatering", JsonUtils.toJson(toRSEvent(event)));
+            redis.publishMessage(Redis.getChannel(), JsonUtils.toJson(toRSEvent(event)));
         }
     }
 

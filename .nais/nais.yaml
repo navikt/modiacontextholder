@@ -118,4 +118,4 @@ spec:
     - name: AAREG_URL
       value: "https://arbeid-og-inntekt.nais.adeo.no"
     - name: REDIS_HOST
-      value: "modiacontextholder-redis-personoversikt.personoversikt.svc.nais.local"
+      value: "modiacontextholder-redis.personoversikt.svc.nais.local"

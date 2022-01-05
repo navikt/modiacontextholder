@@ -7,10 +7,10 @@ metadata:
   annotations:
     nais.io/read-only-file-system: "false"
     nais.io/run-as-user: "999"
-  name: modiacontextholder-redis-personoversikt
+  name: modiacontextholder-redis
   namespace: personoversikt
 spec:
-  image: redis:<redis:6-alpine> # or a custom Redis-image
+  image: redis:6.2.6-alpine # or a custom Redis-image
   port: 6379
   replicas: # A single Redis-app doesn't scale
     min: 1
