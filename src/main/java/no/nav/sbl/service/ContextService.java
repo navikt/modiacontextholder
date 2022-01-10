@@ -60,13 +60,12 @@ public class ContextService {
 
         long id = saveToDb(event);
 
-        if (featureToggle.isKafkaEnabled()) {
+        if (featureToggle.isRedisEnabled()) {
+            redis.publishMessage(Redis.getChannel(), JsonUtils.toJson(toRSEvent(event)));
+        } else if (featureToggle.isKafkaEnabled()) {
             sendToKafka(nyContext, veilederIdent, event.id(id));
         }
 
-        if (featureToggle.isRedisEnabled()) {
-            redis.publishMessage(Redis.getChannel(), JsonUtils.toJson(toRSEvent(event)));
-        }
     }
 
     private long saveToDb(PEvent event) {
