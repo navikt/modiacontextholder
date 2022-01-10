@@ -59,11 +59,12 @@ public class ContextService {
                 .veilederIdent(veilederIdent);
 
         long id = saveToDb(event);
+        event = event.id(id);
 
         if (featureToggle.isRedisEnabled()) {
             redis.publishMessage(Redis.getChannel(), JsonUtils.toJson(toRSEvent(event)));
         } else if (featureToggle.isKafkaEnabled()) {
-            sendToKafka(nyContext, veilederIdent, event.id(id));
+            sendToKafka(nyContext, veilederIdent, event);
         }
 
     }
