@@ -8,6 +8,8 @@ import no.nav.common.sts.SystemUserTokenProvider;
 import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.db.dao.EventDAO;
+import no.nav.sbl.redis.Redis;
+import no.nav.sbl.redis.RedisConfig;
 import no.nav.sbl.service.PdlService;
 import no.nav.sbl.service.*;
 import no.nav.sbl.kafka.KafkaConfig;
@@ -23,14 +25,15 @@ import static no.nav.common.utils.EnvironmentUtils.getRequiredProperty;
         KafkaConfig.class,
         FeatureToggleConfig.class,
         AxsysConfig.class,
-        Norg2Config.class
+        Norg2Config.class,
+        RedisConfig.class
 })
 public class ServiceContext {
     public static final String SECURITY_TOKEN_SERVICE_DISCOVERYURL = getRequiredProperty("SECURITY_TOKEN_SERVICE_DISCOVERY_URL");
 
     @Bean
-    public ContextService contextService(EventDAO eventDAO, KafkaProducer<String, String> kafka, FeatureToggle featureToggle) {
-        return new ContextService(eventDAO, kafka, featureToggle);
+    public ContextService contextService(EventDAO eventDAO, KafkaProducer<String, String> kafka, FeatureToggle featureToggle, Redis.Publisher redis) {
+        return new ContextService(eventDAO, kafka, featureToggle, redis);
     }
 
     @Bean

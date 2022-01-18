@@ -2,12 +2,12 @@ package no.nav.sbl.service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.common.json.JsonUtils;
-import no.nav.common.utils.StringUtils;
 import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
 import no.nav.sbl.kafka.KafkaUtil;
 import no.nav.sbl.mappers.EventMapper;
+import no.nav.sbl.redis.Redis;
 import no.nav.sbl.rest.domain.RSContext;
 import no.nav.sbl.rest.domain.RSNyContext;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -27,12 +27,15 @@ public class ContextService {
 
     private final KafkaProducer<String, String> kafka;
 
+    private final Redis.Publisher redis;
+
     private final FeatureToggle featureToggle;
 
     @Autowired
-    public ContextService(EventDAO eventDAO, KafkaProducer<String, String> kafka, FeatureToggle featureToggle) {
+    public ContextService(EventDAO eventDAO, KafkaProducer<String, String> kafka, FeatureToggle featureToggle, Redis.Publisher redis) {
         this.eventDAO = eventDAO;
         this.kafka = kafka;
+        this.redis = redis;
         this.featureToggle = featureToggle;
     }
 
@@ -56,10 +59,14 @@ public class ContextService {
                 .veilederIdent(veilederIdent);
 
         long id = saveToDb(event);
+        event = event.id(id);
 
-        if (featureToggle.isKafkaEnabled()) {
-            sendToKafka(nyContext, veilederIdent, event.id(id));
+        if (featureToggle.isRedisEnabled()) {
+            redis.publishMessage(Redis.getChannel(), JsonUtils.toJson(toRSEvent(event)));
+        } else if (featureToggle.isKafkaEnabled()) {
+            sendToKafka(nyContext, veilederIdent, event);
         }
+
     }
 
     private long saveToDb(PEvent event) {
