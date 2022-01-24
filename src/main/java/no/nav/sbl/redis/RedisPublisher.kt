@@ -5,9 +5,10 @@ import no.nav.common.health.HealthCheckResult
 import no.nav.common.health.selftest.SelfTestCheck
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.config.Pingable
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import org.slf4j.LoggerFactory
-import redis.clients.jedis.HostAndPort
-import redis.clients.jedis.Jedis
+import redis.clients.jedis.*
+import redis.clients.jedis.util.Pool
 
 object Redis {
     private val environment = EnvironmentUtils.getRequiredProperty("APP_ENVIRONMENT_NAME")
@@ -17,10 +18,17 @@ object Redis {
     
     class Publisher(private val hostAndPort: HostAndPort) : HealthCheck, Pingable {
         private val logger = LoggerFactory.getLogger(Publisher::class.java)
-        private val jedis = Jedis(hostAndPort)
-        
+        private val poolConfig = GenericObjectPoolConfig<Jedis>().apply {
+            minIdle = 1
+            maxIdle = 4
+            maxWaitMillis = 1000
+        }
+        private val jedisPool = JedisPool(poolConfig, hostAndPort, DefaultJedisClientConfig.builder().build())
+
         fun publishMessage(channel: String, message: String) {
-            jedis.publish(channel, message)
+            jedisPool.withResource {
+                publish(channel, message)
+            }
             logger.info(
                 """
                 Redismelding sendt på kanal '$channel' med melding:
@@ -31,7 +39,9 @@ object Redis {
     
         override fun checkHealth(): HealthCheckResult {
             return try {
-                jedis.ping()
+                jedisPool.withResource {
+                    ping()
+                }
                 HealthCheckResult.healthy()
             } catch (e: Exception) {
                 HealthCheckResult.unhealthy(e)
@@ -45,5 +55,15 @@ object Redis {
                 this
             )
         }
+    }
+}
+private fun <RESOURCE> Pool<RESOURCE>.withResource(block: RESOURCE.() -> Unit) {
+    val resource: RESOURCE = this.resource
+    runCatching {
+        block(resource)
+    }.onSuccess {
+        returnResource(resource)
+    }.onFailure {
+        returnBrokenResource(resource)
     }
 }
