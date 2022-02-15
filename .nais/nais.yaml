@@ -111,6 +111,8 @@ spec:
       value: "6f661f36-1adb-42c3-9e10-294a10007880"
     - name: SPINNSYN_FRONTEND_INTERNE_CLIENTID
       value: "d9f767f1-89a0-413a-9c18-368eb3f752e9"
+    - name: REKRUTTERINGSBISTAND_CONTAINER_CLIENTID
+      value: "5d9d72d6-c027-4f70-b240-8682c7237220"
     - name: KAFKA_BROKERS_URL
       value: "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443"
     - name: APP_ENVIRONMENT_NAME

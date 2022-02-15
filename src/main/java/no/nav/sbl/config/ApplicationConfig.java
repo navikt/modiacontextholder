@@ -54,6 +54,7 @@ public class ApplicationConfig {
     private static final String syfoSmmanuellClientId = EnvironmentUtils.getRequiredProperty("SYFO_SMMANUELL_CLIENTID");
     private static final String sosialhjelpModiaClientId = EnvironmentUtils.getRequiredProperty("SOSIALHJELP_MODIA_CLIENTID");
     private static final String spinnsynFrontendInterneClientId = EnvironmentUtils.getRequiredProperty("SPINNSYN_FRONTEND_INTERNE_CLIENTID");
+    private static final String rekrutteringsbistandContainerClientId = EnvironmentUtils.getRequiredProperty("REKRUTTERINGSBISTAND_CONTAINER_CLIENTID");
 
     @Bean
     public FilterRegistrationBean authenticationFilterRegistration() {
@@ -82,7 +83,7 @@ public class ApplicationConfig {
                 .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
-                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId, syfoSmregClientId, sosialhjelpModiaClientId, veilarbloginAADClientId, syfoSmmanuellClientId, syfoSmregNewClientId, spinnsynFrontendInterneClientId))
+                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId, syfoSmregClientId, sosialhjelpModiaClientId, veilarbloginAADClientId, syfoSmmanuellClientId, syfoSmregNewClientId, spinnsynFrontendInterneClientId, rekrutteringsbistandContainerClientId))
                 .withDiscoveryUrl(azureADV2DiscoveryUrl)
                 .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN);
