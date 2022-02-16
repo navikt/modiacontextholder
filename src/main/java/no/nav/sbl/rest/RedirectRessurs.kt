@@ -2,7 +2,6 @@ package no.nav.sbl.rest
 
 import no.nav.common.rest.client.RestClient
 import no.nav.common.utils.EnvironmentUtils
-import no.nav.sbl.config.FeatureToggle
 import no.nav.sbl.rest.domain.RSContext
 import no.nav.sbl.service.AuthContextService
 import no.nav.sbl.service.ContextService

@@ -12,8 +12,6 @@ import no.nav.sbl.redis.Redis;
 import no.nav.sbl.redis.RedisConfig;
 import no.nav.sbl.service.PdlService;
 import no.nav.sbl.service.*;
-import no.nav.sbl.kafka.KafkaConfig;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -22,7 +20,6 @@ import static no.nav.common.utils.EnvironmentUtils.getRequiredProperty;
 
 @Configuration
 @Import({
-        KafkaConfig.class,
         FeatureToggleConfig.class,
         AxsysConfig.class,
         Norg2Config.class,
@@ -32,8 +29,8 @@ public class ServiceContext {
     public static final String SECURITY_TOKEN_SERVICE_DISCOVERYURL = getRequiredProperty("SECURITY_TOKEN_SERVICE_DISCOVERY_URL");
 
     @Bean
-    public ContextService contextService(EventDAO eventDAO, KafkaProducer<String, String> kafka, FeatureToggle featureToggle, Redis.Publisher redis) {
-        return new ContextService(eventDAO, kafka, featureToggle, redis);
+    public ContextService contextService(EventDAO eventDAO, Redis.Publisher redis) {
+        return new ContextService(eventDAO, redis);
     }
 
     @Bean
