@@ -113,6 +113,8 @@ spec:
       value: "6f661f36-1adb-42c3-9e10-294a10007880"
     - name: SPINNSYN_FRONTEND_INTERNE_CLIENTID
       value: "300fd59d-c575-473a-bd6a-9b0fd51b28ad"
+    - name: REKRUTTERINGSBISTAND_CONTAINER_CLIENTID
+      value: "c0ca4b47-7115-43cb-8d5d-6ebb78513bff"
     - name: KAFKA_BROKERS_URL
       value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
     - name: APP_ENVIRONMENT_NAME
