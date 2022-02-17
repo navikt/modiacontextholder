@@ -17,7 +17,6 @@
 
     <properties>
         <java.version>11</java.version>
-        <kafka.version>2.0.0</kafka.version>
         <common.version>2.2020.09.10_12.21-5ce9f2fa2fca</common.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <kotlin.version>1.3.72</kotlin.version>
@@ -74,26 +73,6 @@
 
 
     <dependencies>
-        <!-- kafka -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>${kafka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
-            <version>${kafka.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
-            <version>${kafka.version}</version>
-            <classifier>test</classifier>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

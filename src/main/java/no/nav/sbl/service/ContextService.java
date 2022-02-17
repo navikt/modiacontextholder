@@ -2,16 +2,12 @@ package no.nav.sbl.service;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.common.json.JsonUtils;
-import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
-import no.nav.sbl.kafka.KafkaUtil;
 import no.nav.sbl.mappers.EventMapper;
 import no.nav.sbl.redis.Redis;
 import no.nav.sbl.rest.domain.RSContext;
 import no.nav.sbl.rest.domain.RSNyContext;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -25,18 +21,12 @@ public class ContextService {
 
     private final EventDAO eventDAO;
 
-    private final KafkaProducer<String, String> kafka;
-
     private final Redis.Publisher redis;
 
-    private final FeatureToggle featureToggle;
-
     @Autowired
-    public ContextService(EventDAO eventDAO, KafkaProducer<String, String> kafka, FeatureToggle featureToggle, Redis.Publisher redis) {
+    public ContextService(EventDAO eventDAO, Redis.Publisher redis) {
         this.eventDAO = eventDAO;
-        this.kafka = kafka;
         this.redis = redis;
-        this.featureToggle = featureToggle;
     }
 
     public RSContext hentVeiledersContext(String veilederIdent) {
@@ -61,28 +51,11 @@ public class ContextService {
         long id = saveToDb(event);
         event = event.id(id);
 
-        if (featureToggle.isRedisEnabled()) {
-            redis.publishMessage(Redis.getChannel(), JsonUtils.toJson(toRSEvent(event)));
-        } else if (featureToggle.isKafkaEnabled()) {
-            sendToKafka(nyContext, veilederIdent, event);
-        }
-
+        redis.publishMessage(Redis.getChannel(), JsonUtils.toJson(toRSEvent(event)));
     }
 
     private long saveToDb(PEvent event) {
         return eventDAO.save(event);
-    }
-
-    private void sendToKafka(RSNyContext nyContext, String veilederIdent, PEvent event) {
-        String topic = KafkaUtil.asTopic(nyContext);
-        String eventJson = JsonUtils.toJson(toRSEvent(event));
-        kafka.send(new ProducerRecord<>(topic, veilederIdent, eventJson),(metadata, e) -> {
-            if (e != null) {
-                log.warn("KAFKA SEND FAILED: topic={} offset={} veileder={} message={}", topic, metadata.offset(), veilederIdent, e.getMessage());
-            } else {
-                log.info("KAFKA SEND OK: topic={} offset={} veileder={} partisjon={}", metadata.topic(), metadata.offset(), veilederIdent, metadata.partition());
-            }
-        });
     }
 
     public RSContext hentAktivBruker(String veilederIdent) {

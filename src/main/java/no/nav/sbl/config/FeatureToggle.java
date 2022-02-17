@@ -12,11 +12,4 @@ public class FeatureToggle {
         this.unleashService = unleashService;
     }
 
-    public boolean isKafkaEnabled() {
-        return unleashService.isEnabled("veilederflatehendelser.kafka");
-    }
-
-    public boolean isRedisEnabled() {
-        return unleashService.isEnabled("veilederflatehendelser.redis");
-    }
 }
