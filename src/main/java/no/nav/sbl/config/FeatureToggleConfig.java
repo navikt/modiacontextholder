@@ -20,9 +20,4 @@ public class FeatureToggleConfig {
 
         return new UnleashService(config);
     }
-
-    @Bean
-    public FeatureToggle feature() {
-        return new FeatureToggle(unleashService());
-    }
 }

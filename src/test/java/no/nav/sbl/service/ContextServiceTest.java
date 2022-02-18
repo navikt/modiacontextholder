@@ -1,11 +1,9 @@
 package no.nav.sbl.service;
 
-import no.nav.sbl.config.FeatureToggle;
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
 import no.nav.sbl.redis.Redis;
 import no.nav.sbl.rest.domain.RSContext;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,10 +29,8 @@ public class ContextServiceTest {
     @SuppressWarnings("unchecked")
     public void setup(){
         eventDAO = mock(EventDAO.class);
-        FeatureToggle featureToggle = mock(FeatureToggle.class);
-        KafkaProducer kafka = (KafkaProducer<String, String>) mock(KafkaProducer.class);
         Redis.Publisher redis = mock(Redis.Publisher.class);
-        contextService = new ContextService(eventDAO, kafka, featureToggle, redis);
+        contextService = new ContextService(eventDAO, redis);
     }
 
     @Test
