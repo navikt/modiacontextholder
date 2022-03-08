@@ -4,24 +4,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Configuration
-@Slf4j
+import java.util.List;
+
 public class CorsConfig {
-    @Bean
-    public WebMvcConfigurer webMvcConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                        .allowCredentials(true)
-                        .allowedHeaders("Accept", "Accept-language", "Content-Language", "Content-Type")
-                        .allowedOrigins(CorsConfiguration.ALL)
-                        .maxAge(3600)
-                        .allowedMethods("GET", "HEAD", "PUT", "POST", "PATCH", "DELETE", "OPTIONS");
-            }
-        };
+    public static CorsConfigurationSource allowAllCorsConfig() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(List.of("Accept", "Accept-language", "Content-Language", "Content-Type"));
+        configuration.setAllowedOrigins(List.of(CorsConfiguration.ALL));
+        configuration.setMaxAge(3600L);
+        configuration.setAllowedMethods(List.of("GET", "HEAD", "PUT", "POST", "PATCH", "DELETE", "OPTIONS"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
