@@ -12,10 +12,15 @@ import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.rest.CleanupServlet;
 import no.nav.sbl.service.AuthContextService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.*;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
@@ -55,6 +60,19 @@ public class ApplicationConfig {
     private static final String sosialhjelpModiaClientId = EnvironmentUtils.getRequiredProperty("SOSIALHJELP_MODIA_CLIENTID");
     private static final String spinnsynFrontendInterneClientId = EnvironmentUtils.getRequiredProperty("SPINNSYN_FRONTEND_INTERNE_CLIENTID");
     private static final String rekrutteringsbistandContainerClientId = EnvironmentUtils.getRequiredProperty("REKRUTTERINGSBISTAND_CONTAINER_CLIENTID");
+
+    @Bean
+    public FilterRegistrationBean corsFilterRegistration() {
+        CorsFilter corsFilter = new CorsFilter(CorsConfig.allowAllCorsConfig());
+
+        FilterRegistrationBean<CorsFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(corsFilter);
+        registration.setOrder(0);
+        registration.addUrlPatterns("/api/*");
+        registration.addUrlPatterns("/redirect/*");
+
+        return registration;
+    }
 
     @Bean
     public FilterRegistrationBean authenticationFilterRegistration() {

@@ -10,7 +10,6 @@ env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/modiacontextholder:${{ github.sha }}
   CI: true
   TZ: Europe/Oslo
-  Q1_TEST_BRANCH: 'refs/heads/fix/cors-security'
 
 jobs:
   build:
@@ -34,7 +33,7 @@ jobs:
 
   build-and-push:
     name: Build and push Docker container
-    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master' || github.ref == ${{ env.Q1_TEST_BRANCH }}
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master'
     env:
       TZ: Europe/Oslo
     runs-on: ubuntu-latest
@@ -56,15 +55,6 @@ jobs:
           docker build --tag ${IMAGE} .
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${IMAGE}
-      - name: Deploy test branch to Q1
-        uses: nais/deploy/actions/deploy@v1
-        if: github.ref == env.Q1_TEST_BRANCH
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          PRINT_PAYLOAD: true
-          CLUSTER: dev-fss
-          RESOURCE: .nais/qa-template.yaml
-          VAR: namespace=q1
 
   deploy-qa:
     name: Deploy to preprod
