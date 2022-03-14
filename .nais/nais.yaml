@@ -3,7 +3,7 @@ kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
   name: modiacontextholder
-  namespace: default
+  namespace: personoversikt
   labels:
     team: personoversikt
 spec:
