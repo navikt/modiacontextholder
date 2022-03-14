@@ -113,6 +113,8 @@ spec:
       value: "d9f767f1-89a0-413a-9c18-368eb3f752e9"
     - name: REKRUTTERINGSBISTAND_CONTAINER_CLIENTID
       value: "539183b6-56d3-4a65-9e01-75c980b2cd58"
+    - name: ARBEIDSSOKERREGISTRERING_VEILEDER_CLIENTID
+      value: "e875bd94-d6a1-43e8-9f4f-aca9faa23992"
     - name: APP_ENVIRONMENT_NAME
       value: "p"
     - name: AAREG_URL
