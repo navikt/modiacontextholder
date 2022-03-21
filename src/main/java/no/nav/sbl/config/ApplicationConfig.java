@@ -12,14 +12,10 @@ import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.rest.CleanupServlet;
 import no.nav.sbl.service.AuthContextService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.*;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
@@ -60,7 +56,12 @@ public class ApplicationConfig {
     private static final String sosialhjelpModiaClientId = EnvironmentUtils.getRequiredProperty("SOSIALHJELP_MODIA_CLIENTID");
     private static final String spinnsynFrontendInterneClientId = EnvironmentUtils.getRequiredProperty("SPINNSYN_FRONTEND_INTERNE_CLIENTID");
     private static final String rekrutteringsbistandContainerClientId = EnvironmentUtils.getRequiredProperty("REKRUTTERINGSBISTAND_CONTAINER_CLIENTID");
-    private static final String arbeidssokerregistreringVeilederClientId = EnvironmentUtils.getRequiredProperty("ARBEIDSSOKERREGISTRERING_VEILEDER_CLIENTID");
+
+    /**
+     * Azure verdiene er automatisk injected til poden siden vi har lagt til azure-konfig i nais-yaml
+     */
+    private static final String azureOBODiscoveryUrl = EnvironmentUtils.getRequiredProperty("AZURE_APP_WELL_KNOWN_URL");
+    private static final String azureOBOClientId = EnvironmentUtils.getRequiredProperty("AZURE_APP_CLIENT_ID");
 
     @Bean
     public FilterRegistrationBean corsFilterRegistration() {
@@ -102,9 +103,14 @@ public class ApplicationConfig {
                 .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
-                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId, syfoSmregClientId, sosialhjelpModiaClientId, veilarbloginAADClientId, syfoSmmanuellClientId, syfoSmregNewClientId, spinnsynFrontendInterneClientId, rekrutteringsbistandContainerClientId, arbeidssokerregistreringVeilederClientId))
+                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId, syfoSmregClientId, sosialhjelpModiaClientId, veilarbloginAADClientId, syfoSmmanuellClientId, syfoSmregNewClientId, spinnsynFrontendInterneClientId, rekrutteringsbistandContainerClientId))
                 .withDiscoveryUrl(azureADV2DiscoveryUrl)
                 .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
+                .withUserRole(UserRole.INTERN);
+
+        OidcAuthenticatorConfig azureAdOBO = new OidcAuthenticatorConfig()
+                .withClientId(azureOBOClientId)
+                .withDiscoveryUrl(azureOBODiscoveryUrl)
                 .withUserRole(UserRole.INTERN);
 
         FilterRegistrationBean<OidcAuthenticationFilter> registration = new FilterRegistrationBean<>();
@@ -113,7 +119,8 @@ public class ApplicationConfig {
                 openAmModia,
                 openAmFpsak,
                 azureAd,
-                azureAdV2
+                azureAdV2,
+                azureAdOBO
         );
         registration.setFilter(new OidcAuthenticationFilter(authenticators));
         registration.setOrder(1);
