@@ -2,8 +2,8 @@
 kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
-  name: modiacontextholder
-  namespace: {{ namespace }}
+  name: modiacontextholder-{{ namespace }}
+  namespace: personoversikt
   labels:
     team: personoversikt
 spec:
@@ -55,6 +55,19 @@ spec:
         mountPath: /var/run/secrets/nais.io/db_config
       - kvPath: /apikey/appdynamics/dev
         mountPath: /var/run/secrets/nais.io/vault
+  azure:
+    application:
+      enabled: true
+      tenant: trygdeetaten.no
+      claims:
+        extra:
+          - "NAVident"
+  accessPolicy:
+    inbound:
+      rules:
+        - application: arbeidssokerregistrering-veileder
+          namespace: paw
+          cluster: dev-gcp
   secureLogs:
     enabled: true
   env:
@@ -116,8 +129,6 @@ spec:
       value: "300fd59d-c575-473a-bd6a-9b0fd51b28ad"
     - name: REKRUTTERINGSBISTAND_CONTAINER_CLIENTID
       value: "19069abf-30aa-4a8d-90fd-caaacdc45166"
-    - name: ARBEIDSSOKERREGISTRERING_VEILEDER_CLIENTID
-      value: "e875bd94-d6a1-43e8-9f4f-aca9faa23992"
     - name: APP_ENVIRONMENT_NAME
       value: "{{ namespace }}"
     - name: AAREG_URL
