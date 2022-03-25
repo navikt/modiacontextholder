@@ -108,7 +108,7 @@ spec:
     - name: LOGINSERVICE_OIDC_CLIENTID
       value: "38e07d31-659d-4595-939a-f18dce3446c5"
     - name: VEILARBLOGIN_AAD_CLIENT_ID
-      value: "2edd96a2-fb5a-4dfa-8f36-848ae306f9b1"
+      value: "65a379be-d708-4e63-b6a0-df52efdf695f"
     - name: SYFO_FINNFASTLEGE_CLIENTID
       value: "decdb625-ddde-4c4a-9586-f20862b9e1fe"
     - name: SYFO_SYFOMODIAPERSON_CLIENTID
