@@ -12,6 +12,7 @@ import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.rest.CleanupServlet;
 import no.nav.sbl.service.AuthContextService;
+import no.nav.sbl.util.AccesstokenServletFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.*;
@@ -130,10 +131,20 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public FilterRegistrationBean accesstokenFilterRegistrationBean() {
+        FilterRegistrationBean<AccesstokenServletFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new AccesstokenServletFilter());
+        registration.setOrder(2);
+        registration.addUrlPatterns("/api/*");
+        registration.addUrlPatterns("/redirect/*");
+        return registration;
+    }
+
+    @Bean
     public FilterRegistrationBean logFilterRegistrationBean() {
         FilterRegistrationBean<LogFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new LogFilter("modiacontextholder", isDevelopment().orElse(false)));
-        registration.setOrder(2);
+        registration.setOrder(3);
         registration.addUrlPatterns("/*");
         return registration;
     }
@@ -142,7 +153,7 @@ public class ApplicationConfig {
     public FilterRegistrationBean setStandardHeadersFilterRegistrationBean() {
         FilterRegistrationBean<SetStandardHttpHeadersFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new SetStandardHttpHeadersFilter());
-        registration.setOrder(3);
+        registration.setOrder(4);
         registration.addUrlPatterns("/*");
         return registration;
     }
