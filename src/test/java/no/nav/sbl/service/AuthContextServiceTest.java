@@ -3,9 +3,9 @@ package no.nav.sbl.service;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import no.nav.common.auth.context.AuthContext;
-import no.nav.common.auth.context.AuthContextHolder;
 import no.nav.common.auth.context.UserRole;
 import no.nav.common.client.msgraph.MsGraphClient;
+import no.nav.sbl.util.AuthContextUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -31,11 +31,6 @@ public class AuthContextServiceTest {
             UserRole.INTERN,
             new PlainJWT(new JWTClaimsSet.Builder().claim(AAD_NAV_IDENT_CLAIM, AAD_V1_IDENT).build())
     );
-    private static final AuthContext AAD_V2_AUTH_CONTEXT = new AuthContext(
-            UserRole.INTERN,
-            new PlainJWT(new JWTClaimsSet.Builder().build()),
-            AAD_ACCESS_TOKEN
-    );
 
     @Mock
     MsGraphClient client;
@@ -45,7 +40,7 @@ public class AuthContextServiceTest {
 
     @Test
     public void skal_hente_ident_fra_openAm_token() {
-        AuthContextHolder.withContext(OPENAM_AUTH_CONTEXT, () -> {
+        AuthContextUtils.withContext(OPENAM_AUTH_CONTEXT, () -> {
             assertThat(authContextService.getIdent()).hasValue(IDENT);
             verify(client, never()).hentOnPremisesSamAccountName(anyString());
             verify(client, never()).hentUserData(anyString());
@@ -54,7 +49,7 @@ public class AuthContextServiceTest {
 
     @Test
     public void skal_hente_ident_fra_aad_v1_token() {
-        AuthContextHolder.withContext(AAD_V1_AUTH_CONTEXT, () -> {
+        AuthContextUtils.withContext(AAD_V1_AUTH_CONTEXT, () -> {
             assertThat(authContextService.getIdent()).hasValue(AAD_V1_IDENT);
             verify(client, never()).hentOnPremisesSamAccountName(anyString());
             verify(client, never()).hentUserData(anyString());
@@ -64,7 +59,7 @@ public class AuthContextServiceTest {
     @Test
     public void skal_hente_ident_fra_graph_api_om_accesstoken_eksisterer() {
         when(client.hentOnPremisesSamAccountName(eq(AAD_ACCESS_TOKEN))).thenReturn(AAD_V2_IDENT);
-        AuthContextHolder.withContext(AAD_V2_AUTH_CONTEXT, () -> {
+        AuthContextUtils.withAccesstoken(AAD_ACCESS_TOKEN, () -> {
             assertThat(authContextService.getIdent()).hasValue(AAD_V2_IDENT);
             verify(client, times(1)).hentOnPremisesSamAccountName(anyString());
             verify(client, never()).hentUserData(anyString());

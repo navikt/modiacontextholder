@@ -2,10 +2,9 @@ package no.nav.sbl.service;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.SneakyThrows;
-import no.nav.common.auth.context.AuthContext;
-import no.nav.common.auth.context.AuthContextHolder;
 import no.nav.common.client.msgraph.MsGraphClient;
 import no.nav.common.utils.StringUtils;
+import no.nav.sbl.util.AuthContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
@@ -20,10 +19,10 @@ public class AuthContextService {
     }
 
     public Optional<String> getIdent() {
-        return AuthContextHolder
+        return AuthContextUtils
                 .getAccessToken()
                 .map(msGraphClient::hentOnPremisesSamAccountName)
-                .or(() -> AuthContextHolder.getIdTokenClaims().map(AuthContextService::getSubject))
+                .or(() -> AuthContextUtils.getIdTokenClaims().map(AuthContextService::getSubject))
                 .filter(StringUtils::notNullOrEmpty);
     }
 
@@ -34,6 +33,6 @@ public class AuthContextService {
     }
 
     public static String requireIdToken() {
-        return AuthContextHolder.requireIdTokenString();
+        return AuthContextUtils.requireIdTokenString();
     }
 }
