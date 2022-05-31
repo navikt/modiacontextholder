@@ -66,6 +66,9 @@ spec:
         - application: arbeidssokerregistrering-veileder
           namespace: paw
           cluster: prod-gcp
+        - application: veilarbpersonflate
+          namespace: poao
+          cluster: prod-gcp
   secureLogs:
     enabled: true
   env:
