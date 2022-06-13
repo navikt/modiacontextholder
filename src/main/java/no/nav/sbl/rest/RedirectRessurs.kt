@@ -1,5 +1,7 @@
 package no.nav.sbl.rest
 
+import no.finn.unleash.UnleashContext
+import no.nav.common.featuretoggle.UnleashClient
 import no.nav.common.rest.client.RestClient
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.rest.domain.RSContext
@@ -20,15 +22,22 @@ import java.net.URI
 @RequestMapping("/redirect")
 class RedirectRessurs @Autowired constructor(
     private val authContextUtils: AuthContextService,
-    private val contextService: ContextService
+    private val contextService: ContextService,
+    private val unleash: UnleashClient,
 ) {
     private val aaRegisteretBaseUrl = EnvironmentUtils.getRequiredProperty("AAREG_URL")
+    private val salesforceBaseUrl = EnvironmentUtils.getRequiredProperty("SALESFORCE_URL")
     private val client: OkHttpClient = RestClient.baseClient()
     private val log = LoggerFactory.getLogger(RedirectRessurs::class.java)
 
     @GetMapping("/aaregisteret")
     fun aaRegisteret(): ResponseEntity<Unit> {
         return temporaryRedirect(aaRegisteretUrl(aktivContext()))
+    }
+
+    @GetMapping("/salesforce")
+    fun salesforce(): ResponseEntity<Unit> {
+        return temporaryRedirect(salesforceUrl(aktivContext()))
     }
 
     private fun aaRegisteretUrl(context: RSContext?): String {
@@ -48,6 +57,18 @@ class RedirectRessurs @Autowired constructor(
                 log.error("[AAREG] Bytte av brukercontext til url feilet", e)
             }
         }
+    }
+
+    private fun salesforceUrl(context: RSContext?): String {
+        val unleashContext = UnleashContext.builder()
+            .userId(authContextUtils.ident.orElse(null))
+            .appName("modiacontextholder")
+            .build()
+        val brukSfPersonUrl = unleash.isEnabled("modiacontextholder.sf_pilot", unleashContext)
+        return if (context?.aktivBruker != null && brukSfPersonUrl)
+            "$salesforceBaseUrl/lightning/cmp/c__crmPersonRedirect?c__fnr=${context.aktivBruker}"
+        else
+            salesforceBaseUrl
     }
 
     private fun aktivContext(): RSContext? {

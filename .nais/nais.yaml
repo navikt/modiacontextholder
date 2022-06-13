@@ -136,3 +136,5 @@ spec:
       value: "https://arbeid-og-inntekt.nais.adeo.no"
     - name: REDIS_HOST
       value: "modiacontextholder-redis.personoversikt.svc.nais.local"
+    - name: SALESFORCE_URL
+      value: "https://navdialog.lightning.force.com"
