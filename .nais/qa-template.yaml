@@ -74,6 +74,9 @@ spec:
         - application: veilarbportefoljeflatefs
           namespace: obo
           cluster: dev-gcp
+        - application: beslutteroversikt
+          namespace: obo
+          cluster: dev-gcp
   secureLogs:
     enabled: true
   env:
