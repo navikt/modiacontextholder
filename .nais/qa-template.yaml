@@ -121,7 +121,7 @@ spec:
     - name: SYFO_FINNFASTLEGE_CLIENTID
       value: "decdb625-ddde-4c4a-9586-f20862b9e1fe"
     - name: SYFO_SYFOMODIAPERSON_CLIENTID
-      value: "c65ad33c-2f8a-4b2c-9160-95a4c18562b0"
+      value: "897256b4-faa4-474a-aa2e-5f7b5b9c7e16"
     - name: SYFO_SYFOMOTEOVERSIKT_CLIENTID
       value: "5bfe761b-8fcb-4b89-81a0-f37bee456af5"
     - name: SYFO_SYFOOVERSIKT_CLIENTID
