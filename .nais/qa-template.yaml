@@ -77,7 +77,7 @@ spec:
         - application: beslutteroversikt
           namespace: obo
           cluster: dev-gcp
-        - application: modiaflatefs-q1
+        - application: modiaflatefs-{{ namespace }}
           namespace: personoversikt
           cluster: dev-fss
   secureLogs:
