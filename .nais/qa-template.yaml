@@ -80,6 +80,9 @@ spec:
         - application: modiaflatefs-{{ namespace }}
           namespace: personoversikt
           cluster: dev-fss
+        - application: modiapersonoversikt-{{ namespace }}
+          namespace: personoversikt
+          cluster: dev-fss
   secureLogs:
     enabled: true
   env:
