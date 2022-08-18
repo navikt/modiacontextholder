@@ -78,6 +78,9 @@ spec:
         - application: modiaflatefs
           namespace: personoversikt
           cluster: prod-fss
+        - application: modiapersonoversikt
+          namespace: personoversikt
+          cluster: prod-fss
   secureLogs:
     enabled: true
   env:
