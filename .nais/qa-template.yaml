@@ -77,6 +77,9 @@ spec:
         - application: beslutteroversikt
           namespace: obo
           cluster: dev-gcp
+        - application: smregistrering
+          namespace: teamsykmelding
+          cluster: dev-gcp
         - application: modiaflatefs-{{ namespace }}
           namespace: personoversikt
           cluster: dev-fss
