@@ -80,6 +80,9 @@ spec:
         - application: smregistrering
           namespace: teamsykmelding
           cluster: dev-gcp
+        - application: syfosmmanuell
+          namespace: teamsykmelding
+          cluster: dev-gcp
         - application: modiaflatefs-{{ namespace }}
           namespace: personoversikt
           cluster: dev-fss
