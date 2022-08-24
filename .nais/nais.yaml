@@ -78,6 +78,9 @@ spec:
         - application: smregistrering
           namespace: teamsykmelding
           cluster: prod-gcp
+        - application: syfosmmanuell
+          namespace: teamsykmelding
+          cluster: prod-gcp
         - application: modiaflatefs
           namespace: personoversikt
           cluster: prod-fss
