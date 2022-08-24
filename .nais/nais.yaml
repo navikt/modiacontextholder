@@ -75,6 +75,9 @@ spec:
         - application: beslutteroversikt
           namespace: obo
           cluster: prod-gcp
+        - application: smregistrering
+          namespace: teamsykmelding
+          cluster: prod-gcp
         - application: modiaflatefs
           namespace: personoversikt
           cluster: prod-fss
