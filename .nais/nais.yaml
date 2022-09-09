@@ -81,6 +81,9 @@ spec:
         - application: syfosmmanuell
           namespace: teamsykmelding
           cluster: prod-gcp
+        - application: syk-dig
+          namespace: teamsykmelding
+          cluster: prod-gcp
         - application: modiaflatefs
           namespace: personoversikt
           cluster: prod-fss

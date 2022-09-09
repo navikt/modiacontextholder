@@ -83,6 +83,9 @@ spec:
         - application: syfosmmanuell
           namespace: teamsykmelding
           cluster: dev-gcp
+        - application: syk-dig
+          namespace: teamsykmelding
+          cluster: dev-gcp
         - application: modiaflatefs-{{ namespace }}
           namespace: personoversikt
           cluster: dev-fss
