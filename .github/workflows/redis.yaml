@@ -15,7 +15,7 @@ jobs:
     name: Setup Redis application
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - name: Setup preprod
         if: github.ref == 'refs/heads/dev'
         uses: nais/deploy/actions/deploy@v1
