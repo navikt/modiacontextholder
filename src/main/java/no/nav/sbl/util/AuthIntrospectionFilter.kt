@@ -12,20 +12,21 @@ class AuthIntrospectionFilter : Filter {
 
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         request as HttpServletRequest
-        request.cookies.size
 
-        val logString = buildString {
-            appendLine("[AuthIntrospection]")
-            append("Authorization Header: ")
-            appendLine(request.getHeader("Authorization").isNullOrEmpty().not())
-            append("Cookies: ")
-            appendLine(
-                request.cookies.joinToString(", ") {
-                    it.name
-                }
-            )
-        }
-        log.info(logString)
+        log.info(buildLogMessage(request))
+
         chain.doFilter(request, response)
+    }
+
+    private fun buildLogMessage(request: HttpServletRequest) = buildString {
+        appendLine("[AuthIntrospection]")
+        append("Authorization Header: ")
+        appendLine(request.getHeader("Authorization").isNullOrEmpty().not())
+        append("Cookies: ")
+        appendLine(
+            request.cookies?.joinToString(", ") {
+                it.name
+            }
+        )
     }
 }
