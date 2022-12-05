@@ -26,7 +26,11 @@ class AuthIntrospectionFilter : Filter {
                 it.name
             }
         )
-        append("Referer: ")
-        appendLine(request.getHeader("Referer"))
+        append("Headers: ")
+        val allHeaders = mutableListOf<String>()
+        request.headerNames.asIterator().forEachRemaining {
+            allHeaders.add("$it: ${request.getHeader(it)}")
+        }
+        appendLine(allHeaders.joinToString(", "))
     }
 }
