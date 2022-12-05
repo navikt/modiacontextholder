@@ -5,7 +5,7 @@ import no.nav.sbl.naudit.AuditIdentifier.DENY_REASON
 import org.slf4j.LoggerFactory
 import java.util.*
 
-private val tjenestekallLogg = LoggerFactory.getLogger("SecureLog")
+val tjenestekallLogg = LoggerFactory.getLogger("SecureLog")
 class Audit {
     open class AuditResource(val resource: String)
     enum class Action {

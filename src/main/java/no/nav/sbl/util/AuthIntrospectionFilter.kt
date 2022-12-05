@@ -1,6 +1,6 @@
 package no.nav.sbl.util
 
-import org.slf4j.LoggerFactory
+import no.nav.sbl.naudit.tjenestekallLogg
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.ServletRequest
@@ -8,12 +8,10 @@ import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 
 class AuthIntrospectionFilter : Filter {
-    private val log = LoggerFactory.getLogger(AuthIntrospectionFilter::class.java)
-
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         request as HttpServletRequest
 
-        log.info(buildLogMessage(request))
+        tjenestekallLogg.info(buildLogMessage(request))
 
         chain.doFilter(request, response)
     }
@@ -28,5 +26,7 @@ class AuthIntrospectionFilter : Filter {
                 it.name
             }
         )
+        append("Referer: ")
+        appendLine(request.getHeader("Referer"))
     }
 }
