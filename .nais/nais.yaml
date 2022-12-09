@@ -90,6 +90,9 @@ spec:
         - application: modiapersonoversikt
           namespace: personoversikt
           cluster: prod-fss
+        - application: rekrutteringsbistand-container
+          namespace: toi
+          cluster: prod-gcp
   secureLogs:
     enabled: true
   env:
