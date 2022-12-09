@@ -144,8 +144,6 @@ spec:
       value: "ee2a7796-113a-4637-89d1-49d29843e833"
     - name: SPINNSYN_FRONTEND_INTERNE_CLIENTID
       value: "d9f767f1-89a0-413a-9c18-368eb3f752e9"
-    - name: REKRUTTERINGSBISTAND_CONTAINER_CLIENTID
-      value: "cf4fe4de-5085-4257-adbd-9130f99f3769"
     - name: APP_ENVIRONMENT_NAME
       value: "p"
     - name: AAREG_URL
