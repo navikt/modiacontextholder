@@ -120,14 +120,6 @@ spec:
       value: "PREPROD.LOCAL"
     - name: MS_GRAPH_CLIENT_URL
       value: "https://graph.microsoft.com/v1.0"
-    - name: ISSO_CLIENT_ID
-      value: "veilarblogin-{{ namespace }}"
-    - name: MODIA_CLIENT_ID
-      value: "modialogin-{{ namespace }}"
-    - name: FPSAK_CLIENT_ID
-      value: "fpsak-frontend-{{ namespace }}"
-    - name: ISSO_DISCOVERY_URL
-      value: "https://isso-q.adeo.no/isso/oauth2/.well-known/openid-configuration"
     - name: LOGINSERVICE_OIDC_DISCOVERYURI
       value: "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration"
     - name: AAD_V2_DISCOVERURI
@@ -154,8 +146,6 @@ spec:
       value: "6f661f36-1adb-42c3-9e10-294a10007880"
     - name: SPINNSYN_FRONTEND_INTERNE_CLIENTID
       value: "300fd59d-c575-473a-bd6a-9b0fd51b28ad"
-    - name: REKRUTTERINGSBISTAND_CONTAINER_CLIENTID
-      value: "19069abf-30aa-4a8d-90fd-caaacdc45166"
     - name: APP_ENVIRONMENT_NAME
       value: "{{ namespace }}"
     - name: AAREG_URL

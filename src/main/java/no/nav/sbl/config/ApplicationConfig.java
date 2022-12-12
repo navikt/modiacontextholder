@@ -39,13 +39,8 @@ public class ApplicationConfig {
     public static String SRV_USERNAME_PROPERTY = "SRVMODIACONTEXTHOLDER_USERNAME";
     public static String SRV_PASSWORD_PROPERTY = "SRVMODIACONTEXTHOLDER_PASSWORD";
 
-    private static final String issoDiscoveryUrl = EnvironmentUtils.getRequiredProperty("ISSO_DISCOVERY_URL");
     private static final String azureADDiscoveryUrl = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_DISCOVERYURI");
     private static final String azureADV2DiscoveryUrl = EnvironmentUtils.getRequiredProperty("AAD_V2_DISCOVERURI");
-
-    private static final String issoClientId = EnvironmentUtils.getRequiredProperty("ISSO_CLIENT_ID");
-    private static final String modiaClientId = EnvironmentUtils.getRequiredProperty("MODIA_CLIENT_ID");
-    private static final String fpsakClientId = EnvironmentUtils.getRequiredProperty("FPSAK_CLIENT_ID");
     private static final String azureADClientId = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_CLIENTID");
     private static final String veilarbloginAADClientId = EnvironmentUtils.getRequiredProperty("VEILARBLOGIN_AAD_CLIENT_ID");
     private static final String syfoFinnfastlegeClientId = EnvironmentUtils.getRequiredProperty("SYFO_FINNFASTLEGE_CLIENTID");
@@ -57,7 +52,6 @@ public class ApplicationConfig {
     private static final String syfoSmmanuellClientId = EnvironmentUtils.getRequiredProperty("SYFO_SMMANUELL_CLIENTID");
     private static final String sosialhjelpModiaClientId = EnvironmentUtils.getRequiredProperty("SOSIALHJELP_MODIA_CLIENTID");
     private static final String spinnsynFrontendInterneClientId = EnvironmentUtils.getRequiredProperty("SPINNSYN_FRONTEND_INTERNE_CLIENTID");
-    private static final String rekrutteringsbistandContainerClientId = EnvironmentUtils.getRequiredProperty("REKRUTTERINGSBISTAND_CONTAINER_CLIENTID");
 
     /**
      * Azure verdiene er automatisk injected til poden siden vi har lagt til azure-konfig i nais-yaml
@@ -80,24 +74,6 @@ public class ApplicationConfig {
 
     @Bean
     public FilterRegistrationBean authenticationFilterRegistration() {
-        OidcAuthenticatorConfig openAm = new OidcAuthenticatorConfig()
-                .withClientId(issoClientId)
-                .withDiscoveryUrl(issoDiscoveryUrl)
-                .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
-                .withUserRole(UserRole.INTERN);
-
-        OidcAuthenticatorConfig openAmModia = new OidcAuthenticatorConfig()
-                .withClientId(modiaClientId)
-                .withDiscoveryUrl(issoDiscoveryUrl)
-                .withIdTokenCookieName("modia_ID_token")
-                .withUserRole(UserRole.INTERN);
-
-        OidcAuthenticatorConfig openAmFpsak = new OidcAuthenticatorConfig()
-                .withClientId(fpsakClientId)
-                .withDiscoveryUrl(issoDiscoveryUrl)
-                .withIdTokenCookieName(Constants.OPEN_AM_ID_TOKEN_COOKIE_NAME)
-                .withUserRole(UserRole.INTERN);
-
         OidcAuthenticatorConfig azureAd = new OidcAuthenticatorConfig()
                 .withClientId(azureADClientId)
                 .withDiscoveryUrl(azureADDiscoveryUrl)
@@ -105,7 +81,7 @@ public class ApplicationConfig {
                 .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
-                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId, syfoSmregClientId, sosialhjelpModiaClientId, veilarbloginAADClientId, syfoSmmanuellClientId, syfoSmregNewClientId, spinnsynFrontendInterneClientId, rekrutteringsbistandContainerClientId))
+                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId, syfoSmregClientId, sosialhjelpModiaClientId, veilarbloginAADClientId, syfoSmmanuellClientId, syfoSmregNewClientId, spinnsynFrontendInterneClientId))
                 .withDiscoveryUrl(azureADV2DiscoveryUrl)
                 .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN);
@@ -117,9 +93,6 @@ public class ApplicationConfig {
 
         FilterRegistrationBean<OidcAuthenticationFilter> registration = new FilterRegistrationBean<>();
         List<OidcAuthenticator> authenticators = OidcAuthenticator.fromConfigs(
-                openAm,
-                openAmModia,
-                openAmFpsak,
                 azureAd,
                 azureAdV2,
                 azureAdOBO
