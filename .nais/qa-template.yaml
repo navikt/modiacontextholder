@@ -95,6 +95,9 @@ spec:
         - application: rekrutteringsbistand-container
           namespace: toi
           cluster: dev-gcp
+        - application: spinnsyn-frontend-interne
+          namespace: flex
+          cluster: dev-gcp
   secureLogs:
     enabled: true
   env:
