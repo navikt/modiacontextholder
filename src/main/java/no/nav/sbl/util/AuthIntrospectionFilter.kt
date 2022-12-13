@@ -1,6 +1,8 @@
 package no.nav.sbl.util
 
+import com.nimbusds.jwt.JWTParser
 import no.nav.sbl.naudit.tjenestekallLogg
+import java.lang.Exception
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.ServletRequest
@@ -18,19 +20,22 @@ class AuthIntrospectionFilter : Filter {
 
     private fun buildLogMessage(request: HttpServletRequest) = buildString {
         appendLine("[AuthIntrospection]")
-        append("Authorization Header: ")
-        appendLine(request.getHeader("Authorization").isNullOrEmpty().not())
-        append("Cookies: ")
-        appendLine(
-            request.cookies?.joinToString(", ") {
-                it.name
+
+        val bearerToken = request.getHeader("Authorization")?.removePrefix("Bearer ")
+        if (bearerToken != null) {
+            try {
+                val parsedJWT = JWTParser.parse(bearerToken)
+                append("Audience: ")
+                appendLine(parsedJWT.jwtClaimsSet.audience)
+            } catch (_: Exception) {
+                // Pass
             }
-        )
-        append("Headers: ")
-        val allHeaders = mutableListOf<String>()
-        request.headerNames.asIterator().forEachRemaining {
-            allHeaders.add("$it: ${request.getHeader(it)}")
         }
-        appendLine(allHeaders.joinToString(", "))
+
+        val origin = request.getHeader("Origin")
+        if (origin != null) {
+            append("Origin: ")
+            appendLine(origin)
+        }
     }
 }
