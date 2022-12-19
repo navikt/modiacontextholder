@@ -13,7 +13,6 @@ import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.rest.CleanupServlet;
 import no.nav.sbl.service.AuthContextService;
 import no.nav.sbl.util.AccesstokenServletFilter;
-import no.nav.sbl.util.AuthIntrospectionFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.*;
@@ -133,15 +132,5 @@ public class ApplicationConfig {
     public ServletRegistrationBean<CleanupServlet> cleanupServletServletRegistrationBean(DatabaseCleanerService databaseCleanerService, AuthContextService authContextService) {
         CleanupServlet cleanupServlet = new CleanupServlet(databaseCleanerService, authContextService);
         return new ServletRegistrationBean<>(cleanupServlet, "/internal/cleanup");
-    }
-
-    @Bean
-    public FilterRegistrationBean authIntrospectionFilterRegistrationBean() {
-        FilterRegistrationBean<AuthIntrospectionFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new AuthIntrospectionFilter());
-        registration.setOrder(5);
-        registration.addUrlPatterns("/api/*");
-        registration.addUrlPatterns("/redirect/*");
-        return registration;
     }
 }
