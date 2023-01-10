@@ -46,8 +46,6 @@ public class ApplicationConfig {
     private static final String syfoSyfomoteoversiktClientId = EnvironmentUtils.getRequiredProperty("SYFO_SYFOMOTEOVERSIKT_CLIENTID");
     private static final String syfoSyfooversiktClientId = EnvironmentUtils.getRequiredProperty("SYFO_SYFOOVERSIKT_CLIENTID");
     private static final String sosialhjelpModiaClientId = EnvironmentUtils.getRequiredProperty("SOSIALHJELP_MODIA_CLIENTID");
-    private static final String spinnsynFrontendInterneClientId = EnvironmentUtils.getRequiredProperty("SPINNSYN_FRONTEND_INTERNE_CLIENTID");
-
     /**
      * Azure verdiene er automatisk injected til poden siden vi har lagt til azure-konfig i nais-yaml
      */
@@ -76,7 +74,7 @@ public class ApplicationConfig {
                 .withUserRole(UserRole.INTERN);
 
         OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
-                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId, sosialhjelpModiaClientId, spinnsynFrontendInterneClientId))
+                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId, sosialhjelpModiaClientId))
                 .withDiscoveryUrl(azureADV2DiscoveryUrl)
                 .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
                 .withUserRole(UserRole.INTERN);
