@@ -137,8 +137,6 @@ spec:
       value: "4fca3a52-4540-4690-8a81-240ace253839"
     - name: SOSIALHJELP_MODIA_CLIENTID
       value: "ee2a7796-113a-4637-89d1-49d29843e833"
-    - name: SPINNSYN_FRONTEND_INTERNE_CLIENTID
-      value: "d9f767f1-89a0-413a-9c18-368eb3f752e9"
     - name: APP_ENVIRONMENT_NAME
       value: "p"
     - name: AAREG_URL
