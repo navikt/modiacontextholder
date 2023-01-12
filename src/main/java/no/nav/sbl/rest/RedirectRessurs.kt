@@ -57,7 +57,7 @@ class RedirectRessurs @Autowired constructor(
             val body = checkNotNull(response.body()) {
                 "Body: <null>"
             }
-            body.toString()
+            body.string()
         }.fold(
             onSuccess = { it },
             onFailure = { exception ->
