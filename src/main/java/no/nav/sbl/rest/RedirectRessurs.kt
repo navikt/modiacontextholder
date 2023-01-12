@@ -42,7 +42,7 @@ class RedirectRessurs @Autowired constructor(
 
     private fun aaRegisteretUrl(context: RSContext?): String {
         val aktivBruker: String = context?.aktivBruker ?: return aaRegisteretBaseUrl
-        return try {
+        return runCatching {
             val request = Request.Builder()
                 .url("$aaRegisteretBaseUrl/api/v2/redirect/sok/arbeidstaker")
                 .addHeader("Nav-Personident", aktivBruker)
@@ -51,12 +51,20 @@ class RedirectRessurs @Autowired constructor(
                 .newCall(request)
                 .execute()
 
-            requireNotNull(response.body()).string()
-        } catch (e: Throwable) {
-            aaRegisteretBaseUrl.also {
-                log.error("[AAREG] Bytte av brukercontext til url feilet", e)
+            check(response.isSuccessful) {
+                "ResponseCode: ${response.code()}"
             }
-        }
+            val body = checkNotNull(response.body()) {
+                "Body: <null>"
+            }
+            body.toString()
+        }.fold(
+            onSuccess = { it },
+            onFailure = { exception ->
+                log.error("[AAREG] feil ved henting av aareg url. Returnerer baseurl", exception)
+                aaRegisteretBaseUrl
+            }
+        )
     }
 
     private fun salesforceUrl(context: RSContext?): String {
