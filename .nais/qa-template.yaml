@@ -98,6 +98,18 @@ spec:
         - application: spinnsyn-frontend-interne
           namespace: flex
           cluster: dev-gcp
+        - application: finnfastlege
+          namespace: teamsykefravr
+          cluster: dev-fss
+        - application: syfomodiaperson
+          namespace: teamsykefravr
+          cluster: dev-fss
+        - application: syfomoteoversikt
+          namespace: teamsykefravr
+          cluster: dev-fss
+        - application: syfooversikt
+          namespace: teamsykefravr
+          cluster: dev-fss
   secureLogs:
     enabled: true
   env:
