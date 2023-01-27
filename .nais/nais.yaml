@@ -108,6 +108,9 @@ spec:
         - application: syfooversikt
           namespace: teamsykefravr
           cluster: prod-fss
+        - application: sosialhjelp-modia-oidc-auth-proxy
+          namespace: teamdigisos
+          cluster: prod-fss
   secureLogs:
     enabled: true
   env:
