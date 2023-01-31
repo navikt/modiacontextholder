@@ -152,8 +152,6 @@ spec:
       value: "5bfe761b-8fcb-4b89-81a0-f37bee456af5"
     - name: SYFO_SYFOOVERSIKT_CLIENTID
       value: "6db2c887-7c46-49a8-a6a5-26adec81a145"
-    - name: SOSIALHJELP_MODIA_CLIENTID
-      value: "6f661f36-1adb-42c3-9e10-294a10007880"
     - name: APP_ENVIRONMENT_NAME
       value: "{{ namespace }}"
     - name: AAREG_URL
