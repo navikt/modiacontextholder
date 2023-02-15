@@ -58,7 +58,7 @@ spec:
   azure:
     application:
       enabled: true
-      AllUsers: true
+      allowAllUsers: true
       tenant: trygdeetaten.no
       claims:
         extra:
