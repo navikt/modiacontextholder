@@ -146,14 +146,6 @@ spec:
       value: "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration"
     - name: LOGINSERVICE_OIDC_CLIENTID
       value: "9b4e07a3-4f4c-4bab-b866-87f62dff480d"
-    - name: SYFO_FINNFASTLEGE_CLIENTID
-      value: "916a8191-f241-4227-be1a-4b820657254f"
-    - name: SYFO_SYFOMODIAPERSON_CLIENTID
-      value: "a04bb3b5-8051-40bb-a5f0-f9f4a409b07a"
-    - name: SYFO_SYFOMOTEOVERSIKT_CLIENTID
-      value: "cd1456a1-b2cd-449d-8fc1-ffe55fe63b61"
-    - name: SYFO_SYFOOVERSIKT_CLIENTID
-      value: "4fca3a52-4540-4690-8a81-240ace253839"
     - name: APP_ENVIRONMENT_NAME
       value: "p"
     - name: AAREG_URL

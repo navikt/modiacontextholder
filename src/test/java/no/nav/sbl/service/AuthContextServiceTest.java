@@ -20,16 +20,15 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class AuthContextServiceTest {
     private static final String IDENT = "Z999999";
-    private static final String AAD_V1_IDENT = "Z999990";
-    private static final String AAD_V2_IDENT = "Z999991";
+    private static final String AAD_OBO_IDENT = "Z999991";
     private static final String AAD_ACCESS_TOKEN = "add-access-token-here";
     private static final AuthContext OPENAM_AUTH_CONTEXT = new AuthContext(
             UserRole.INTERN,
             new PlainJWT(new JWTClaimsSet.Builder().subject(IDENT).build())
     );
-    private static final AuthContext AAD_V1_AUTH_CONTEXT = new AuthContext(
+    private static final AuthContext AAD_OBO_CONTEXT = new AuthContext(
             UserRole.INTERN,
-            new PlainJWT(new JWTClaimsSet.Builder().claim(AAD_NAV_IDENT_CLAIM, AAD_V1_IDENT).build())
+            new PlainJWT(new JWTClaimsSet.Builder().claim(AAD_NAV_IDENT_CLAIM, AAD_OBO_IDENT).build())
     );
 
     @Mock
@@ -39,18 +38,9 @@ public class AuthContextServiceTest {
     AuthContextService authContextService;
 
     @Test
-    public void skal_hente_ident_fra_openAm_token() {
-        AuthContextUtils.withContext(OPENAM_AUTH_CONTEXT, () -> {
-            assertThat(authContextService.getIdent()).hasValue(IDENT);
-            verify(client, never()).hentOnPremisesSamAccountName(anyString());
-            verify(client, never()).hentUserData(anyString());
-        });
-    }
-
-    @Test
-    public void skal_hente_ident_fra_aad_v1_token() {
-        AuthContextUtils.withContext(AAD_V1_AUTH_CONTEXT, () -> {
-            assertThat(authContextService.getIdent()).hasValue(AAD_V1_IDENT);
+    public void skal_hente_ident_fra_obo() {
+        AuthContextUtils.withContext(AAD_OBO_CONTEXT, () -> {
+            assertThat(authContextService.getIdent()).hasValue(AAD_OBO_IDENT);
             verify(client, never()).hentOnPremisesSamAccountName(anyString());
             verify(client, never()).hentUserData(anyString());
         });
@@ -58,9 +48,9 @@ public class AuthContextServiceTest {
 
     @Test
     public void skal_hente_ident_fra_graph_api_om_accesstoken_eksisterer() {
-        when(client.hentOnPremisesSamAccountName(eq(AAD_ACCESS_TOKEN))).thenReturn(AAD_V2_IDENT);
+        when(client.hentOnPremisesSamAccountName(eq(AAD_ACCESS_TOKEN))).thenReturn(AAD_OBO_IDENT);
         AuthContextUtils.withAccesstoken(AAD_ACCESS_TOKEN, () -> {
-            assertThat(authContextService.getIdent()).hasValue(AAD_V2_IDENT);
+            assertThat(authContextService.getIdent()).hasValue(AAD_OBO_IDENT);
             verify(client, times(1)).hentOnPremisesSamAccountName(anyString());
             verify(client, never()).hentUserData(anyString());
         });
