@@ -38,13 +38,6 @@ public class ApplicationConfig {
     public static String SRV_USERNAME_PROPERTY = "SRVMODIACONTEXTHOLDER_USERNAME";
     public static String SRV_PASSWORD_PROPERTY = "SRVMODIACONTEXTHOLDER_PASSWORD";
 
-    private static final String azureADDiscoveryUrl = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_DISCOVERYURI");
-    private static final String azureADV2DiscoveryUrl = EnvironmentUtils.getRequiredProperty("AAD_V2_DISCOVERURI");
-    private static final String azureADClientId = EnvironmentUtils.getRequiredProperty("LOGINSERVICE_OIDC_CLIENTID");
-    private static final String syfoFinnfastlegeClientId = EnvironmentUtils.getRequiredProperty("SYFO_FINNFASTLEGE_CLIENTID");
-    private static final String syfoSyfomodiapersonClientId = EnvironmentUtils.getRequiredProperty("SYFO_SYFOMODIAPERSON_CLIENTID");
-    private static final String syfoSyfomoteoversiktClientId = EnvironmentUtils.getRequiredProperty("SYFO_SYFOMOTEOVERSIKT_CLIENTID");
-    private static final String syfoSyfooversiktClientId = EnvironmentUtils.getRequiredProperty("SYFO_SYFOOVERSIKT_CLIENTID");
     /**
      * Azure verdiene er automatisk injected til poden siden vi har lagt til azure-konfig i nais-yaml
      */
@@ -66,18 +59,6 @@ public class ApplicationConfig {
 
     @Bean
     public FilterRegistrationBean authenticationFilterRegistration() {
-        OidcAuthenticatorConfig azureAd = new OidcAuthenticatorConfig()
-                .withClientId(azureADClientId)
-                .withDiscoveryUrl(azureADDiscoveryUrl)
-                .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
-                .withUserRole(UserRole.INTERN);
-
-        OidcAuthenticatorConfig azureAdV2 = new OidcAuthenticatorConfig()
-                .withClientIds(asList(syfoFinnfastlegeClientId, syfoSyfomodiapersonClientId, syfoSyfomoteoversiktClientId, syfoSyfooversiktClientId))
-                .withDiscoveryUrl(azureADV2DiscoveryUrl)
-                .withIdTokenCookieName(Constants.AZURE_AD_ID_TOKEN_COOKIE_NAME)
-                .withUserRole(UserRole.INTERN);
-
         OidcAuthenticatorConfig azureAdOBO = new OidcAuthenticatorConfig()
                 .withClientId(azureOBOClientId)
                 .withDiscoveryUrl(azureOBODiscoveryUrl)
@@ -85,8 +66,6 @@ public class ApplicationConfig {
 
         FilterRegistrationBean<OidcAuthenticationFilter> registration = new FilterRegistrationBean<>();
         List<OidcAuthenticator> authenticators = OidcAuthenticator.fromConfigs(
-                azureAd,
-                azureAdV2,
                 azureAdOBO
         );
         registration.setFilter(new OidcAuthenticationFilter(authenticators));
