@@ -149,13 +149,13 @@ spec:
     - name: LOGINSERVICE_OIDC_CLIENTID
       value: "38e07d31-659d-4595-939a-f18dce3446c5"
     - name: SYFO_FINNFASTLEGE_CLIENTID
-      value: "decdb625-ddde-4c4a-9586-f20862b9e1fe"
+      value: ""
     - name: SYFO_SYFOMODIAPERSON_CLIENTID
-      value: "897256b4-faa4-474a-aa2e-5f7b5b9c7e16"
+      value: ""
     - name: SYFO_SYFOMOTEOVERSIKT_CLIENTID
-      value: "5bfe761b-8fcb-4b89-81a0-f37bee456af5"
+      value: ""
     - name: SYFO_SYFOOVERSIKT_CLIENTID
-      value: "6db2c887-7c46-49a8-a6a5-26adec81a145"
+      value: ""
     - name: APP_ENVIRONMENT_NAME
       value: "{{ namespace }}"
     - name: AAREG_URL
