@@ -99,9 +99,6 @@ spec:
           cluster: prod-gcp
         - application: finnfastlege
           namespace: teamsykefravr
-          cluster: prod-fss
-        - application: finnfastlege
-          namespace: teamsykefravr
           cluster: prod-gcp
         - application: syfomodiaperson
           namespace: teamsykefravr
@@ -112,6 +109,15 @@ spec:
         - application: syfooversikt
           namespace: teamsykefravr
           cluster: prod-fss
+        - application: syfomodiaperson
+          namespace: teamsykefravr
+          cluster: prod-gcp
+        - application: syfomoteoversikt
+          namespace: teamsykefravr
+          cluster: prod-gcp
+        - application: syfooversikt
+          namespace: teamsykefravr
+          cluster: prod-gcp
         - application: sosialhjelp-modia-oidc-auth-proxy
           namespace: teamdigisos
           cluster: prod-fss
