@@ -101,9 +101,6 @@ spec:
           cluster: dev-gcp
         - application: finnfastlege
           namespace: teamsykefravr
-          cluster: dev-fss
-        - application: finnfastlege
-          namespace: teamsykefravr
           cluster: dev-gcp
         - application: syfomodiaperson
           namespace: teamsykefravr
@@ -114,6 +111,15 @@ spec:
         - application: syfooversikt
           namespace: teamsykefravr
           cluster: dev-fss
+        - application: syfomodiaperson
+          namespace: teamsykefravr
+          cluster: dev-gcp
+        - application: syfomoteoversikt
+          namespace: teamsykefravr
+          cluster: dev-gcp
+        - application: syfooversikt
+          namespace: teamsykefravr
+          cluster: dev-gcp
         - application: sosialhjelp-modia-oidc-auth-proxy
           namespace: teamdigisos
           cluster: dev-fss
