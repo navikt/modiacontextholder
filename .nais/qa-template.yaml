@@ -104,15 +104,6 @@ spec:
           cluster: dev-gcp
         - application: syfomodiaperson
           namespace: teamsykefravr
-          cluster: dev-fss
-        - application: syfomoteoversikt
-          namespace: teamsykefravr
-          cluster: dev-fss
-        - application: syfooversikt
-          namespace: teamsykefravr
-          cluster: dev-fss
-        - application: syfomodiaperson
-          namespace: teamsykefravr
           cluster: dev-gcp
         - application: syfomoteoversikt
           namespace: teamsykefravr
