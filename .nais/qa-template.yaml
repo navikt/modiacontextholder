@@ -32,7 +32,7 @@ spec:
       memory: 768Mi
   ingresses:
     - https://modiacontextholder-{{ namespace }}.dev-fss-pub.nais.io/modiacontextholder
-    - https://modiacontextholder-{{ namespace }}.dev.intern.nav.no/modiacontextholder
+    - https://modiacontextholder-{{ namespace }}.intern.dev.nav.no/modiacontextholder
     - https://modiacontextholder-{{ namespace }}.nais.preprod.local/modiacontextholder
     - https://modiacontextholder-{{ namespace }}.dev.adeo.no/modiacontextholder
     - https://modapp-{{ namespace }}.adeo.no/modiacontextholder
@@ -124,7 +124,7 @@ spec:
     - name: UNLEASH_API_URL
       value: "https://unleash.nais.io/api/"
     - name: PDL_API_URL
-      value: "https://pdl-api-{{ namespace }}.dev.intern.nav.no/graphql"
+      value: "https://pdl-api-{{ namespace }}.intern.dev.nav.no/graphql"
     - name: NORG2_API_URL
       value: "https://app-{{ namespace }}.adeo.no/norg2"
     - name: LDAP_BASEDN
