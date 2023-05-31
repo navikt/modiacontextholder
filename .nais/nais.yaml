@@ -102,15 +102,6 @@ spec:
           cluster: prod-gcp
         - application: syfomodiaperson
           namespace: teamsykefravr
-          cluster: prod-fss
-        - application: syfomoteoversikt
-          namespace: teamsykefravr
-          cluster: prod-fss
-        - application: syfooversikt
-          namespace: teamsykefravr
-          cluster: prod-fss
-        - application: syfomodiaperson
-          namespace: teamsykefravr
           cluster: prod-gcp
         - application: syfomoteoversikt
           namespace: teamsykefravr
