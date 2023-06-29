@@ -94,6 +94,9 @@ spec:
         - application: rekrutteringsbistand-container
           namespace: toi
           cluster: prod-gcp
+        - application: rekrutteringsbistand
+          namespace: toi
+          cluster: prod-gcp
         - application: spinnsyn-frontend-interne
           namespace: flex
           cluster: prod-gcp
