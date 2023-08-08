@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        namespace: [q0, q1]
+        namespace: [q0, q1, q2]
     steps:
       - uses: actions/checkout@v3
       - uses: nais/deploy/actions/deploy@v1
