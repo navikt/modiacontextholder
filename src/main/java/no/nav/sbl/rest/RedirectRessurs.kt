@@ -1,7 +1,5 @@
 package no.nav.sbl.rest
 
-import no.finn.unleash.UnleashContext
-import no.nav.common.featuretoggle.UnleashClient
 import no.nav.common.rest.client.RestClient
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.rest.domain.RSContext
@@ -23,7 +21,6 @@ import java.net.URI
 class RedirectRessurs @Autowired constructor(
     private val authContextUtils: AuthContextService,
     private val contextService: ContextService,
-    private val unleash: UnleashClient,
 ) {
     private val aaRegisteretBaseUrl = EnvironmentUtils.getRequiredProperty("AAREG_URL")
     private val salesforceBaseUrl = EnvironmentUtils.getRequiredProperty("SALESFORCE_URL")
@@ -68,12 +65,7 @@ class RedirectRessurs @Autowired constructor(
     }
 
     private fun salesforceUrl(context: RSContext?): String {
-        val unleashContext = UnleashContext.builder()
-            .userId(authContextUtils.ident.orElse(null))
-            .appName("modiacontextholder")
-            .build()
-        val brukSfPersonUrl = unleash.isEnabled("modiacontextholder.sf_pilot", unleashContext)
-        return if (context?.aktivBruker != null && brukSfPersonUrl)
+        return if (context?.aktivBruker != null)
             "$salesforceBaseUrl/lightning/cmp/c__crmPersonRedirect?c__fnr=${context.aktivBruker}"
         else
             salesforceBaseUrl
