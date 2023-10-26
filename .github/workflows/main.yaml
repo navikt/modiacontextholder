@@ -15,6 +15,8 @@ jobs:
   build:
     name: Test and build
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     if: github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/master'
     steps:
       - uses: actions/checkout@v3
