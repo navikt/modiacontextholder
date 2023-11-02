@@ -34,7 +34,7 @@ class RedirectRessurs @Autowired constructor(
 
     @GetMapping("/salesforce")
     fun salesforce(): ResponseEntity<Unit> {
-        return temporaryRedirect(salesforceUrl(aktivContext()))
+        return temporaryRedirect(salesforceBaseUrl)
     }
 
     private fun aaRegisteretUrl(context: RSContext?): String {
@@ -60,15 +60,8 @@ class RedirectRessurs @Autowired constructor(
             onFailure = { exception ->
                 log.error("[AAREG] feil ved henting av aareg url. Returnerer baseurl", exception)
                 aaRegisteretBaseUrl
-            }
+            },
         )
-    }
-
-    private fun salesforceUrl(context: RSContext?): String {
-        return if (context?.aktivBruker != null)
-            "$salesforceBaseUrl/lightning/cmp/c__crmPersonRedirect?c__fnr=${context.aktivBruker}"
-        else
-            salesforceBaseUrl
     }
 
     private fun aktivContext(): RSContext? {
