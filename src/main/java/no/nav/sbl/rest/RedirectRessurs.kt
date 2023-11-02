@@ -1,7 +1,5 @@
 package no.nav.sbl.rest
 
-import no.finn.unleash.UnleashContext
-import no.nav.common.featuretoggle.UnleashClient
 import no.nav.common.rest.client.RestClient
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.rest.domain.RSContext
@@ -23,7 +21,6 @@ import java.net.URI
 class RedirectRessurs @Autowired constructor(
     private val authContextUtils: AuthContextService,
     private val contextService: ContextService,
-    private val unleash: UnleashClient,
 ) {
     private val aaRegisteretBaseUrl = EnvironmentUtils.getRequiredProperty("AAREG_URL")
     private val salesforceBaseUrl = EnvironmentUtils.getRequiredProperty("SALESFORCE_URL")
@@ -37,7 +34,7 @@ class RedirectRessurs @Autowired constructor(
 
     @GetMapping("/salesforce")
     fun salesforce(): ResponseEntity<Unit> {
-        return temporaryRedirect(salesforceUrl(aktivContext()))
+        return temporaryRedirect(salesforceBaseUrl)
     }
 
     private fun aaRegisteretUrl(context: RSContext?): String {
@@ -63,20 +60,8 @@ class RedirectRessurs @Autowired constructor(
             onFailure = { exception ->
                 log.error("[AAREG] feil ved henting av aareg url. Returnerer baseurl", exception)
                 aaRegisteretBaseUrl
-            }
+            },
         )
-    }
-
-    private fun salesforceUrl(context: RSContext?): String {
-        val unleashContext = UnleashContext.builder()
-            .userId(authContextUtils.ident.orElse(null))
-            .appName("modiacontextholder")
-            .build()
-        val brukSfPersonUrl = unleash.isEnabled("modiacontextholder.sf_pilot", unleashContext)
-        return if (context?.aktivBruker != null && brukSfPersonUrl)
-            "$salesforceBaseUrl/lightning/cmp/c__crmPersonRedirect?c__fnr=${context.aktivBruker}"
-        else
-            salesforceBaseUrl
     }
 
     private fun aktivContext(): RSContext? {
