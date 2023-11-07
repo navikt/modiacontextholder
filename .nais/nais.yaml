@@ -67,6 +67,9 @@ spec:
         - application: arbeidssokerregistrering-veileder
           namespace: paw
           cluster: prod-gcp
+        - application: arbeidssokerregistrering-for-veileder
+          cluster: prod-gcp
+          namespace: paw
         - application: veilarbpersonflate
           namespace: poao
           cluster: prod-gcp
