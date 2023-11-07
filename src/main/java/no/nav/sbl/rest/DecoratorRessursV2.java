@@ -7,19 +7,15 @@ import no.nav.sbl.rest.domain.DecoratorDomain.FnrAktorId;
 import no.nav.sbl.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/decorator")
-public class DecoratorRessurs {
+@RequestMapping("/api/v2/decorator")
+public class DecoratorRessursV2 {
     private static final String rolleModiaAdmin = "0000-GA-Modia_Admin";
 
     @Autowired
@@ -44,9 +40,8 @@ public class DecoratorRessurs {
         return lagDecoratorConfig(ident, hentEnheter(ident));
     }
 
-    @GetMapping("/aktor/{fnr}")
-    @Deprecated(forRemoval = true)
-    public FnrAktorId hentAktorId(@PathVariable("fnr") String fnr) {
+    @PostMapping("/aktor/hent-fnr")
+    public FnrAktorId hentAktorId(@RequestBody String fnr) {
         return pdlService.hentIdent(fnr)
                 .map((aktorId) -> new FnrAktorId(fnr, aktorId))
                 .getOrElseThrow((exception) -> {
@@ -61,7 +56,7 @@ public class DecoratorRessurs {
     private DecoratorConfig lagDecoratorConfig(String ident, Try<List<DecoratorDomain.Enhet>> tryEnheter) {
         return tryEnheter
                 .map((enheter) -> new DecoratorConfig(veilederService.hentVeilederNavn(ident), enheter))
-                .getOrElseThrow(DecoratorRessurs::exceptionHandler);
+                .getOrElseThrow(DecoratorRessursV2::exceptionHandler);
     }
 
     private Try<List<DecoratorDomain.Enhet>> hentEnheter(String ident) {
