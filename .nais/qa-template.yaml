@@ -7,6 +7,8 @@ metadata:
   labels:
     team: personoversikt
 spec:
+  envFrom:
+    - secret: modiacontextholder-unleash-api-token
   image: "{{ image }}"
   port: 8080
   webproxy: true
@@ -64,6 +66,9 @@ spec:
         extra:
           - "NAVident"
   accessPolicy:
+    outbound:
+      external:
+        - host: personoversikt-unleash-api.nav.cloud.nais.io
     inbound:
       rules:
         - application: arbeidssokerregistrering-veileder
@@ -127,8 +132,6 @@ spec:
       value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
     - name: AXSYS_REST_API_URL
       value: "https://axsys.nais.preprod.local"
-    - name: UNLEASH_API_URL
-      value: "https://unleash.nais.io/api/"
     - name: PDL_API_URL
       value: "https://pdl-api-{{ namespace }}.dev.intern.nav.no/graphql"
     - name: NORG2_API_URL
@@ -159,3 +162,5 @@ spec:
       value: "modiacontextholder-redis.personoversikt.svc.nais.local"
     - name: SALESFORCE_URL
       value: "https://navdialog--sit2.lightning.force.com"
+    - name: UNLEASH_ENVIRONMENT
+      value: "development"
