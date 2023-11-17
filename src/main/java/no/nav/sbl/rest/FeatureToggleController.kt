@@ -4,7 +4,7 @@ import no.nav.sbl.service.unleash.UnleashService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
-private const val APPLICATION_PREFIX = "modiapersonoversikt."
+private const val APPLICATION_PREFIX = "modiacontextholder."
 
 @RestController
 @RequestMapping("/api/featuretoggle")
