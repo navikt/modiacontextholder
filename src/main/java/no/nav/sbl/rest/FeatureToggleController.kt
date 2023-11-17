@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*
 private const val APPLICATION_PREFIX = "modiapersonoversikt."
 
 @RestController
-@RequestMapping("/rest/featuretoggle")
+@RequestMapping("/api/featuretoggle")
 class FeatureToggleController @Autowired constructor(
     private val unleashService: UnleashService,
 ) {
