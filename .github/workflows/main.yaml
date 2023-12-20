@@ -7,7 +7,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  IMAGE: ghcr.io/${{ github.repository }}/modiacontextholder:${{ github.sha }}
   CI: true
   TZ: Europe/Oslo
 
@@ -31,9 +30,9 @@ jobs:
     name: Build and push Docker container
     permissions:
       packages: write
+      contents: read
+      id-token: write
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master'
-    env:
-      TZ: Europe/Oslo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -43,12 +42,12 @@ jobs:
           java-version: 11
           cache: 'maven'
       - name: Publish Docker image
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          docker build --tag ${IMAGE} .
-          docker login ghcr.io -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
-          docker push ${IMAGE}
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          team: personoversikt
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
   deploy-qa:
     name: Deploy to preprod
@@ -60,13 +59,13 @@ jobs:
         namespace: [q0, q1]
     steps:
       - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: nais/deploy/actions/deploy@v2
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: dev-fss
           RESOURCE: .nais/qa-template.yaml
-          VAR: namespace=${{matrix.namespace}}
+          VAR: namespace=${{matrix.namespace}},image=${{ needs.build-and-push.outputs.image }}
 
   deploy-prod:
     name: Deploy to prod
@@ -75,9 +74,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: nais/deploy/actions/deploy@v2
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD : true
           CLUSTER: prod-fss
           RESOURCE: .nais/nais.yaml
+          VAR: image=${{ needs.build-and-push.outputs.image }}
