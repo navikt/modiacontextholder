@@ -27,10 +27,10 @@ class PdlService(private val stsService: SystemUserTokenProvider) {
         .build()
     private val graphQLClient = PdlClient(url = pdlApiUrl)
 
-    fun hentIdent(fnr: String) {
+    fun hentIdent(fnr: String): Try<String> =
             CacheUtils.tryCacheFirst(hentIdentCache, fnr
             ) { hentIdentFraPDL(fnr) }
-    }
+
 
     fun hentIdentFraPDL(fnr: String): Try<String> = Try.of {
         runBlocking {
