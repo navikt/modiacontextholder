@@ -51,9 +51,7 @@ public class ContextService {
         long id = saveToDb(event);
         event = event.id(id);
 
-        PEvent finalEvent = event;
-
-        redisPublisher.publishMessage(JsonUtils.toJson(toRSEvent(finalEvent)));
+        redisPublisher.publishMessage(JsonUtils.toJson(toRSEvent(event)));
     }
 
     private long saveToDb(PEvent event) {
