@@ -2,7 +2,7 @@ package no.nav.sbl.service;
 
 import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
-import no.nav.sbl.redis.Redis;
+import no.nav.sbl.redis.RedisPublisher;
 import no.nav.sbl.rest.domain.RSContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +29,8 @@ public class ContextServiceTest {
     @SuppressWarnings("unchecked")
     public void setup(){
         eventDAO = mock(EventDAO.class);
-        Redis.Publisher redis = mock(Redis.Publisher.class);
-        contextService = new ContextService(eventDAO, redis);
+        RedisPublisher redisPublisher = mock(RedisPublisher.class);
+        contextService = new ContextService(eventDAO, redisPublisher);
     }
 
     @Test

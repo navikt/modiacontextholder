@@ -9,6 +9,7 @@ metadata:
 spec:
   envFrom:
     - secret: modiacontextholder-unleash-api-token
+    - secret: modiacontextholder-redis-passord
   image: "{{ image }}"
   port: 8080
   webproxy: true

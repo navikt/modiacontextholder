@@ -113,10 +113,6 @@
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
-            <artifactId>auth</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.common</groupId>
             <artifactId>feature-toggle</artifactId>
         </dependency>
         <dependency>
