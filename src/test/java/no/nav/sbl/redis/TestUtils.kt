@@ -3,10 +3,10 @@ package no.nav.sbl.redis
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import no.nav.sbl.redis.TestUtils.WithRedis.Companion.PASSWORD
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
+import org.junit.After
+import org.junit.AfterClass
+import org.junit.Before
+import org.junit.BeforeClass
 import org.testcontainers.containers.GenericContainer
 import redis.clients.jedis.HostAndPort
 import redis.clients.jedis.Jedis
@@ -48,40 +48,42 @@ object TestUtils {
         }
     }
 
-    interface WithRedis {
+    open class WithRedis {
 
         companion object {
             private var job: Job? = null
             private var subscriber: RedisSubscriber? = null
-            private val container = RedisContainer()
+            val container = RedisContainer()
 
-            @BeforeAll
+            const val PASSWORD = "password"
+
+            @BeforeClass
             @JvmStatic
             fun startContainer() {
                 container.start()
             }
 
-            @AfterAll
+            @AfterClass
             @JvmStatic
             fun stopContainer() {
                 container.stop()
             }
-
-            const val PASSWORD = "password"
         }
 
-        @BeforeEach
+        @Before
         fun setupSubscriber() = runBlocking {
             val lock = WaitLock(true)
             subscriber = RedisSubscriber { lock.unlock() }
-            val jedis = Jedis(redisHostAndPort())
+            val hostAndPort = redisHostAndPort()
+            val jedis = Jedis(hostAndPort)
+            jedis.auth(PASSWORD)
             job = GlobalScope.launch {
                 jedis.psubscribe(subscriber, "*")
             }
             lock.waitForUnlock()
         }
 
-        @AfterEach
+        @After
         fun closeSubscriber() {
             subscriber?.unsubscribe()
             job?.cancel()

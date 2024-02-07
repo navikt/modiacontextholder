@@ -2,22 +2,21 @@ package no.nav.sbl.redis
 
 import kotlinx.coroutines.runBlocking
 import no.nav.sbl.redis.TestUtils.WithRedis.Companion.PASSWORD
-import org.junit.jupiter.api.*
+import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertTrue
 
-class RedisTest : TestUtils.WithRedis {
-    private val hostAndPort = redisHostAndPort()
-    private val authJedisPool = AuthJedisPool(
-        redisHostPortAndPassword = RedisHostPortAndPassword(
-            host = hostAndPort.host,
-            port = hostAndPort.port,
-            password = PASSWORD,
-        ),
-    )
-    private val redisPublisher = RedisPublisher(authJedisPool, "TestChannel")
-
+class RedisTest : TestUtils.WithRedis() {
     @Test
     fun `sender redis-meldinger`() = runBlocking {
+        val hostAndPort = redisHostAndPort()
+        val authJedisPool = AuthJedisPool(
+            redisHostPortAndPassword = RedisHostPortAndPassword(
+                host = hostAndPort.host,
+                port = hostAndPort.port,
+                password = PASSWORD,
+            ),
+        )
+        val redisPublisher = RedisPublisher(authJedisPool, "TestChannel")
         redisPublisher.publishMessage("TestMessage1")
         redisPublisher.publishMessage("TestMessage2")
         redisPublisher.publishMessage("TestMessage3")
