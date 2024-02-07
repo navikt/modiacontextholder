@@ -159,8 +159,10 @@ spec:
       value: "{{ namespace }}"
     - name: AAREG_URL
       value: "https://arbeid-og-inntekt-q1.dev.adeo.no"
+    - name: REDIS_PORT
+      value: "6379"
     - name: REDIS_HOST
-      value: "modiacontextholder-redis.personoversikt.svc.nais.local"
+      value: "modiacontextholder-redis-med-passord.personoversikt.svc.nais.local"
     - name: SALESFORCE_URL
       value: "https://navdialog--sit2.lightning.force.com"
     - name: UNLEASH_ENVIRONMENT
