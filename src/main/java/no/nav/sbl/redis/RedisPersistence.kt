@@ -35,7 +35,7 @@ class RedisPersistence(
         val code = codeGenerator.generateCode(fnr)
         val key = getKey(code)
         val result = redisPool.useResource {
-            it.setex(key, expiration.inWholeMilliseconds, fnr)
+            it.setex(key, expiration.inWholeSeconds, fnr)
         }
         return TempCodeResult(result, code)
     }
