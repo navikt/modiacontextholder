@@ -6,6 +6,8 @@ import no.nav.sbl.db.dao.EventDAO;
 import no.nav.sbl.db.domain.PEvent;
 import no.nav.sbl.mappers.EventMapper;
 import no.nav.sbl.redis.RedisPublisher;
+import no.nav.sbl.rest.domain.RSAktivBruker;
+import no.nav.sbl.rest.domain.RSAktivEnhet;
 import no.nav.sbl.rest.domain.RSContext;
 import no.nav.sbl.rest.domain.RSNyContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +67,14 @@ public class ContextService {
                 .orElse(new RSContext());
     }
 
+    public RSAktivBruker hentAktivBrukerV2(String veilederIdent) {
+        return eventDAO.sistAktiveBrukerEvent(veilederIdent)
+                .filter(ContextService::erFortsattAktuell)
+                .map(EventMapper::toRSAktivBruker)
+                .orElse(new RSAktivBruker(null));
+    }
+
+
     public static boolean erFortsattAktuell(PEvent pEvent) {
         return LocalDate.now().isEqual(pEvent.created.toLocalDate());
     }
@@ -73,6 +83,10 @@ public class ContextService {
         return eventDAO.sistAktiveEnhetEvent(veilederIdent)
                 .map(EventMapper::toRSContext)
                 .orElse(new RSContext());
+    }
+
+    public RSAktivEnhet hentAktivEnhetV2(String veilederIdent) {
+        return eventDAO.sistAktiveEnhetEvent(veilederIdent).map(EventMapper::toRSAktivEnhet).orElse(new RSAktivEnhet(null));
     }
 
     public void nullstillContext(String veilederIdent) {
