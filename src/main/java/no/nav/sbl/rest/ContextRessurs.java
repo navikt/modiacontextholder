@@ -5,6 +5,8 @@ import kotlin.Pair;
 import no.nav.sbl.db.domain.EventType;
 import no.nav.sbl.naudit.AuditIdentifier;
 import no.nav.sbl.naudit.AuditResources;
+import no.nav.sbl.rest.domain.RSAktivBruker;
+import no.nav.sbl.rest.domain.RSAktivEnhet;
 import no.nav.sbl.rest.domain.RSContext;
 import no.nav.sbl.rest.domain.RSNyContext;
 import no.nav.sbl.service.AuthContextService;
@@ -47,11 +49,26 @@ public class ContextRessurs {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
     }
 
+    @GetMapping("/v2/aktivbruker")
+    @Timed("hentAktivBrukerV2")
+    public RSAktivBruker hentAktivBrukerV2() {
+        return authContextUtils.getIdent().map(contextService::hentAktivBrukerV2)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
+    }
+
     @GetMapping("/aktivenhet")
     @Timed("hentAktivEnhet")
     public RSContext hentAktivEnhet() {
         return authContextUtils.getIdent()
                 .map(contextService::hentAktivEnhet)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
+    }
+
+    @GetMapping("/v2/aktivenhet")
+    @Timed("hentAktivEnhetV2")
+    public RSAktivEnhet hentAktivEnhetV2() {
+        return authContextUtils.getIdent()
+                .map(contextService::hentAktivEnhetV2)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
     }
 
