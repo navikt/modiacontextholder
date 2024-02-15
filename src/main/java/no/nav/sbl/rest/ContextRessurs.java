@@ -103,7 +103,7 @@ public class ContextRessurs {
 
     @PostMapping
     @Timed("oppdaterVeiledersContext")
-    public void oppdaterVeiledersContext(@RequestHeader(value = "referer", required = false) String referer, @RequestBody RSNyContext rsNyContext) {
+    public RSContext oppdaterVeiledersContext(@RequestHeader(value = "referer", required = false) String referer, @RequestBody RSNyContext rsNyContext) {
         Optional<String> ident = authContextUtils.getIdent();
         RSNyContext context = new RSNyContext()
                 .verdi(rsNyContext.verdi)
@@ -112,11 +112,15 @@ public class ContextRessurs {
         Pair<AuditIdentifier, String> verdi = new Pair<>(AuditIdentifier.VALUE, context.verdi);
         Pair<AuditIdentifier, String> url = new Pair<>(AuditIdentifier.REFERER, referer);
 
-        withAudit(describe(ident, UPDATE, AuditResources.OppdaterKontekst, type, verdi, url), () -> {
-            ident.ifPresent((veilederIdent) -> {
-                contextService.oppdaterVeiledersContext(context, veilederIdent);
-            });
-            return null;
+        if (ident.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident");
+        }
+
+
+        return withAudit(describe(ident, UPDATE, AuditResources.OppdaterKontekst, type, verdi, url), () -> {
+            String veilederIdent = ident.get();
+            contextService.oppdaterVeiledersContext(context, veilederIdent);
+            return contextService.hentVeiledersContext(veilederIdent);
         });
     }
 }
