@@ -8,13 +8,11 @@ ADD / /source
 WORKDIR /source
 RUN mvn package -DskipTests
 
-FROM gcr.io/distroless/java17-debian12:nonroot
+#FROM gcr.io/distroless/java17-debian12:nonroot
+FROM eclipse-temurin:17-alpine
 
-USER nonroot
 WORKDIR /app
-
-ENV APPD_ENABLED=true
 
 COPY --from=builder /source/target/modiacontextholder.jar /app/app.jar
 
-CMD ["/app/app.jar"]
+CMD ["java", "-jar", "/app/app.jar"]
