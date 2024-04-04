@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.5</version>
+        <version>3.1.10</version>
     </parent>
 
     <groupId>no.nav.sbl</groupId>
@@ -17,20 +17,24 @@
 
     <properties>
         <java.version>11</java.version>
-        <common.version>2.2023.01.09_08.56-ae38750bc0d9</common.version>
+        <common.version>3.2024.02.21_11.18-8f9b43befae1</common.version>
         <graphql-kotlin.version>7.0.2</graphql-kotlin.version>
         <kotlin.version>1.9.23</kotlin.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>https://github-package-registry-mirror.gc.nav.no/cached/maven-release</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>no.nav.common</groupId>
-                <artifactId>bom</artifactId>
-                <version>${common.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>com.oracle.ojdbc</groupId>
                 <artifactId>ojdbc8</artifactId>
@@ -98,38 +102,48 @@
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>util</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>sts</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>nais</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>auth</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>feature-toggle</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>metrics</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>test</artifactId>
+            <version>${common.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>rest</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>client</artifactId>
+            <version>${common.version}</version>
         </dependency>
 
         <!--spring-->
@@ -151,6 +165,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
@@ -167,7 +185,7 @@
             <artifactId>ojdbc8</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.sf.ehcache</groupId>
+            <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
         </dependency>
 
@@ -190,11 +208,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
