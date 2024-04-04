@@ -49,9 +49,9 @@ class RedirectRessurs @Autowired constructor(
                 .execute()
 
             check(response.isSuccessful) {
-                "ResponseCode: ${response.code()}"
+                "ResponseCode: ${response.code}"
             }
-            val body = checkNotNull(response.body()) {
+            val body = checkNotNull(response.body) {
                 "Body: <null>"
             }
             body.string()

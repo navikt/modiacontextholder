@@ -3,11 +3,11 @@ package no.nav.sbl.util
 import no.nav.common.auth.utils.CookieUtils
 import no.nav.common.utils.fn.UnsafeRunnable
 import java.util.*
-import javax.servlet.Filter
-import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.Filter
+import jakarta.servlet.FilterChain
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
+import jakarta.servlet.http.HttpServletRequest
 
 class AccesstokenServletFilter : Filter {
     interface AccesstokenHolder {
