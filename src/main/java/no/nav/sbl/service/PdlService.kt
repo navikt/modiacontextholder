@@ -3,7 +3,6 @@ package no.nav.sbl.service
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import io.ktor.client.request.*
-import io.ktor.util.*
 import io.vavr.control.Try
 import kotlinx.coroutines.runBlocking
 import no.nav.common.client.utils.CacheUtils
@@ -19,7 +18,6 @@ import java.time.Duration
 
 val pdlApiUrl: URL = EnvironmentUtils.getRequiredProperty("PDL_API_URL").let(::URL)
 
-@KtorExperimentalAPI
 class PdlService(private val stsService: SystemUserTokenProvider) {
     private val hentIdentCache: Cache<String, Try<String>> = Caffeine.newBuilder()
         .expireAfterWrite(Duration.ofMinutes(30))
@@ -34,7 +32,7 @@ class PdlService(private val stsService: SystemUserTokenProvider) {
 
     fun hentIdentFraPDL(fnr: String): Try<String> = Try.of {
         runBlocking {
-            val response = HentIdent(graphQLClient).execute(HentIdent.Variables(fnr), systemTokenHeaders)
+            val response = graphQLClient.execute(HentIdent(HentIdent.Variables(fnr)), systemTokenHeaders)
             if (response.errors != null) {
                 throw ResponseStatusException(HttpStatus.BAD_REQUEST, response.errors.toString())
             }
