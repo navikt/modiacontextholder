@@ -1,11 +1,12 @@
 package no.nav.sbl.config;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.common.auth.Constants;
 import no.nav.common.auth.context.UserRole;
 import no.nav.common.auth.oidc.filter.OidcAuthenticationFilter;
 import no.nav.common.auth.oidc.filter.OidcAuthenticator;
 import no.nav.common.auth.oidc.filter.OidcAuthenticatorConfig;
-import no.nav.common.rest.filter.LogRequestFilter;
+import no.nav.common.log.LogFilter;
 import no.nav.common.rest.filter.SetStandardHttpHeadersFilter;
 import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DatabaseCleanerService;
@@ -20,6 +21,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static no.nav.common.utils.EnvironmentUtils.isDevelopment;
 
 @Slf4j
@@ -28,6 +30,7 @@ import static no.nav.common.utils.EnvironmentUtils.isDevelopment;
 @EnableScheduling
 @Import({
         CorsConfig.class,
+        CacheConfig.class,
         DatabaseConfig.class,
         ServiceContext.class
 })
@@ -84,8 +87,8 @@ public class ApplicationConfig {
 
     @Bean
     public FilterRegistrationBean logFilterRegistrationBean() {
-        FilterRegistrationBean<LogRequestFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new LogRequestFilter("modiacontextholder", isDevelopment().orElse(false)));
+        FilterRegistrationBean<LogFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new LogFilter("modiacontextholder", isDevelopment().orElse(false)));
         registration.setOrder(3);
         registration.addUrlPatterns("/*");
         return registration;

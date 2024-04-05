@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.service.AuthContextService;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
