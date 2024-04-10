@@ -242,6 +242,18 @@
         <dependency>
             <groupId>com.expediagroup</groupId>
             <artifactId>graphql-kotlin-ktor-client</artifactId>
+            <version>${graphql-kotlin.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.expediagroup</groupId>
+                    <artifactId>graphql-kotlin-client-serialization</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.expediagroup</groupId>
+            <artifactId>graphql-kotlin-client-jackson</artifactId>
+            <version>${graphql-kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
