@@ -9,6 +9,7 @@ metadata:
 spec:
   envFrom:
     - secret: modiacontextholder-unleash-api-token
+    - secret: modiacontextholder-redis-passord
   image: "{{ image }}"
   port: 8080
   webproxy: true
@@ -159,8 +160,10 @@ spec:
       value: "p"
     - name: AAREG_URL
       value: "https://arbeid-og-inntekt.nais.adeo.no"
+    - name: REDIS_PORT
+      value: "6379"
     - name: REDIS_HOST
-      value: "modiacontextholder-redis.personoversikt.svc.nais.local"
+      value: "modiacontextholder-redis-med-passord.personoversikt.svc.nais.local"
     - name: SALESFORCE_URL
       value: "https://navdialog.lightning.force.com"
     - name: UNLEASH_ENVIRONMENT
