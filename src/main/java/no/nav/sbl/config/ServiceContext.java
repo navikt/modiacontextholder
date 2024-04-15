@@ -8,8 +8,8 @@ import no.nav.common.sts.SystemUserTokenProvider;
 import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DatabaseCleanerService;
 import no.nav.sbl.db.dao.EventDAO;
-import no.nav.sbl.redis.Redis;
 import no.nav.sbl.redis.RedisConfig;
+import no.nav.sbl.redis.RedisPublisher;
 import no.nav.sbl.service.PdlService;
 import no.nav.sbl.service.*;
 import org.springframework.context.annotation.Bean;
@@ -29,8 +29,8 @@ public class ServiceContext {
     public static final String SECURITY_TOKEN_SERVICE_DISCOVERYURL = getRequiredProperty("SECURITY_TOKEN_SERVICE_DISCOVERY_URL");
 
     @Bean
-    public ContextService contextService(EventDAO eventDAO, Redis.Publisher redis) {
-        return new ContextService(eventDAO, redis);
+    public ContextService contextService(EventDAO eventDAO, RedisPublisher redisPublisher) {
+        return new ContextService(eventDAO, redisPublisher);
     }
 
     @Bean

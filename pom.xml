@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.5</version>
+        <version>3.1.10</version>
     </parent>
 
     <groupId>no.nav.sbl</groupId>
@@ -17,20 +17,24 @@
 
     <properties>
         <java.version>11</java.version>
-        <common.version>2.2022.04.01_08.27-cbfeb0be0ee0</common.version>
-        <graphql-kotlin.version>3.6.8</graphql-kotlin.version>
-        <kotlin.version>1.6.10</kotlin.version>
+        <common.version>3.2024.02.21_11.18-8f9b43befae1</common.version>
+        <graphql-kotlin.version>7.0.2</graphql-kotlin.version>
+        <kotlin.version>1.9.23</kotlin.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>https://github-package-registry-mirror.gc.nav.no/cached/maven-release</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>no.nav.common</groupId>
-                <artifactId>bom</artifactId>
-                <version>${common.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>com.oracle.ojdbc</groupId>
                 <artifactId>ojdbc8</artifactId>
@@ -65,7 +69,7 @@
             </dependency>
             <dependency>
                 <groupId>com.expediagroup</groupId>
-                <artifactId>graphql-kotlin-client</artifactId>
+                <artifactId>graphql-kotlin-ktor-client</artifactId>
                 <version>${graphql-kotlin.version}</version>
             </dependency>
         </dependencies>
@@ -86,54 +90,60 @@
         <dependency>
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
-            <version>0.9.0</version>
+            <version>0.10.4</version>
         </dependency>
         <dependency>
             <groupId>io.getunleash</groupId>
             <artifactId>unleash-client-java</artifactId>
-            <version>8.3.1</version>
+            <version>9.2.0</version>
         </dependency>
 
         <!--fellesbiblioteker-->
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>util</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>sts</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>nais</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>auth</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.common</groupId>
-            <artifactId>auth</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>feature-toggle</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>metrics</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>test</artifactId>
+            <version>${common.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>rest</artifactId>
+            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.common</groupId>
             <artifactId>client</artifactId>
+            <version>${common.version}</version>
         </dependency>
 
         <!--spring-->
@@ -151,11 +161,11 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -175,7 +185,7 @@
             <artifactId>ojdbc8</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.sf.ehcache</groupId>
+            <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
         </dependency>
 
@@ -183,7 +193,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>1.16.2</version>
+            <version>1.19.7</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -198,11 +208,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -236,7 +241,30 @@
         </dependency>
         <dependency>
             <groupId>com.expediagroup</groupId>
-            <artifactId>graphql-kotlin-client</artifactId>
+            <artifactId>graphql-kotlin-ktor-client</artifactId>
+            <version>${graphql-kotlin.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.expediagroup</groupId>
+                    <artifactId>graphql-kotlin-client-serialization</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.expediagroup</groupId>
+            <artifactId>graphql-kotlin-client-jackson</artifactId>
+            <version>${graphql-kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+            <version>2.17.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-mock-jvm</artifactId>
+            <version>2.3.9</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -255,7 +283,6 @@
                         </goals>
                         <configuration>
                             <endpoint>https://navikt.github.io/pdl/pdl-api-sdl.graphqls</endpoint>
-                            <outputDirectory>src/main/resources/pdl</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -267,20 +294,23 @@
                             <schemaFile>src/main/resources/pdl/schema.graphql</schemaFile>
                             <packageName>no.nav.sbl.consumers.pdl.generated</packageName>
                             <queryFileDirectory>src/main/resources/pdl/queries</queryFileDirectory>
-                            <converters>
-                                <Long>
+                            <customScalars>
+                                <customScalar>
+                                    <scalar>Long</scalar>
                                     <type>kotlin.Long</type>
                                     <converter>no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.LongScalarConverter</converter>
-                                </Long>
-                                <Date>
-                                    <type>java.time.LocalDate</type>
-                                    <converter>no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.DateScalarConverter</converter>
-                                </Date>
-                                <DateTime>
+                                </customScalar>
+                                <customScalar>
+                                    <scalar>DateTime</scalar>
                                     <type>java.time.LocalDateTime</type>
                                     <converter>no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.DateTimeScalarConverter</converter>
-                                </DateTime>
-                            </converters>
+                                </customScalar>
+                                <customScalar>
+                                    <scalar>Date</scalar>
+                                    <type>java.time.LocalDate</type>
+                                    <converter>no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.DateScalarConverter</converter>
+                                </customScalar>
+                            </customScalars>
                         </configuration>
                     </execution>
                 </executions>
@@ -312,7 +342,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jvmTarget>11</jvmTarget>
+                    <jvmTarget>17</jvmTarget>
                 </configuration>
             </plugin>
             <plugin>

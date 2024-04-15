@@ -123,6 +123,9 @@ spec:
         - application: sosialhjelp-modia-oidc-auth-proxy
           namespace: teamdigisos
           cluster: prod-fss
+        - application: speil
+          namespace: tbd
+          cluster: prod-gcp
   secureLogs:
     enabled: true
   env:

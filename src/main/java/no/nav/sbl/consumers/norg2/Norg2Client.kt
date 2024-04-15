@@ -8,7 +8,7 @@ import no.nav.common.rest.client.RestClient
 import no.nav.common.utils.IdUtils
 import no.nav.sbl.consumers.axsys.domain.HttpRequestConstants
 import no.nav.sbl.consumers.norg2.domain.Enhet
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.slf4j.MDC
@@ -28,8 +28,7 @@ class Norg2Client(private val url: String, private val systemUser: String) {
             .newCall(
                 Request.Builder()
                     .url(
-                        HttpUrl
-                            .get("$url/api/v1/enhet")
+                        "$url/api/v1/enhet".toHttpUrl()
                             .newBuilder()
                             .addQueryParameter("enhetStatusListe", "AKTIV")
                             .addQueryParameter("enhetStatusListe", "UNDER_ETABLERING")
@@ -42,11 +41,11 @@ class Norg2Client(private val url: String, private val systemUser: String) {
                     .build()
             ).execute()
 
-        return objectmapper.readValue(response.body()?.byteStream(), Norg2EnheterResponse)
+        return objectmapper.readValue(response.body?.byteStream(), Norg2EnheterResponse)
     }
 
     fun ping() {
-        val status = client.newCall(Request.Builder().url("$url/internal/isAlive").build()).execute().code()
+        val status = client.newCall(Request.Builder().url("$url/internal/isAlive").build()).execute().code
         if (status != 200) {
             throw RuntimeException("Norg2 /isAlive status: $status")
         }

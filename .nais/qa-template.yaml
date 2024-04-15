@@ -9,6 +9,7 @@ metadata:
 spec:
   envFrom:
     - secret: modiacontextholder-unleash-api-token
+    - secret: modiacontextholder-redis-passord
   image: "{{ image }}"
   port: 8080
   webproxy: true
@@ -125,6 +126,9 @@ spec:
         - application: sosialhjelp-modia-oidc-auth-proxy
           namespace: teamdigisos
           cluster: dev-fss
+        - application: speil
+          namespace: tbd
+          cluster: dev-gcp
   secureLogs:
     enabled: true
   env:
@@ -158,8 +162,10 @@ spec:
       value: "{{ namespace }}"
     - name: AAREG_URL
       value: "https://arbeid-og-inntekt-q1.dev.adeo.no"
+    - name: REDIS_PORT
+      value: "6379"
     - name: REDIS_HOST
-      value: "modiacontextholder-redis.personoversikt.svc.nais.local"
+      value: "modiacontextholder-redis-med-passord.personoversikt.svc.nais.local"
     - name: SALESFORCE_URL
       value: "https://navdialog--sit2.lightning.force.com"
     - name: UNLEASH_ENVIRONMENT
