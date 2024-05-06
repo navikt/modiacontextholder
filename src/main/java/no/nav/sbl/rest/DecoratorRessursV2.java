@@ -1,6 +1,10 @@
 package no.nav.sbl.rest;
 
 import io.vavr.control.Try;
+import no.nav.common.client.nom.NomClient;
+import no.nav.common.types.identer.NavIdent;
+import no.nav.sbl.azure.AnsattRolle;
+import no.nav.sbl.azure.AzureADService;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
 import no.nav.sbl.rest.domain.DecoratorDomain.FnrAktorId;
@@ -9,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -19,7 +23,7 @@ public class DecoratorRessursV2 {
     private static final String rolleModiaAdmin = "0000-GA-Modia_Admin";
 
     @Autowired
-    LdapService ldapService;
+    AzureADService azureADService;
     @Autowired
     EnheterService enheterService;
     @Autowired
@@ -28,6 +32,9 @@ public class DecoratorRessursV2 {
     PdlService pdlService;
     @Autowired
     AuthContextService authContextUtils;
+
+    @Autowired
+    NomClient nomClient;
 
     @GetMapping
     public DecoratorConfig hentSaksbehandlerInfoOgEnheter() {
@@ -60,7 +67,9 @@ public class DecoratorRessursV2 {
     }
 
     private Try<List<DecoratorDomain.Enhet>> hentEnheter(String ident) {
-        if (ldapService.hentVeilederRoller(ident).contains(rolleModiaAdmin)) {
+        String userToken = authContextUtils.requireIdToken();
+        List<String> roles = azureADService.fetchRoller(userToken, new NavIdent(ident)).stream().map(AnsattRolle::getGruppeNavn).collect(Collectors.toList());
+        if (roles.contains(rolleModiaAdmin)) {
             return Try.success(enheterService.hentAlleEnheter());
         }
         return enheterService.hentEnheter(ident);
