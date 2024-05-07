@@ -1,7 +1,6 @@
 package no.nav.sbl.rest;
 
 import io.vavr.control.Try;
-import no.nav.common.client.nom.NomClient;
 import no.nav.common.types.identer.NavIdent;
 import no.nav.sbl.azure.AnsattRolle;
 import no.nav.sbl.azure.AzureADService;
@@ -32,9 +31,6 @@ public class DecoratorRessursV2 {
     PdlService pdlService;
     @Autowired
     AuthContextService authContextUtils;
-
-    @Autowired
-    NomClient nomClient;
 
     @GetMapping
     public DecoratorConfig hentSaksbehandlerInfoOgEnheter() {

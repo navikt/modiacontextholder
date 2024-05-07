@@ -13,11 +13,6 @@ import okhttp3.Request
 import okhttp3.Response
 import org.slf4j.LoggerFactory
 
-data class AnsattRolle(
-    val gruppeNavn: String,
-    val gruppeId: AzureObjectId,
-)
-
 interface AzureADService {
     fun fetchRoller(
         userToken: String,
@@ -56,7 +51,7 @@ class AzureADServiceImpl(
             }
 
         } catch (e: Exception) {
-            log.error("Kall til azureAD feilet")
+            log.error("Kall til azureAD feilet", veilederIdent, e)
             return listOf()
         }
     }
@@ -95,6 +90,11 @@ class AzureADServiceImpl(
         )
     }
 }
+
+data class AnsattRolle(
+    val gruppeNavn: String,
+    val gruppeId: AzureObjectId,
+)
 
 @Serializable
 data class AzureAdResponse(
