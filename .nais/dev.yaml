@@ -33,7 +33,7 @@ spec:
       cpu: 400m
       memory: 768Mi
   ingresses:
-    - https://modiacontextholder.dev.intern.nav.no/modiacontextholder
+    - https://modiacontextholder.intern.dev.nav.no/modiacontextholder
   replicas:
     min: 2
     max: 4
@@ -125,6 +125,8 @@ spec:
       value: "dev-fss:pdl:pdl-api"
     - name: NORG2_API_URL
       value: "https://norg2.dev.intern.nav.no"
+    - name: NORG2_SCOPE
+      value: "dev-fss:org:norg2"
     - name: NOM_URL
       value: "https://nom-api.intern.dev.nav.no"
     - name: NOM_SCOPE

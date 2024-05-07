@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AxsysConfig {
-    public static final String AXSYS_URL_PROPERTY = "AXSYS_REST_API_URL";
+    public static final String AXSYS_URL_PROPERTY = "AXSYS_URL";
 
     @Bean
     public AxsysClient axsysClient() {
