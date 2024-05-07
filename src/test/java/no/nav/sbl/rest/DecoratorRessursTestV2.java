@@ -1,11 +1,13 @@
 package no.nav.sbl.rest;
 
 import io.vavr.control.Try;
+import no.nav.common.types.identer.AzureObjectId;
+import no.nav.sbl.azure.AnsattRolle;
+import no.nav.sbl.azure.AzureADService;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
 import no.nav.sbl.service.AuthContextService;
 import no.nav.sbl.service.EnheterService;
-import no.nav.sbl.service.LdapService;
 import no.nav.sbl.service.VeilederService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,15 +23,18 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DecoratorRessursTestV2 {
     private static final String IDENT = "Z999999";
+    private static final String  GROUP_NAME = "0000-GA-GOSYS_REGIONAL";
+    private static final AzureObjectId azureObjectId = new AzureObjectId("d2987104-63b2-4110-83ac-20ff6afe24a2");
 
     @Mock
-    LdapService ldapService;
+    AzureADService azureADService;
     @Mock
     EnheterService enheterService;
     @Mock
@@ -120,7 +125,7 @@ public class DecoratorRessursTestV2 {
     }
 
     private void gitt_modia_admin_rolle() {
-        when(ldapService.hentVeilederRoller(anyString())).thenReturn(asList("0000-GA-Modia_Admin"));
+        when(azureADService.fetchRoller(anyString(), any())).thenReturn(asList(new AnsattRolle(GROUP_NAME, azureObjectId)));
     }
 
     private void gitt_tilgang_til_enheter(List<DecoratorDomain.Enhet> data) {
