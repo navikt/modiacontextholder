@@ -33,3 +33,17 @@ jobs:
           PRINT_PAYLOAD: true
           CLUSTER: prod-fss
           RESOURCE: .nais/redis.yaml
+      - name: Setup dev gcp
+        if: github.ref == 'refs/heads/master'
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          PRINT_PAYLOAD: true
+          CLUSTER: prod-gcp
+          RESOURCE: .nais/redis.yaml
+      - name: Setup prod gcp
+        if: github.ref == 'refs/heads/master'
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          PRINT_PAYLOAD: true
+          CLUSTER: prod-gcp
+          RESOURCE: .nais/redis.yaml
