@@ -44,10 +44,11 @@ open class ServiceContext {
     open fun enhetService() = EnheterService()
 
     @Bean
-    open fun machineToMachineTokenProvider() = AzureAdTokenClientBuilder
-        .builder()
-        .withNaisDefaults()
-        .buildMachineToMachineTokenClient()
+    open fun machineToMachineTokenProvider(): MachineToMachineTokenClient =
+        AzureAdTokenClientBuilder
+            .builder()
+            .withNaisDefaults()
+            .buildMachineToMachineTokenClient()
 
     @Bean
     open fun oboflowTokenProvider(): OnBehalfOfTokenClient =
