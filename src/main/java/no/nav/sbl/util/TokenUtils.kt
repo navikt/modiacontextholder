@@ -49,7 +49,17 @@ fun MachineToMachineTokenClient.bindTo(api: DownstreamApi) =
         override fun createMachineToMachineToken() = createMachineToMachineToken(api.tokenscope())
     }
 
+fun MachineToMachineTokenClient.bindTo(api: String) =
+    object : BoundedMachineToMachineTokenClient {
+        override fun createMachineToMachineToken(): String = api
+    }
+
 fun OnBehalfOfTokenClient.bindTo(api: DownstreamApi) =
     object : BoundedOnBehalfOfTokenClient {
         override fun exchangeOnBehalfOfToken(accesstoken: String) = exchangeOnBehalfOfToken(api.tokenscope(), accesstoken)
+    }
+
+fun OnBehalfOfTokenClient.bindTo(api: String) =
+    object : BoundedOnBehalfOfTokenClient {
+        override fun exchangeOnBehalfOfToken(accesstoken: String) = exchangeOnBehalfOfToken(api, accesstoken)
     }
