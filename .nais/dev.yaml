@@ -12,7 +12,6 @@ spec:
     - secret: modiacontextholder-redis-passord
   image: "{{ image }}"
   port: 8080
-  webproxy: true
   liveness:
     path: modiacontextholder/internal/isAlive
     initialDelay: 50
