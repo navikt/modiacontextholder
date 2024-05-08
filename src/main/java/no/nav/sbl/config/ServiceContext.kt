@@ -104,9 +104,7 @@ open class ServiceContext {
     }
 
     @Bean
-    open fun norg2Client(machineToMachineTokenProvider: MachineToMachineTokenClient): Norg2Client? {
-        val downstreamApi = parse(EnvironmentUtils.getRequiredProperty("NORG2_SCOPE"))
-        val systemuserToken = machineToMachineTokenProvider.createMachineToMachineToken(downstreamApi)
+    open fun norg2Client(): Norg2Client? {
         val client: OkHttpClient =
             RestClient.baseClient().newBuilder()
                 .addInterceptor(XCorrelationIdInterceptor())
@@ -115,11 +113,6 @@ open class ServiceContext {
                         requireNotNull(request.header("X-Correlation-ID")) {
                             "Kall uten \"X-Correlation-ID\" er ikke lov"
                         }
-                    },
-                )
-                .addInterceptor(
-                    AuthorizationInterceptor {
-                        systemuserToken
                     },
                 )
                 .build()
