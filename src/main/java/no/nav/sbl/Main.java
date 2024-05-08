@@ -16,7 +16,7 @@ import static no.nav.sbl.config.DatabaseConfig.*;
 @SpringBootApplication
 public class Main {
     public static void main(String... args) {
-        String clusterName = String.valueOf(EnvironmentUtils.getClusterName());
+        String clusterName = EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME");
         if(!GCP_CLUSTERS.contains(clusterName)) {
             setupVault();
         }
