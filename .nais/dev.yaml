@@ -38,6 +38,11 @@ spec:
     min: 2
     max: 4
     cpuThresholdPercentage: 50
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_15
+        databases:
+          - name: modiacontextholder-db
   azure:
     application:
       enabled: true
@@ -145,5 +150,7 @@ spec:
       value: "modiacontextholder-redis-med-passord.personoversikt.svc.nais.local"
     - name: SALESFORCE_URL
       value: "https://navdialog--sit2.lightning.force.com"
+    - name: DB_NAME
+      value: "modiacontextholder-db"
     - name: UNLEASH_ENVIRONMENT
       value: "development"
