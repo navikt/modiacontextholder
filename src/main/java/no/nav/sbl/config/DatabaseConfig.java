@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
+import java.util.List;
 import java.util.Objects;
 
 import static no.nav.common.utils.EnvironmentUtils.getRequiredProperty;
@@ -23,8 +24,7 @@ import static no.nav.common.utils.EnvironmentUtils.getRequiredProperty;
 @Configuration
 @EnableTransactionManagement
 public class DatabaseConfig {
-
-            ;
+    public static final List<String> GCP_CLUSTERS = List.of("dev-gcp", "prod-gcp");
     public static final String MODIACONTEXTHOLDERDB_URL_PROPERTY = "MODIACONTEXTHOLDERDB_URL";
     public static final String MODIACONTEXTHOLDERDB_USERNAME = "MODIACONTEXTHOLDERDB_USERNAME";
     public static final String MODIACONTEXTHOLDERDB_PASSWORD = "MODIACONTEXTHOLDERDB_PASSWORD";
@@ -37,7 +37,7 @@ public class DatabaseConfig {
         config.setMaximumPoolSize(300);
         config.setMinimumIdle(1);
 
-        if(Objects.equals(clusterName, "dev-gcp") || Objects.equals(clusterName, "prod-gcp")) {
+        if(GCP_CLUSTERS.contains(clusterName)){
             config.setJdbcUrl(getRequiredProperty("NAIS_DATABASE_MODIACONTEXTHOLDER_MODIACONTEXTHOLDER_DB_JDBC_URL"));
         } else {
             config.setJdbcUrl(getRequiredProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY));
