@@ -31,7 +31,7 @@ public class DatabaseConfig {
 
     @Bean
     public DataSource getDataSource() {
-        String clusterName = String.valueOf(EnvironmentUtils.getClusterName());
+        String clusterName = EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME");
 
         HikariConfig config = new HikariConfig();
         config.setMaximumPoolSize(300);
