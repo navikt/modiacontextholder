@@ -34,8 +34,6 @@ public class DatabaseConfig {
         String clusterName = EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME");
 
         HikariConfig config = new HikariConfig();
-        config.setMaximumPoolSize(300);
-        config.setMinimumIdle(1);
 
         if(GCP_CLUSTERS.contains(clusterName)){
             config.setJdbcUrl(getRequiredProperty("NAIS_DATABASE_MODIACONTEXTHOLDER_MODIACONTEXTHOLDER_DB_JDBC_URL"));
@@ -44,6 +42,8 @@ public class DatabaseConfig {
             config.setUsername(getRequiredProperty(MODIACONTEXTHOLDERDB_USERNAME));
             config.setPassword(getRequiredProperty(MODIACONTEXTHOLDERDB_PASSWORD));
         }
+        config.setMaximumPoolSize(300);
+        config.setMinimumIdle(1);
 
         return new HikariDataSource(config);
     }
