@@ -142,6 +142,8 @@ spec:
       value: "dev-fss:pdl:pdl-api-{{ namespace }}"
     - name: NORG2_API_URL
       value: "https://app-{{ namespace }}.adeo.no/norg2"
+    - name: NORG2_SCOPE
+      value: "dev-fss:org:norg2"
     - name: NOM_URL
       value: "https://nom-api.intern.dev.nav.no"
     - name: NOM_SCOPE

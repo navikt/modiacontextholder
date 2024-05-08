@@ -140,6 +140,8 @@ spec:
       value: "prod-fss:pdl:pdl-api"
     - name: NORG2_API_URL
       value: "https://app.adeo.no/norg2"
+    - name: NORG2_SCOPE
+      value: "prod-fss:org:norg2"
     - name: NOM_URL
       value: "https://nom-api.intern.nav.no"
     - name: NOM_SCOPE

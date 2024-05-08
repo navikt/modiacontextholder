@@ -2,6 +2,7 @@ package no.nav.sbl.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DbHelsesjekk;
 import no.nav.sbl.db.dao.EventDAO;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
+import java.util.Objects;
+
 import static no.nav.common.utils.EnvironmentUtils.getRequiredProperty;
 
 
@@ -21,18 +24,27 @@ import static no.nav.common.utils.EnvironmentUtils.getRequiredProperty;
 @EnableTransactionManagement
 public class DatabaseConfig {
 
+            ;
     public static final String MODIACONTEXTHOLDERDB_URL_PROPERTY = "MODIACONTEXTHOLDERDB_URL";
     public static final String MODIACONTEXTHOLDERDB_USERNAME = "MODIACONTEXTHOLDERDB_USERNAME";
     public static final String MODIACONTEXTHOLDERDB_PASSWORD = "MODIACONTEXTHOLDERDB_PASSWORD";
 
     @Bean
     public DataSource getDataSource() {
+        String clusterName = String.valueOf(EnvironmentUtils.getClusterName());
+
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(getRequiredProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY));
-        config.setUsername(getRequiredProperty(MODIACONTEXTHOLDERDB_USERNAME));
-        config.setPassword(getRequiredProperty(MODIACONTEXTHOLDERDB_PASSWORD));
         config.setMaximumPoolSize(300);
         config.setMinimumIdle(1);
+
+        if(Objects.equals(clusterName, "dev-gcp") || Objects.equals(clusterName, "prod-gcp")) {
+            config.setJdbcUrl(getRequiredProperty("NAIS_DATABASE_MODIACONTEXTHOLDER_MODIACONTEXTHOLDER_DB_JDBC_URL"));
+        } else {
+            config.setJdbcUrl(getRequiredProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY));
+            config.setUsername(getRequiredProperty(MODIACONTEXTHOLDERDB_USERNAME));
+            config.setPassword(getRequiredProperty(MODIACONTEXTHOLDERDB_PASSWORD));
+        }
+
         return new HikariDataSource(config);
     }
 
