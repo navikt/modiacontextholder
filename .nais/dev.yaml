@@ -7,9 +7,6 @@ metadata:
   labels:
     team: personoversikt
 spec:
-  envFrom:
-    - secret: modiacontextholder-unleash-api-token
-    - secret: modiacontextholder-redis-passord
   image: "{{ image }}"
   port: 8080
   liveness:
@@ -122,6 +119,9 @@ spec:
           cluster: dev-gcp
   secureLogs:
     enabled: true
+  envFrom:
+    - secret: modiacontextholder-unleash-api-token
+    - secret: modiacontextholder-redis-passord
   env:
     - name: AXSYS_URL
       value: "https://axsys.dev-fss-pub.nais.io"
@@ -150,7 +150,7 @@ spec:
     - name: REDIS_PORT
       value: "6379"
     - name: REDIS_HOST
-      value: "modiacontextholder-redis-med-passord.personoversikt.svc.nais.local"
+      value: "modiacontextholder-redis-med-passord.personoversikt.svc.cluster.local"
     - name: SALESFORCE_URL
       value: "https://navdialog--sit2.lightning.force.com"
     - name: DB_NAME
