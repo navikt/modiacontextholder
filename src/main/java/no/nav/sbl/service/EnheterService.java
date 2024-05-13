@@ -28,7 +28,7 @@ public class EnheterService {
         return Try.of(() ->
                 client.hentTilganger(NavIdent.of(ident))
                         .stream()
-                        .map((enhet) -> aktiveEnheter.get(enhet.getEnhetId()))
+                        .map((enhet) -> aktiveEnheter.get(enhet.getEnhetId().get()))
                         .filter(Objects::nonNull)
                         .sorted(Comparator.comparing(DecoratorDomain.Enhet::getEnhetId))
                         .collect(Collectors.toList())
