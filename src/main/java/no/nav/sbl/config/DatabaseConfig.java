@@ -12,11 +12,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.flywaydb.core.Flyway;
 
 import javax.sql.DataSource;
 
 import java.util.List;
-import java.util.Objects;
 
 import static no.nav.common.utils.EnvironmentUtils.getRequiredProperty;
 
@@ -35,7 +35,7 @@ public class DatabaseConfig {
 
         HikariConfig config = new HikariConfig();
 
-        if(GCP_CLUSTERS.contains(clusterName)){
+        if (GCP_CLUSTERS.contains(clusterName)) {
             config.setJdbcUrl(getRequiredProperty("NAIS_DATABASE_MODIACONTEXTHOLDER_MODIACONTEXTHOLDER_DB_JDBC_URL"));
         } else {
             config.setJdbcUrl(getRequiredProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY));
@@ -45,9 +45,11 @@ public class DatabaseConfig {
         config.setMaximumPoolSize(300);
         config.setMinimumIdle(1);
 
-        return new HikariDataSource(config);
-    }
+        HikariDataSource dataSource = new HikariDataSource(config);
+        Flyway.configure().dataSource(dataSource).load().migrate();
 
+        return dataSource;
+    }
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
