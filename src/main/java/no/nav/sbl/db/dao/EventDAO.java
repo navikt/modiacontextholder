@@ -1,10 +1,13 @@
 package no.nav.sbl.db.dao;
 
+import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.domain.PEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
@@ -26,17 +29,31 @@ public class EventDAO {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public long save(PEvent pEvent) {
-        Long nesteSekvensverdi = nesteSekvensverdi("EVENT_ID_SEQ", jdbcTemplate);
-        Map namedParameters = new HashMap();
-        namedParameters.put("event_id", nesteSekvensverdi);
-        namedParameters.put("veileder_ident", pEvent.veilederIdent);
-        namedParameters.put("event_type", pEvent.eventType);
-        namedParameters.put("verdi", pEvent.verdi);
-        namedParameters.put("created", convert(now()));
-        namedParameterJdbcTemplate.update("insert into event " +
-                "(event_id, veileder_ident, event_type, verdi, created)" +
-                "VALUES (:event_id, :veileder_ident, :event_type, :verdi, :created)", namedParameters);
-        return nesteSekvensverdi;
+        if ((List.of("dev-gcp", "prod-gcp").contains(EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME")))) {
+            SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                    .withTableName("EVENT")
+                    .usingGeneratedKeyColumns("event_id");
+            return jdbcInsert.executeAndReturnKey(
+                    Map.of(
+                        "veileder_ident", pEvent.veilederIdent,
+                        "event_type", pEvent.eventType,
+                        "verdi", pEvent.verdi,
+                        "created", convert(now())
+                    )
+            ).longValue();
+        } else {
+            Long nesteSekvensverdi = nesteSekvensverdi("EVENT_ID_SEQ", jdbcTemplate);
+            Map namedParameters = new HashMap();
+            namedParameters.put("event_id", nesteSekvensverdi);
+            namedParameters.put("veileder_ident", pEvent.veilederIdent);
+            namedParameters.put("event_type", pEvent.eventType);
+            namedParameters.put("verdi", pEvent.verdi);
+            namedParameters.put("created", convert(now()));
+            namedParameterJdbcTemplate.update("insert into event " +
+                    "(event_id, veileder_ident, event_type, verdi, created)" +
+                    "VALUES (:event_id, :veileder_ident, :event_type, :verdi, :created)", namedParameters);
+            return nesteSekvensverdi;
+        }
     }
 
     private class EventMapper implements RowMapper<PEvent> {

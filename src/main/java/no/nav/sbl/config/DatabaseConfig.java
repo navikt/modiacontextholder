@@ -46,7 +46,9 @@ public class DatabaseConfig {
         config.setMinimumIdle(1);
 
         HikariDataSource dataSource = new HikariDataSource(config);
-        Flyway.configure().dataSource(dataSource).load().migrate();
+
+        if (GCP_CLUSTERS.contains(clusterName))
+            Flyway.configure().dataSource(dataSource).load().migrate();
 
         return dataSource;
     }
