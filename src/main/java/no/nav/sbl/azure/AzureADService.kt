@@ -125,7 +125,7 @@ data class AzureGroupResponse(
     val displayName: String? = null,
     val expirationDateTime: String? = null,
     val groupTypes: List<String> = listOf(),
-    val isAssignableToRole: String? = null,
+    val isAssignableToRole: Boolean? = null,
     val mail: String? = null,
     val mailEnabled: Boolean? = null,
     val mailNickname: String? = null,
