@@ -2,14 +2,18 @@ package no.nav.sbl.db.dao;
 
 import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.domain.PEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -23,6 +27,7 @@ import static no.nav.sbl.db.dao.DbUtil.*;
 @Transactional
 public class EventDAO {
 
+    private static final Logger log = LoggerFactory.getLogger(EventDAO.class);
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
@@ -68,17 +73,27 @@ public class EventDAO {
     }
 
     public Optional<PEvent> sistAktiveBrukerEvent(String veilederIdent) {
-        return queryOptional(jdbcTemplate,
-                "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc) where ROWNUM = 1",
+        try {
+            return Optional.of(jdbcTemplate.queryForObject(
+                "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc limit 1",
                 new EventMapper(),
-                veilederIdent);
+                veilederIdent));
+        } catch (DataAccessException e) {
+            log.warn("Feilet ved henting av aktiv bruker", e);
+            return Optional.empty();
+        }
     }
 
     public Optional<PEvent> sistAktiveEnhetEvent(String veilederIdent) {
-        return queryOptional(jdbcTemplate,
-                "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc) where ROWNUM = 1",
+        try {
+        return Optional.of(jdbcTemplate.queryForObject(
+                "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc limit 1",
                 new EventMapper(),
-                veilederIdent);
+                veilederIdent));
+        } catch (DataAccessException e) {
+            log.warn("Feilet ved henting av aktiv enhet", e);
+            return Optional.empty();
+        }
     }
 
     public List<PEvent> finnAlleEventerEtterId(long id) {
