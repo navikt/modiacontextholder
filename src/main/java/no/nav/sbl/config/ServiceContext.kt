@@ -22,9 +22,9 @@ import no.nav.sbl.service.*
 import no.nav.sbl.util.DownstreamApi.Companion.parse
 import no.nav.sbl.util.bindTo
 import no.nav.sbl.util.createMachineToMachineToken
-import no.nav.utils.AuthorizationInterceptor
 import no.nav.utils.LoggingInterceptor
 import no.nav.utils.XCorrelationIdInterceptor
+import no.nav.utils.getCallId
 import okhttp3.OkHttpClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -88,6 +88,11 @@ open class ServiceContext {
             RestClient
                 .baseClient()
                 .newBuilder()
+                .addInterceptor(
+                    LoggingInterceptor("Axsys") {
+                        getCallId()
+                    },
+                )
                 .build()
         val downstreamApi = parse(EnvironmentUtils.getRequiredProperty("AXSYS_SCOPE"))
         val tokenSupplier = {

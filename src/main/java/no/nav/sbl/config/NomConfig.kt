@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import no.nav.sbl.util.createMachineToMachineToken
+import no.nav.utils.LoggingInterceptor
+import no.nav.utils.getCallId
 
 @Configuration
 open class NomConfig {
@@ -22,6 +24,11 @@ open class NomConfig {
     private val httpClient: OkHttpClient =
         RestClient.baseClient()
             .newBuilder()
+            .addInterceptor(
+                LoggingInterceptor("Nom") {
+                    getCallId()
+                },
+            )
             .build()
 
     @Autowired
