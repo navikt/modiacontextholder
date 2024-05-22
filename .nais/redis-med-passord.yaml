@@ -14,6 +14,7 @@ spec:
     inbound:
       rules:
         - application: modiacontextholder
+        - application: modiaeventdistribution
   image: bitnami/redis:7.2.4
   port: 6379
   replicas: # A single Redis-app doesn't scale
