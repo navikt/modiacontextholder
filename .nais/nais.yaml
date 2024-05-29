@@ -100,7 +100,7 @@ spec:
         - application: modiapersonoversikt
           namespace: personoversikt
           cluster: prod-fss
-        - application: rekrutteringsbistand-container
+        - application: rekrutteringsbistand-kandidatsok-api
           namespace: toi
           cluster: prod-gcp
         - application: rekrutteringsbistand

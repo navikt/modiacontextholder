@@ -102,7 +102,7 @@ spec:
         - application: modiapersonoversikt-{{ namespace }}
           namespace: personoversikt
           cluster: dev-fss
-        - application: rekrutteringsbistand-container
+        - application: rekrutteringsbistand-kandidatsok-api
           namespace: toi
           cluster: dev-gcp
         - application: rekrutteringsbistand
