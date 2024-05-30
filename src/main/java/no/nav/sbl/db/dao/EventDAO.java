@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,10 +41,10 @@ public class EventDAO {
                     .usingGeneratedKeyColumns("event_id");
             return jdbcInsert.executeAndReturnKey(
                     Map.of(
-                        "veileder_ident", pEvent.veilederIdent,
-                        "event_type", pEvent.eventType,
-                        "verdi", pEvent.verdi,
-                        "created", convert(now())
+                            "veileder_ident", pEvent.veilederIdent,
+                            "event_type", pEvent.eventType,
+                            "verdi", pEvent.verdi,
+                            "created", convert(now())
                     )
             ).longValue();
         } else {
@@ -61,23 +62,19 @@ public class EventDAO {
         }
     }
 
-    private class EventMapper implements RowMapper<PEvent> {
-        public PEvent mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new PEvent()
-                    .id(rs.getLong("event_id"))
-                    .veilederIdent(rs.getString("veileder_ident"))
-                    .eventType(rs.getString("event_type"))
-                    .verdi(rs.getString("verdi"))
-                    .created(convert(rs.getTimestamp("created")));
-        }
-    }
-
     public Optional<PEvent> sistAktiveBrukerEvent(String veilederIdent) {
         try {
-            return Optional.of(jdbcTemplate.queryForObject(
-                "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc limit 1",
-                new EventMapper(),
-                veilederIdent));
+            if (EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME").contains("gcp")) {
+                return Optional.of(jdbcTemplate.queryForObject(
+                        "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc limit 1",
+                        new EventMapper(),
+                        veilederIdent));
+            } else {
+                return Optional.of(jdbcTemplate.queryForObject(
+                        "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc) where ROWNUM = 1",
+                        new EventMapper(),
+                        veilederIdent));
+            }
         } catch (DataAccessException e) {
             log.warn("Feilet ved henting av aktiv bruker", e);
             return Optional.empty();
@@ -86,10 +83,17 @@ public class EventDAO {
 
     public Optional<PEvent> sistAktiveEnhetEvent(String veilederIdent) {
         try {
-        return Optional.of(jdbcTemplate.queryForObject(
-                "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc limit 1",
-                new EventMapper(),
-                veilederIdent));
+            if (EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME").contains("gcp")) {
+            return Optional.of(jdbcTemplate.queryForObject(
+                    "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc limit 1",
+                    new EventMapper(),
+                    veilederIdent));
+            } else {
+                return Optional.of(jdbcTemplate.queryForObject(
+                        "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc) where ROWNUM = 1",
+                        new EventMapper(),
+                        veilederIdent));
+            }
         } catch (DataAccessException e) {
             log.warn("Feilet ved henting av aktiv enhet", e);
             return Optional.empty();
@@ -128,5 +132,16 @@ public class EventDAO {
 
     public void slettAllEventer(String veilederIdent) {
         jdbcTemplate.update("delete from event where veileder_ident = ?", veilederIdent);
+    }
+
+    private class EventMapper implements RowMapper<PEvent> {
+        public PEvent mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new PEvent()
+                    .id(rs.getLong("event_id"))
+                    .veilederIdent(rs.getString("veileder_ident"))
+                    .eventType(rs.getString("event_type"))
+                    .verdi(rs.getString("verdi"))
+                    .created(convert(rs.getTimestamp("created")));
+        }
     }
 }
