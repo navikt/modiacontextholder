@@ -32,7 +32,7 @@ public class AuthContextService {
         return navIdent != null ? navIdent : claims.getSubject();
     }
 
-    public static String requireIdToken() {
+    public String requireIdToken() {
         return AuthContextUtils.requireIdTokenString();
     }
 }
