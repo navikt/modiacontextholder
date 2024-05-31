@@ -1,10 +1,10 @@
-name: Setup Redis application with password
+name: Setup Redis application
 
 on:
   push:
     paths:
-      - '.github/workflows/redis-med-passord.yaml'
-      - '.nais/redis-med-passord.yaml'
+      - '.github/workflows/redis.yaml'
+      - '.nais/redis.yaml'
 
 env:
   CI: true
@@ -23,15 +23,13 @@ jobs:
         if: github.ref == 'refs/heads/dev'
         uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: dev-fss
-          RESOURCE: .nais/redis-med-passord.yaml
+          RESOURCE: .nais/redis.yaml
       - name: Setup prod
         if: github.ref == 'refs/heads/master'
         uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: prod-fss
-          RESOURCE: .nais/redis-med-passord.yaml
+          RESOURCE: .nais/redis.yaml

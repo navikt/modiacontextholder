@@ -1,25 +1,27 @@
 package no.nav.sbl.service;
 
-import no.nav.common.client.nom.NomClient;
-import no.nav.common.client.nom.VeilederNavn;
-import no.nav.common.types.identer.NavIdent;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 
+import java.util.Map;
+
+import static java.util.Arrays.asList;
+
 public class VeilederService {
 
     @Autowired
-    NomClient nomClient;
+    LdapService ldapService;
+
 
     @Cacheable("veilederCache")
     public DecoratorDomain.Saksbehandler hentVeilederNavn(String ident) {
-        VeilederNavn veilederNavn = nomClient.finnNavn(new NavIdent(ident));
+        Map map = ldapService.hentVeilederAttributter(ident, asList("givenname", "sn"));
 
         return new DecoratorDomain.Saksbehandler(
                 ident,
-                veilederNavn.getFornavn(),
-                veilederNavn.getEtternavn()
+                map.get("givenname").toString(),
+                map.get("sn").toString()
         );
     }
 }
