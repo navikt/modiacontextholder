@@ -102,7 +102,7 @@ spec:
         - application: modiapersonoversikt-{{ namespace }}
           namespace: personoversikt
           cluster: dev-fss
-        - application: rekrutteringsbistand-kandidatsok-api
+        - application: rekrutteringsbistand-container
           namespace: toi
           cluster: dev-gcp
         - application: rekrutteringsbistand
@@ -132,26 +132,26 @@ spec:
   secureLogs:
     enabled: true
   env:
-    - name: AXSYS_URL
-      value: "https://axsys.dev.intern.nav.no"
-    - name: AXSYS_SCOPE
-      value: "dev-fss:org:axsys"
+    - name: SECURITY_TOKEN_SERVICE_DISCOVERY_URL
+      value: "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration"
+    - name: AXSYS_REST_API_URL
+      value: "https://axsys.nais.preprod.local"
     - name: PDL_API_URL
       value: "https://pdl-api-{{ namespace }}.dev.intern.nav.no/graphql"
-    - name: PDL_SCOPE
-      value: "dev-fss:pdl:pdl-api-{{ namespace }}"
     - name: NORG2_API_URL
       value: "https://app-{{ namespace }}.adeo.no/norg2"
-    - name: NORG2_SCOPE
-      value: "dev-fss:org:norg2"
-    - name: NOM_URL
-      value: "https://nom-api.intern.dev.nav.no"
-    - name: NOM_SCOPE
-      value: "dev-gcp:nom:nom-api"
-    - name: MS_GRAPH_URL
-      value: "https://graph.microsoft.com/"
-    - name: MS_GRAPH_SCOPE
-      value: "https://graph.microsoft.com/.default"
+    - name: LDAP_BASEDN
+      value: "dc=preprod,dc=local"
+    - name: LDAP_URL
+      value: "ldaps://ldapgw.preprod.local"
+    - name: LDAP_USER_BASEDN
+      value: "ou=NAV,ou=BusinessUnits,dc=preprod,dc=local"
+    - name: LDAP_SERVICEUSER_BASEDN
+      value: "ou=ServiceAccounts,dc=preprod,dc=local"
+    - name: LDAP_DOMAIN
+      value: "PREPROD.LOCAL"
+    - name: MS_GRAPH_CLIENT_URL
+      value: "https://graph.microsoft.com/v1.0"
     - name: LOGINSERVICE_OIDC_DISCOVERYURI
       value: "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration"
     - name: AAD_V2_DISCOVERURI
