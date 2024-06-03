@@ -68,6 +68,17 @@ spec:
     outbound:
       external:
         - host: personoversikt-unleash-api.nav.cloud.nais.io
+        - host: graph.microsoft.com
+      rules:
+        - application: nom-api
+          namespace: nom
+          cluster: prod-gcp
+        - application: axsys
+          namespace: org
+          cluster: prod-fss
+        - application: norg2
+          namespace: org
+          cluster: prod-fss
     inbound:
       rules:
         - application: arbeidssokerregistrering-veileder
