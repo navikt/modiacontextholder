@@ -2,10 +2,11 @@ package no.nav.sbl.service;
 
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.common.client.axsys.AxsysClient;
+import no.nav.common.types.identer.NavIdent;
 import no.nav.sbl.rest.domain.DecoratorDomain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import no.nav.sbl.consumers.axsys.AxsysClient;
 
 import java.util.Comparator;
 import java.util.List;
@@ -25,10 +26,9 @@ public class EnheterService {
     public Try<List<DecoratorDomain.Enhet>> hentEnheter(String ident) {
         Map<String, DecoratorDomain.Enhet> aktiveEnheter = enheterCache.get();
         return Try.of(() ->
-                client.hentTilgang(ident)
-                        .enheter
+                client.hentTilganger(NavIdent.of(ident))
                         .stream()
-                        .map((enhet) -> aktiveEnheter.get(enhet.getEnhetId()))
+                        .map((enhet) -> aktiveEnheter.get(enhet.getEnhetId().get()))
                         .filter(Objects::nonNull)
                         .sorted(Comparator.comparing(DecoratorDomain.Enhet::getEnhetId))
                         .collect(Collectors.toList())
