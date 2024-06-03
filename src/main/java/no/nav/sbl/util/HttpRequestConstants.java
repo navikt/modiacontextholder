@@ -1,4 +1,4 @@
-package no.nav.sbl.consumers.axsys.domain;
+package no.nav.sbl.util;
 
 public final class HttpRequestConstants {
 
