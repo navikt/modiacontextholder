@@ -39,6 +39,6 @@ class AuthenticationServerRequestObservationConventionTest {
             .andReturn().response.contentAsString
 
         // Verify that the custom metric with the authentication_type tag is present
-        assert(result.contains("""authentication_server_request_observation_convention_seconds_count{authentication_type="unknown",error="none",exception="none",method="GET",outcome="SUCCESS",status="200",uri="/test"} 1"""))
+        assert(result.contains("""http_server_requests_seconds_count{authentication_type="unknown",error="none",exception="none",method="GET",outcome="SUCCESS",status="200",uri="/test"} 1"""))
     }
 }

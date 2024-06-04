@@ -34,6 +34,6 @@ class AuthenticationServerRequestObservationConvention(
     }
 
     override fun getName(): String {
-        return "authentication-server-request-observation-convention"
+        return defaultConvention.name
     }
 }
