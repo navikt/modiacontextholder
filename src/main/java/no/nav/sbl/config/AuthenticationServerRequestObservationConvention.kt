@@ -2,6 +2,7 @@ package no.nav.sbl.config
 
 import io.micrometer.common.KeyValues
 import io.micrometer.observation.Observation
+import no.nav.sbl.service.AuthContextService
 import org.slf4j.LoggerFactory
 import org.springframework.http.server.observation.DefaultServerRequestObservationConvention
 import org.springframework.http.server.observation.ServerRequestObservationContext
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component
 // Legger til ekstra informasjon om autentisert bruker i metrikker basert fra request context
 @Component
 class AuthenticationServerRequestObservationConvention(
+    private val authContextService: AuthContextService,
     private val defaultConvention: ServerRequestObservationConvention = DefaultServerRequestObservationConvention(),
 ) : ServerRequestObservationConvention by defaultConvention {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -18,15 +20,14 @@ class AuthenticationServerRequestObservationConvention(
     override fun getLowCardinalityKeyValues(context: ServerRequestObservationContext): KeyValues {
         val defaultTags = defaultConvention.getLowCardinalityKeyValues(context)
 
-        // TODO: Legg til mer informasjon om bruker, men pass på å kun logge klientidentifikator for maskin-til-maskin-tokens
-        val authenticationType = context.carrier.userPrincipal?.javaClass?.simpleName
-            ?: "unknown"
-        // TODO: Fjern
-        logger.info("Authentication type: $authenticationType")
+        // azp_name from token claim, e.g. "dev-gcp:aura:nais-testapp"
+        val authorizedPartyName: String = authContextService.getAuthorizedPartyName()
+            .orElse("unknown")
 
-        val authenticationTypeLabel = KeyValues.of("authentication_type", authenticationType)
+        // TODO: Fjern etter testing
+        logger.info("Authentication type: $authorizedPartyName")
 
-        return defaultTags.and(authenticationTypeLabel)
+        return defaultTags.and(KeyValues.of("authorized_party", authorizedPartyName))
     }
 
     override fun supportsContext(context: Observation.Context): Boolean {

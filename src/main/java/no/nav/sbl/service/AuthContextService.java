@@ -26,6 +26,18 @@ public class AuthContextService {
                 .filter(StringUtils::notNullOrEmpty);
     }
 
+    public Optional<String> getAuthorizedPartyName() {
+        return AuthContextUtils.getIdTokenClaims()
+                .map(AuthContextService::getAuthorizedParty)
+                .filter(StringUtils::notNullOrEmpty);
+    }
+
+    @SneakyThrows
+    private static String getAuthorizedParty(JWTClaimsSet claims) {
+        String authorizedParty = claims.getStringClaim("azp_name");
+        return authorizedParty != null ? authorizedParty : "unknown";
+    }
+
     @SneakyThrows
     private static String getSubject(JWTClaimsSet claims) {
         String navIdent = claims.getStringClaim(AAD_NAV_IDENT_CLAIM);
