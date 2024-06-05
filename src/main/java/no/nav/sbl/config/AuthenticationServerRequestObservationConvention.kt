@@ -19,7 +19,8 @@ class AuthenticationServerRequestObservationConvention(
         val defaultTags = super.getLowCardinalityKeyValues(context)
 
         logger.info("Available headers: ${context.carrier.headerNames.toList().joinToString(", ")}")
-        logger.info("Available cookies: ${context.carrier.cookies.toList().map { it.name }.joinToString(", ")}")
+        val cookies = context.carrier.cookies?.toList() ?: emptyList()
+        logger.info("Available cookies: ${cookies.map { it.name }.joinToString(", ")}")
 
         // azp_name from token claim, e.g. "dev-gcp:aura:nais-testapp"
         val authorizedPartyName: String = authContextService.getAuthorizedPartyName()
