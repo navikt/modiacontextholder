@@ -7,6 +7,7 @@ import no.nav.common.utils.StringUtils;
 import no.nav.sbl.util.AuthContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
 import java.util.Optional;
 
 public class AuthContextService {
@@ -28,14 +29,15 @@ public class AuthContextService {
 
     public Optional<String> getAuthorizedPartyName() {
         return AuthContextUtils.getIdTokenClaims()
-                .map(AuthContextService::getAuthorizedParty)
-                .filter(StringUtils::notNullOrEmpty);
+                .flatMap(AuthContextService::getAuthorizedParty);
     }
 
-    @SneakyThrows
-    private static String getAuthorizedParty(JWTClaimsSet claims) {
-        String authorizedParty = claims.getStringClaim("azp_name");
-        return authorizedParty != null ? authorizedParty : "unknown";
+    private static Optional<String> getAuthorizedParty(JWTClaimsSet claims) {
+        try {
+            return Optional.ofNullable(claims.getStringClaim("azp_name"));
+        } catch (ParseException e) {
+            return Optional.empty();
+        }
     }
 
     @SneakyThrows
