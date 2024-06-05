@@ -6,19 +6,17 @@ import no.nav.sbl.service.AuthContextService
 import org.slf4j.LoggerFactory
 import org.springframework.http.server.observation.DefaultServerRequestObservationConvention
 import org.springframework.http.server.observation.ServerRequestObservationContext
-import org.springframework.http.server.observation.ServerRequestObservationConvention
 import org.springframework.stereotype.Component
 
 // Legger til ekstra informasjon om autentisert bruker i metrikker basert fra request context
 @Component
 class AuthenticationServerRequestObservationConvention(
     private val authContextService: AuthContextService,
-    private val defaultConvention: ServerRequestObservationConvention = DefaultServerRequestObservationConvention(),
-) : ServerRequestObservationConvention by defaultConvention {
+) : DefaultServerRequestObservationConvention() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun getLowCardinalityKeyValues(context: ServerRequestObservationContext): KeyValues {
-        val defaultTags = defaultConvention.getLowCardinalityKeyValues(context)
+        val defaultTags = super.getLowCardinalityKeyValues(context)
 
         // azp_name from token claim, e.g. "dev-gcp:aura:nais-testapp"
         val authorizedPartyName: String = authContextService.getAuthorizedPartyName()
@@ -32,9 +30,5 @@ class AuthenticationServerRequestObservationConvention(
 
     override fun supportsContext(context: Observation.Context): Boolean {
         return context is ServerRequestObservationContext
-    }
-
-    override fun getName(): String {
-        return defaultConvention.name
     }
 }
