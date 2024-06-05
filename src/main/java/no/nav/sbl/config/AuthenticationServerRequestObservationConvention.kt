@@ -18,12 +18,19 @@ class AuthenticationServerRequestObservationConvention(
     override fun getLowCardinalityKeyValues(context: ServerRequestObservationContext): KeyValues {
         val defaultTags = super.getLowCardinalityKeyValues(context)
 
+        val claims = authContextService.getClaims()
+
+        val authType = context.carrier.authType
+        val principal = context.carrier.userPrincipal
+
+        // TODO: Remove after testing
+        logger.info("claims: $claims")
+        logger.info("authType: $authType")
+        logger.info("principal: $principal")
+
         // azp_name from token claim, e.g. "dev-gcp:aura:nais-testapp"
         val authorizedPartyName: String = authContextService.getAuthorizedPartyName()
             .orElse("unknown")
-
-        // TODO: Fjern etter testing
-        logger.info("Authentication type: $authorizedPartyName")
 
         return defaultTags.and(KeyValues.of("authorized_party", authorizedPartyName))
     }

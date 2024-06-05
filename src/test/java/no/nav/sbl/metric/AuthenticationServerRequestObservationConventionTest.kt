@@ -40,6 +40,7 @@ class AuthenticationServerRequestObservationConventionTest {
 
     @Test
     fun `metrics are collected with unknown authentication type`() {
+        every { authContextService.claims } returns emptyMap<String, Any>()
         every { authContextService.authorizedPartyName } returns Optional.empty()
 
         mockMvc.get("/test")
@@ -59,6 +60,7 @@ class AuthenticationServerRequestObservationConventionTest {
 
     @Test
     fun `metrics are collected with authentication type`() {
+        every { authContextService.claims } returns mapOf("azp_name" to "dev-gcp:aura:nais-testapp")
         every { authContextService.authorizedPartyName } returns Optional.of("dev-gcp:aura:nais-testapp")
 
         mockMvc.get("/test")

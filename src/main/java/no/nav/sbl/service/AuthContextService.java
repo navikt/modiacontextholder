@@ -8,6 +8,8 @@ import no.nav.sbl.util.AuthContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 public class AuthContextService {
@@ -30,6 +32,12 @@ public class AuthContextService {
     public Optional<String> getAuthorizedPartyName() {
         return AuthContextUtils.getIdTokenClaims()
                 .flatMap(AuthContextService::getAuthorizedParty);
+    }
+
+    public Map<String, Object> getClaims() {
+        return AuthContextUtils.getIdTokenClaims()
+                .map(JWTClaimsSet::getClaims)
+                .orElse(Collections.emptyMap());
     }
 
     private static Optional<String> getAuthorizedParty(JWTClaimsSet claims) {
