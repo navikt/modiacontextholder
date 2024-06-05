@@ -42,7 +42,7 @@ public class ApplicationConfig {
     private static final String azureOBOClientId = EnvironmentUtils.getRequiredProperty("AZURE_APP_CLIENT_ID");
 
     @Bean
-    public FilterRegistrationBean corsFilterRegistration() {
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
         CorsFilter corsFilter = new CorsFilter(CorsConfig.allowAllCorsConfig());
 
         FilterRegistrationBean<CorsFilter> registration = new FilterRegistrationBean<>();
@@ -55,7 +55,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public FilterRegistrationBean authenticationFilterRegistration() {
+    public FilterRegistrationBean<OidcAuthenticationFilter> authenticationFilterRegistration() {
         OidcAuthenticatorConfig azureAdOBO = new OidcAuthenticatorConfig()
                 .withClientId(azureOBOClientId)
                 .withDiscoveryUrl(azureOBODiscoveryUrl)
@@ -73,7 +73,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public FilterRegistrationBean accesstokenFilterRegistrationBean() {
+    public FilterRegistrationBean<AccesstokenServletFilter> accesstokenFilterRegistrationBean() {
         FilterRegistrationBean<AccesstokenServletFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new AccesstokenServletFilter());
         registration.setOrder(2);
@@ -83,7 +83,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public FilterRegistrationBean logFilterRegistrationBean() {
+    public FilterRegistrationBean<LogRequestFilter> logFilterRegistrationBean() {
         FilterRegistrationBean<LogRequestFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new LogRequestFilter("modiacontextholder", isDevelopment().orElse(false)));
         registration.setOrder(3);
@@ -92,7 +92,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public FilterRegistrationBean setStandardHeadersFilterRegistrationBean() {
+    public FilterRegistrationBean<SetStandardHttpHeadersFilter> setStandardHeadersFilterRegistrationBean() {
         FilterRegistrationBean<SetStandardHttpHeadersFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new SetStandardHttpHeadersFilter());
         registration.setOrder(4);
