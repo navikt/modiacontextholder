@@ -7,6 +7,9 @@ import no.nav.common.utils.StringUtils;
 import no.nav.sbl.util.AuthContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 public class AuthContextService {
@@ -24,6 +27,25 @@ public class AuthContextService {
                 .map(msGraphClient::hentOnPremisesSamAccountName)
                 .or(() -> AuthContextUtils.getIdTokenClaims().map(AuthContextService::getSubject))
                 .filter(StringUtils::notNullOrEmpty);
+    }
+
+    public Optional<String> getAuthorizedPartyName() {
+        return AuthContextUtils.getIdTokenClaims()
+                .flatMap(AuthContextService::getAuthorizedParty);
+    }
+
+    public Map<String, Object> getClaims() {
+        return AuthContextUtils.getIdTokenClaims()
+                .map(JWTClaimsSet::getClaims)
+                .orElse(Collections.emptyMap());
+    }
+
+    private static Optional<String> getAuthorizedParty(JWTClaimsSet claims) {
+        try {
+            return Optional.ofNullable(claims.getStringClaim("azp_name"));
+        } catch (ParseException e) {
+            return Optional.empty();
+        }
     }
 
     @SneakyThrows

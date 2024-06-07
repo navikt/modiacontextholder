@@ -1,5 +1,6 @@
 package no.nav.sbl.config;
 
+import io.micrometer.observation.ObservationRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.common.auth.context.UserRole;
 import no.nav.common.auth.oidc.filter.OidcAuthenticationFilter;
@@ -14,9 +15,14 @@ import no.nav.sbl.service.AuthContextService;
 import no.nav.sbl.util.AccesstokenServletFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.server.observation.ServerRequestObservationConvention;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.filter.ServerHttpObservationFilter;
 
 import java.util.List;
 
@@ -42,7 +48,7 @@ public class ApplicationConfig {
     private static final String azureOBOClientId = EnvironmentUtils.getRequiredProperty("AZURE_APP_CLIENT_ID");
 
     @Bean
-    public FilterRegistrationBean corsFilterRegistration() {
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
         CorsFilter corsFilter = new CorsFilter(CorsConfig.allowAllCorsConfig());
 
         FilterRegistrationBean<CorsFilter> registration = new FilterRegistrationBean<>();
@@ -55,7 +61,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public FilterRegistrationBean authenticationFilterRegistration() {
+    public FilterRegistrationBean<OidcAuthenticationFilter> authenticationFilterRegistration() {
         OidcAuthenticatorConfig azureAdOBO = new OidcAuthenticatorConfig()
                 .withClientId(azureOBOClientId)
                 .withDiscoveryUrl(azureOBODiscoveryUrl)
@@ -73,7 +79,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public FilterRegistrationBean accesstokenFilterRegistrationBean() {
+    public FilterRegistrationBean<AccesstokenServletFilter> accesstokenFilterRegistrationBean() {
         FilterRegistrationBean<AccesstokenServletFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new AccesstokenServletFilter());
         registration.setOrder(2);
@@ -83,7 +89,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public FilterRegistrationBean logFilterRegistrationBean() {
+    public FilterRegistrationBean<LogRequestFilter> logFilterRegistrationBean() {
         FilterRegistrationBean<LogRequestFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new LogRequestFilter("modiacontextholder", isDevelopment().orElse(false)));
         registration.setOrder(3);
@@ -92,11 +98,24 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public FilterRegistrationBean setStandardHeadersFilterRegistrationBean() {
+    public FilterRegistrationBean<SetStandardHttpHeadersFilter> setStandardHeadersFilterRegistrationBean() {
         FilterRegistrationBean<SetStandardHttpHeadersFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new SetStandardHttpHeadersFilter());
         registration.setOrder(4);
         registration.addUrlPatterns("/*");
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<ServerHttpObservationFilter> serverHttpObservationFilterRegistrationBean(
+            ObservationRegistry observationRegistry,
+            ServerRequestObservationConvention serverRequestObservationConvention
+    ) {
+        FilterRegistrationBean<ServerHttpObservationFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new ServerHttpObservationFilter(observationRegistry, serverRequestObservationConvention));
+        registration.setOrder(5);
+        registration.addUrlPatterns("/api/*");
+        registration.addUrlPatterns("/redirect/*");
         return registration;
     }
 
