@@ -1,126 +1,113 @@
-package no.nav.sbl.rest;
+package no.nav.sbl.rest
 
-import io.micrometer.core.annotation.Timed;
-import kotlin.Pair;
-import no.nav.sbl.db.domain.EventType;
-import no.nav.sbl.naudit.AuditIdentifier;
-import no.nav.sbl.naudit.AuditResources;
-import no.nav.sbl.rest.domain.RSAktivBruker;
-import no.nav.sbl.rest.domain.RSAktivEnhet;
-import no.nav.sbl.rest.domain.RSContext;
-import no.nav.sbl.rest.domain.RSNyContext;
-import no.nav.sbl.service.AuthContextService;
-import no.nav.sbl.service.ContextService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Optional;
-
-import static no.nav.sbl.naudit.Audit.Action.DELETE;
-import static no.nav.sbl.naudit.Audit.Action.UPDATE;
-import static no.nav.sbl.naudit.Audit.describe;
-import static no.nav.sbl.naudit.Audit.withAudit;
-
+import io.micrometer.core.annotation.Timed
+import no.nav.sbl.db.domain.EventType
+import no.nav.sbl.naudit.Audit.Action
+import no.nav.sbl.naudit.Audit.Companion.describe
+import no.nav.sbl.naudit.Audit.Companion.withAudit
+import no.nav.sbl.naudit.AuditIdentifier
+import no.nav.sbl.naudit.AuditResources
+import no.nav.sbl.rest.domain.RSAktivBruker
+import no.nav.sbl.rest.domain.RSAktivEnhet
+import no.nav.sbl.rest.domain.RSContext
+import no.nav.sbl.rest.domain.RSNyContext
+import no.nav.sbl.service.AuthContextService
+import no.nav.sbl.service.ContextService
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
+import kotlin.Pair
 
 @RestController
 @RequestMapping("/api/context")
-public class ContextRessurs {
-
-    @Autowired
-    private ContextService contextService;
-    @Autowired
-    AuthContextService authContextUtils;
+class ContextRessurs(
+    private val contextService: ContextService,
+    private val authContextUtils: AuthContextService,
+) {
 
     @GetMapping
     @Timed
-    public RSContext hentVeiledersContext() {
-        return authContextUtils.getIdent()
-                .map(contextService::hentVeiledersContext)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
+    fun hentVeiledersContext(): RSContext {
+        return authContextUtils.getIdent().map(contextService::hentVeiledersContext)
+            .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident") }
     }
 
     @GetMapping("/aktivbruker")
     @Timed("hentAktivBruker")
-    public RSContext hentAktivBruker() {
-        return authContextUtils.getIdent()
-                .map(contextService::hentAktivBruker)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
+    fun hentAktivBruker(): RSContext {
+        return authContextUtils.getIdent().map(contextService::hentAktivBruker)
+            .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident") }
     }
 
     @GetMapping("/v2/aktivbruker")
     @Timed("hentAktivBrukerV2")
-    public RSAktivBruker hentAktivBrukerV2() {
+    fun hentAktivBrukerV2(): RSAktivBruker {
         return authContextUtils.getIdent().map(contextService::hentAktivBrukerV2)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
+            .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident") }
     }
 
     @GetMapping("/aktivenhet")
     @Timed("hentAktivEnhet")
-    public RSContext hentAktivEnhet() {
-        return authContextUtils.getIdent()
-                .map(contextService::hentAktivEnhet)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
+    fun hentAktivEnhet(): RSContext {
+        return authContextUtils.getIdent().map(contextService::hentAktivEnhet)
+            .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident") }
     }
 
     @GetMapping("/v2/aktivenhet")
     @Timed("hentAktivEnhetV2")
-    public RSAktivEnhet hentAktivEnhetV2() {
-        return authContextUtils.getIdent()
-                .map(contextService::hentAktivEnhetV2)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident"));
+    fun hentAktivEnhetV2(): RSAktivEnhet {
+        return authContextUtils.getIdent().map(contextService::hentAktivEnhetV2)
+            .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident") }
     }
 
     @DeleteMapping
     @Timed("nullstillContext")
-    public void nullstillBrukerContext(@RequestHeader(value = "referer", required = false) String referer) {
-        Optional<String> ident = authContextUtils.getIdent();
-        Pair<AuditIdentifier, String> url = new Pair<>(AuditIdentifier.REFERER, referer);
-        withAudit(describe(ident, DELETE, AuditResources.NullstillKontekst, url), () -> {
-            ident.ifPresent(contextService::nullstillContext);
-            return null;
-        });
+    fun nullstillBrukerContext(@RequestHeader(value = "referer", required = false) referer: String) {
+        val ident = authContextUtils.getIdent()
+        val url = Pair(AuditIdentifier.REFERER, referer)
+        withAudit(describe(ident, Action.DELETE, AuditResources.NullstillKontekst, url)) {
+            ident.ifPresent(contextService::nullstillContext)
+        }
     }
 
     @DeleteMapping("/nullstill")
-    @Deprecated
-    //migrer over til den som ligger på "/" da dette er mest riktig REST-semantisk.
-    public void deprecatedNullstillContext(@RequestHeader(value = "referer", required = false) String referer) {
-        nullstillBrukerContext(referer);
+    @Deprecated("migrer over til den som ligger på '/' da dette er mest riktig REST-semantisk.")
+    fun deprecatedNullstillContext(@RequestHeader(value = "referer", required = false) referer: String) {
+        nullstillBrukerContext(referer)
     }
 
     @DeleteMapping("/aktivbruker")
     @Timed("nullstillAktivBrukerContext")
-    public void nullstillAktivBrukerContext(@RequestHeader(value = "referer", required = false) String referer) {
-        Optional<String> ident = authContextUtils.getIdent();
-        Pair<AuditIdentifier, String> url = new Pair<>(AuditIdentifier.REFERER, referer);
-        withAudit(describe(ident, DELETE, AuditResources.NullstillBrukerIKontekst, url), () -> {
-            ident.ifPresent(contextService::nullstillAktivBruker);
-            return null;
-        });
+    fun nullstillAktivBrukerContext(@RequestHeader(value = "referer", required = false) referer: String) {
+        val ident = authContextUtils.getIdent()
+        val url = Pair(AuditIdentifier.REFERER, referer)
+        withAudit(describe(ident, Action.DELETE, AuditResources.NullstillBrukerIKontekst, url)) {
+            ident.ifPresent(contextService::nullstillAktivBruker)
+        }
     }
 
     @PostMapping
     @Timed("oppdaterVeiledersContext")
-    public RSContext oppdaterVeiledersContext(@RequestHeader(value = "referer", required = false) String referer, @RequestBody RSNyContext rsNyContext) {
-        Optional<String> ident = authContextUtils.getIdent();
-        RSNyContext context = new RSNyContext()
-                .verdi(rsNyContext.verdi)
-                .eventType(EventType.valueOf(rsNyContext.eventType).name());
-        Pair<AuditIdentifier, String> type = new Pair<>(AuditIdentifier.TYPE, context.eventType);
-        Pair<AuditIdentifier, String> verdi = new Pair<>(AuditIdentifier.VALUE, context.verdi);
-        Pair<AuditIdentifier, String> url = new Pair<>(AuditIdentifier.REFERER, referer);
+    fun oppdaterVeiledersContext(
+        @RequestHeader(value = "referer", required = false) referer: String, @RequestBody rsNyContext: RSNyContext
+    ): RSContext {
+        val ident = authContextUtils.getIdent()
+        val context = RSNyContext().apply {
+            verdi = rsNyContext.verdi
+            eventType = EventType.valueOf(rsNyContext.eventType).name
+        }
+        val type = Pair(AuditIdentifier.TYPE, context.eventType)
+        val verdi = Pair(AuditIdentifier.VALUE, context.verdi)
+        val url = Pair(AuditIdentifier.REFERER, referer)
 
-        if (ident.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident");
+        if (ident.isEmpty) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident")
         }
 
-
-        return withAudit(describe(ident, UPDATE, AuditResources.OppdaterKontekst, type, verdi, url), () -> {
-            String veilederIdent = ident.get();
-            contextService.oppdaterVeiledersContext(context, veilederIdent);
-            return contextService.hentVeiledersContext(veilederIdent);
-        });
+        return withAudit(describe(ident, Action.UPDATE, AuditResources.OppdaterKontekst, type, verdi, url)) {
+            val veilederIdent = ident.get()
+            contextService.oppdaterVeiledersContext(context, veilederIdent)
+            contextService.hentVeiledersContext(veilederIdent)
+        }
     }
 }

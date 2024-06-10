@@ -1,42 +1,29 @@
-package no.nav.sbl.service;
+package no.nav.sbl.service
 
-import io.vavr.control.Try;
-import lombok.extern.slf4j.Slf4j;
-import no.nav.common.client.axsys.AxsysClient;
-import no.nav.common.types.identer.NavIdent;
-import no.nav.sbl.rest.domain.DecoratorDomain;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import io.vavr.control.Try
+import no.nav.common.client.axsys.AxsysClient
+import no.nav.common.types.identer.NavIdent
+import no.nav.sbl.rest.domain.DecoratorDomain
+import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.Cacheable
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-@Slf4j
-public class EnheterService {
-    @Autowired
-    private AxsysClient client;
-
-    @Autowired
-    private EnheterCache enheterCache;
+open class EnheterService(
+    private val client: AxsysClient,
+    private val enheterCache: EnheterCache,
+) {
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     @Cacheable("enheterCache")
-    public Try<List<DecoratorDomain.Enhet>> hentEnheter(String ident) {
-        Map<String, DecoratorDomain.Enhet> aktiveEnheter = enheterCache.get();
-        return Try.of(() ->
-                client.hentTilganger(NavIdent.of(ident))
-                        .stream()
-                        .map((enhet) -> aktiveEnheter.get(enhet.getEnhetId().get()))
-                        .filter(Objects::nonNull)
-                        .sorted(Comparator.comparing(DecoratorDomain.Enhet::getEnhetId))
-                        .collect(Collectors.toList())
-        )
-                .onFailure((exception) -> log.error("Kunne ikke hente enheter for {} fra AXSYS", ident, exception));
+    open fun hentEnheter(ident: String): Try<List<DecoratorDomain.Enhet>> {
+        val aktiveEnheter = enheterCache.get()
+        return Try.of {
+            client.hentTilganger(NavIdent.of(ident))
+                .mapNotNull { enhet -> aktiveEnheter[enhet.enhetId.get()] }
+                .sortedBy { it.enhetId }
+        }.onFailure { exception -> log.error("Kunne ikke hente enheter for $ident fra AXSYS", exception) }
     }
 
-    public List<DecoratorDomain.Enhet> hentAlleEnheter() {
-        return enheterCache.getAll();
+    fun hentAlleEnheter(): List<DecoratorDomain.Enhet> {
+        return enheterCache.getAll()
     }
 }

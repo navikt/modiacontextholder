@@ -21,8 +21,8 @@ import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -114,7 +114,7 @@ public class DecoratorRessursTest {
         gitt_logget_inn();
         gitt_modia_admin_rolle();
         gitt_saksbehandler_i_ad();
-        gitt_tilgang_til_enheter(asList(
+        gitt_tilgang_til_enheter(List.of(
                 enhet("0001", "Test 1")
         ));
 
@@ -125,7 +125,7 @@ public class DecoratorRessursTest {
     }
 
     private void gitt_modia_admin_rolle() {
-        when(azureADService.fetchRoller(anyString(), any())).thenReturn(asList(new AnsattRolle(GROUP_NAME, azureObjectId)));
+        when(azureADService.fetchRoller(anyString(), any())).thenReturn(List.of(new AnsattRolle(GROUP_NAME, azureObjectId)));
 
     }
 
@@ -147,6 +147,7 @@ public class DecoratorRessursTest {
     }
 
     private void gitt_logget_inn() {
+        when(authContextService.requireIdToken()).thenReturn("token");
         when(authContextService.getIdent()).thenReturn(Optional.of(IDENT));
     }
 

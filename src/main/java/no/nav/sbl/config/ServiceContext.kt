@@ -51,7 +51,10 @@ open class ServiceContext {
     open fun veilederCache() = VeilederService()
 
     @Bean
-    open fun enhetService() = EnheterService()
+    open fun enhetService(
+        client: AxsysClient,
+        enheterCache: EnheterCache,
+    ) = EnheterService(client, enheterCache)
 
     @Bean
     open fun machineToMachineTokenProvider(): MachineToMachineTokenClient = AzureAdTokenClientBuilder
