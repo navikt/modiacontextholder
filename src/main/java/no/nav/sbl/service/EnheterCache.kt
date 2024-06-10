@@ -1,57 +1,48 @@
-package no.nav.sbl.service;
+package no.nav.sbl.service
 
-import lombok.extern.slf4j.Slf4j;
-import no.nav.sbl.consumers.norg2.Norg2Client;
-import no.nav.sbl.consumers.norg2.domain.Enhet;
-import no.nav.sbl.rest.domain.DecoratorDomain;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import no.nav.sbl.consumers.norg2.Norg2Client
+import no.nav.sbl.consumers.norg2.domain.Enhet
+import no.nav.sbl.rest.domain.DecoratorDomain
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.scheduling.annotation.Scheduled
+import java.util.*
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+class EnheterCache(
+    @Autowired private val norg2Client: Norg2Client
+) {
+    companion object {
+        private const val HVER_TOLVTE_TIME: Long = 12 * 3600 * 1000
+    }
 
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableMap;
-
-@Slf4j
-public class EnheterCache {
-    private static final long HVER_TOLVTE_TIME = 12 * 3600 * 1000;
-    private Map<String, DecoratorDomain.Enhet> cache = unmodifiableMap(new HashMap<>());
-    private List<DecoratorDomain.Enhet> cacheList = unmodifiableList(new ArrayList<>());
-
-    @Autowired
-    Norg2Client norg2Client;
+    private val log = LoggerFactory.getLogger(EnheterCache::class.java)
+    private var cache: Map<String, DecoratorDomain.Enhet> = Collections.unmodifiableMap(HashMap())
+    private var cacheList: List<DecoratorDomain.Enhet> = Collections.unmodifiableList(ArrayList())
 
     @Scheduled(fixedRate = HVER_TOLVTE_TIME)
-    private void refreshCache() {
+    private fun refreshCache() {
         try {
-            List<Enhet> enheter = norg2Client.hentAlleEnheter();
+            val enheter: List<Enhet> = norg2Client.hentAlleEnheter()
 
-            cacheList = unmodifiableList(enheter
-                    .stream()
-                    .map((enhet) -> new DecoratorDomain.Enhet(enhet.getEnhetNr(), enhet.getNavn()))
-                    .sorted(Comparator.comparing(DecoratorDomain.Enhet::getEnhetId))
-                    .collect(Collectors.toList())
-            );
+            cacheList = Collections.unmodifiableList(enheter
+                .map { enhet -> DecoratorDomain.Enhet(enhet.enhetNr, enhet.navn) }
+                .sortedBy { it.enhetId }
+            )
 
-            cache = unmodifiableMap(cacheList
-                    .stream()
-                    .collect(Collectors.toMap(
-                            enhet -> enhet.enhetId,
-                            Function.identity()
-                    )));
+            cache = Collections.unmodifiableMap(cacheList
+                .associateBy { it.enhetId }
+            )
 
-        } catch (Exception e) {
-            log.error("Kunne ikke hente ut alle aktive enheter fra NORG2-rest", e);
+        } catch (e: Exception) {
+            log.error("Kunne ikke hente ut alle aktive enheter fra NORG2-rest", e)
         }
     }
 
-    public Map<String, DecoratorDomain.Enhet> get() {
-        return this.cache;
+    fun get(): Map<String, DecoratorDomain.Enhet> {
+        return this.cache
     }
 
-    public List<DecoratorDomain.Enhet> getAll() {
-        return cacheList;
+    fun getAll(): List<DecoratorDomain.Enhet> {
+        return cacheList
     }
 }

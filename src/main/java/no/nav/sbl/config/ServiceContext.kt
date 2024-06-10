@@ -26,6 +26,7 @@ import no.nav.utils.LoggingInterceptor
 import no.nav.utils.XCorrelationIdInterceptor
 import no.nav.utils.getCallId
 import okhttp3.OkHttpClient
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -45,7 +46,9 @@ open class ServiceContext {
     open fun databaseCleanerService() = DatabaseCleanerService()
 
     @Bean
-    open fun enheterCache() = EnheterCache()
+    open fun enheterCache(
+        @Autowired norg2Client: Norg2Client,
+    ) = EnheterCache(norg2Client)
 
     @Bean
     open fun veilederCache() = VeilederService()

@@ -1,16 +1,9 @@
-package no.nav.sbl.consumers.norg2.domain;
+package no.nav.sbl.consumers.norg2.domain
 
-import lombok.*;
+import java.io.Serializable
 
-import java.io.Serializable;
-
-@Getter
-@Setter
-@EqualsAndHashCode
-@AllArgsConstructor
-@NoArgsConstructor
-public class Enhet implements Serializable {
-    private String enhetNr;
-    private String navn;
-    private String status;
-}
+data class Enhet(
+    var enhetNr: String? = null,
+    var navn: String? = null,
+    var status: String? = null
+) : Serializable
