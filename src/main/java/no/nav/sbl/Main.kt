@@ -1,39 +1,49 @@
-package no.nav.sbl;
+package no.nav.sbl
 
-import no.nav.common.utils.Credentials;
-import no.nav.common.utils.EnvironmentUtils;
-import no.nav.common.utils.NaisUtils;
-import no.nav.common.utils.SslUtils;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import static no.nav.common.utils.EnvironmentUtils.Type.PUBLIC;
-import static no.nav.common.utils.EnvironmentUtils.Type.SECRET;
-import static no.nav.common.utils.EnvironmentUtils.setProperty;
-import static no.nav.sbl.config.ApplicationConfig.SRV_PASSWORD_PROPERTY;
-import static no.nav.sbl.config.ApplicationConfig.SRV_USERNAME_PROPERTY;
-import static no.nav.sbl.config.DatabaseConfig.*;
+import no.nav.common.utils.EnvironmentUtils
+import no.nav.common.utils.NaisUtils
+import no.nav.common.utils.SslUtils
+import no.nav.sbl.config.ApplicationConfig.SRV_PASSWORD_PROPERTY
+import no.nav.sbl.config.ApplicationConfig.SRV_USERNAME_PROPERTY
+import no.nav.sbl.config.DatabaseConfig.GCP_CLUSTERS
+import no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_PASSWORD
+import no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_URL_PROPERTY
+import no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_USERNAME
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-public class Main {
-    public static void main(String... args) {
-        String clusterName = EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME");
-        if(!GCP_CLUSTERS.contains(clusterName)) {
-            setupVault();
+open class Main {
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val clusterName = EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME")
+            if (!GCP_CLUSTERS.contains(clusterName)) {
+                setupVault()
+            }
+            SslUtils.setupTruststore()
+            SpringApplication.run(Main::class.java, *args)
         }
-        SslUtils.setupTruststore();
-        SpringApplication.run(Main.class, args);
-    }
 
-    private static void setupVault() {
-        Credentials serviceUser = NaisUtils.getCredentials("service_user");
-        setProperty(SRV_USERNAME_PROPERTY, serviceUser.username, PUBLIC);
-        setProperty(SRV_PASSWORD_PROPERTY, serviceUser.password, SECRET);
+        private fun setupVault() {
+            val serviceUser = NaisUtils.getCredentials("service_user")
+            EnvironmentUtils.setProperty(SRV_USERNAME_PROPERTY, serviceUser.username, EnvironmentUtils.Type.PUBLIC)
+            EnvironmentUtils.setProperty(SRV_PASSWORD_PROPERTY, serviceUser.password, EnvironmentUtils.Type.SECRET)
 
-        Credentials dbCredentials = NaisUtils.getCredentials("modiacontextholderDB");
-        setProperty(MODIACONTEXTHOLDERDB_USERNAME, dbCredentials.username, PUBLIC);
-        setProperty(MODIACONTEXTHOLDERDB_PASSWORD, dbCredentials.password, SECRET);
+            val dbCredentials = NaisUtils.getCredentials("modiacontextholderDB")
+            EnvironmentUtils.setProperty(
+                MODIACONTEXTHOLDERDB_USERNAME,
+                dbCredentials.username,
+                EnvironmentUtils.Type.PUBLIC
+            )
+            EnvironmentUtils.setProperty(
+                MODIACONTEXTHOLDERDB_PASSWORD,
+                dbCredentials.password,
+                EnvironmentUtils.Type.SECRET
+            )
 
-        String dbUrl = NaisUtils.getFileContent("/var/run/secrets/nais.io/db_config/jdbc_url");
-        setProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY, dbUrl, PUBLIC);
+            val dbUrl = NaisUtils.getFileContent("/var/run/secrets/nais.io/db_config/jdbc_url")
+            EnvironmentUtils.setProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY, dbUrl, EnvironmentUtils.Type.PUBLIC)
+        }
     }
 }
