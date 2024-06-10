@@ -1,91 +1,78 @@
-package no.nav.sbl.rest;
+package no.nav.sbl.rest
 
-import io.vavr.control.Try;
-import no.nav.common.types.identer.NavIdent;
-import no.nav.sbl.azure.AnsattRolle;
-import no.nav.sbl.azure.AzureADService;
-import no.nav.sbl.rest.domain.DecoratorDomain;
-import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
-import no.nav.sbl.rest.domain.DecoratorDomain.FnrAktorId;
-import no.nav.sbl.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
-
-import java.util.List;
-import java.util.stream.Collectors;
-
+import io.vavr.control.Try
+import no.nav.common.types.identer.NavIdent
+import no.nav.sbl.azure.AnsattRolle
+import no.nav.sbl.azure.AzureADService
+import no.nav.sbl.rest.domain.DecoratorDomain
+import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig
+import no.nav.sbl.rest.domain.DecoratorDomain.FnrAktorId
+import no.nav.sbl.service.*
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/api/decorator")
-public class DecoratorRessurs {
-    private static final String rolleModiaAdmin = "0000-GA-Modia_Admin";
-
-    @Autowired
-    AzureADService azureADService;
-    @Autowired
-    EnheterService enheterService;
-    @Autowired
-    VeilederService veilederService;
-    @Autowired
-    PdlService pdlService;
-    @Autowired
-    AuthContextService authContextUtils;
+class DecoratorRessurs(
+    val azureADService: AzureADService,
+    val enheterService: EnheterService,
+    val veilederService: VeilederService,
+    val pdlService: PdlService,
+    val authContextUtils: AuthContextService
+) {
+    companion object {
+        private const val ROLLE_MODIA_ADMIN = "0000-GA-Modia_Admin"
+    }
 
     @GetMapping
-    public DecoratorConfig hentSaksbehandlerInfoOgEnheter() {
-        return hentSaksbehandlerInfoOgEnheterFraAxsys();
+    fun hentSaksbehandlerInfoOgEnheter(): DecoratorConfig {
+        return hentSaksbehandlerInfoOgEnheterFraAxsys()
     }
 
     @GetMapping("/v2")
-    public DecoratorConfig hentSaksbehandlerInfoOgEnheterFraAxsys() {
-        String ident = getIdent();
-        return lagDecoratorConfig(ident, hentEnheter(ident));
+    fun hentSaksbehandlerInfoOgEnheterFraAxsys(): DecoratorConfig {
+        val ident = getIdent()
+        return lagDecoratorConfig(ident, hentEnheter(ident))
     }
 
     @GetMapping("/aktor/{fnr}")
-    @Deprecated(forRemoval = true)
-    public FnrAktorId hentAktorId(@PathVariable("fnr") String fnr) {
+    @Deprecated("forRemoval = true")
+    fun hentAktorId(@PathVariable("fnr") fnr: String): FnrAktorId {
         return pdlService.hentIdent(fnr)
-                .map((aktorId) -> new FnrAktorId(fnr, aktorId))
-                .getOrElseThrow((exception) -> {
-                    if (exception instanceof ResponseStatusException) {
-                        throw (ResponseStatusException) exception;
-                    } else {
-                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error", exception);
-                    }
-                });
+            .map { aktorId -> FnrAktorId(fnr, aktorId) }
+            .getOrElseThrow { exception ->
+                if (exception is ResponseStatusException) {
+                    throw exception
+                } else {
+                    throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error", exception)
+                }
+            }
     }
 
-    private DecoratorConfig lagDecoratorConfig(String ident, Try<List<DecoratorDomain.Enhet>> tryEnheter) {
+    private fun lagDecoratorConfig(ident: String, tryEnheter: Try<List<DecoratorDomain.Enhet>>): DecoratorConfig {
         return tryEnheter
-                .map((enheter) -> new DecoratorConfig(veilederService.hentVeilederNavn(ident), enheter))
-                .getOrElseThrow(DecoratorRessurs::exceptionHandler);
+            .map { enheter -> DecoratorConfig(veilederService.hentVeilederNavn(ident), enheter) }
+            .getOrElseThrow(::exceptionHandler)
     }
 
-    private Try<List<DecoratorDomain.Enhet>> hentEnheter(String ident) {
-        String userToken = authContextUtils.requireIdToken();
-        List<String> roles = azureADService.fetchRoller(userToken, new NavIdent(ident)).stream().map(AnsattRolle::getGruppeNavn).collect(Collectors.toList());
-        if (roles.contains(rolleModiaAdmin)) {
-            return Try.success(enheterService.hentAlleEnheter());
-        }
-        return enheterService.hentEnheter(ident);
+    private fun hentEnheter(ident: String): Try<List<DecoratorDomain.Enhet>> {
+        val userToken = authContextUtils.requireIdToken()
+        val roles = azureADService.fetchRoller(userToken, NavIdent.of(ident))
+            .map(AnsattRolle::gruppeNavn)
+        return if (roles.contains(ROLLE_MODIA_ADMIN)) {
+            Try.success(enheterService.hentAlleEnheter())
+        } else enheterService.hentEnheter(ident)
     }
 
-    private String getIdent() {
-        return authContextUtils.getIdent()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fant ingen subjecthandler"));
+    private fun getIdent(): String {
+        return authContextUtils.ident
+            .orElseThrow { ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fant ingen subjecthandler") }
     }
 
-    private static ResponseStatusException exceptionHandler(Throwable throwable) {
-        if (throwable instanceof ResponseStatusException) {
-            return (ResponseStatusException) throwable;
-        }
-        return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Kunne ikke hente data", throwable);
+    private fun exceptionHandler(throwable: Throwable): ResponseStatusException {
+        return if (throwable is ResponseStatusException) {
+            throwable
+        } else ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Kunne ikke hente data", throwable)
     }
 }
