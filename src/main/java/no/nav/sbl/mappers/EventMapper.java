@@ -14,26 +14,27 @@ import static no.nav.sbl.db.domain.EventType.NY_AKTIV_ENHET;
 public class EventMapper {
 
     public static RSContext toRSContext(PEvent event) {
-        return new RSContext()
-                .aktivEnhet(NY_AKTIV_ENHET.name().equals(event.eventType) ? event.verdi : null)
-                .aktivBruker(NY_AKTIV_BRUKER.name().equals(event.eventType) ? event.verdi : null);
+        return new RSContext(
+                NY_AKTIV_BRUKER.name().equals(event.getEventType()) ? event.getVerdi() : null,
+                NY_AKTIV_ENHET.name().equals(event.getEventType()) ? event.getVerdi() : null
+        );
     }
 
     public static RSAktivBruker toRSAktivBruker(PEvent event) {
         return new RSAktivBruker(
-                NY_AKTIV_BRUKER.name().equals(event.eventType) ? event.verdi : null
+                NY_AKTIV_BRUKER.name().equals(event.getEventType()) ? event.getVerdi() : null
         );
     }
 
     public static RSAktivEnhet toRSAktivEnhet(PEvent event) {
-        return new RSAktivEnhet(NY_AKTIV_ENHET.name().equals(event.eventType) ? event.verdi : null);
+        return new RSAktivEnhet(NY_AKTIV_ENHET.name().equals(event.getEventType()) ? event.getVerdi() : null);
     }
 
     public static RSEvent toRSEvent(PEvent event) {
         return new RSEvent()
-                .id(event.id)
-                .eventType(event.eventType)
-                .veilederIdent(event.veilederIdent);
+                .id(event.getId())
+                .eventType(event.getEventType())
+                .veilederIdent(event.getVeilederIdent());
     }
 
 }

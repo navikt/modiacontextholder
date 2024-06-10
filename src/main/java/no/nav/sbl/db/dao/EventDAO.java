@@ -5,7 +5,6 @@ import no.nav.sbl.db.domain.PEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,8 +12,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
-import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -23,7 +20,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
-import static no.nav.sbl.db.dao.DbUtil.*;
+import static no.nav.sbl.db.dao.DbUtil.convert;
+import static no.nav.sbl.db.dao.DbUtil.nesteSekvensverdi;
 
 @Transactional
 public class EventDAO {
@@ -41,9 +39,9 @@ public class EventDAO {
                     .usingGeneratedKeyColumns("event_id");
             return jdbcInsert.executeAndReturnKey(
                     Map.of(
-                            "veileder_ident", pEvent.veilederIdent,
-                            "event_type", pEvent.eventType,
-                            "verdi", pEvent.verdi,
+                            "veileder_ident", pEvent.getVeilederIdent(),
+                            "event_type", pEvent.getEventType(),
+                            "verdi", pEvent.getVerdi(),
                             "created", convert(now())
                     )
             ).longValue();
@@ -51,9 +49,9 @@ public class EventDAO {
             Long nesteSekvensverdi = nesteSekvensverdi("EVENT_ID_SEQ", jdbcTemplate);
             Map namedParameters = new HashMap();
             namedParameters.put("event_id", nesteSekvensverdi);
-            namedParameters.put("veileder_ident", pEvent.veilederIdent);
-            namedParameters.put("event_type", pEvent.eventType);
-            namedParameters.put("verdi", pEvent.verdi);
+            namedParameters.put("veileder_ident", pEvent.getVeilederIdent());
+            namedParameters.put("event_type", pEvent.getEventType());
+            namedParameters.put("verdi", pEvent.getVerdi());
             namedParameters.put("created", convert(now()));
             namedParameterJdbcTemplate.update("insert into event " +
                     "(event_id, veileder_ident, event_type, verdi, created)" +
@@ -84,10 +82,10 @@ public class EventDAO {
     public Optional<PEvent> sistAktiveEnhetEvent(String veilederIdent) {
         try {
             if (EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME").contains("gcp")) {
-            return Optional.of(jdbcTemplate.queryForObject(
-                    "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc limit 1",
-                    new EventMapper(),
-                    veilederIdent));
+                return Optional.of(jdbcTemplate.queryForObject(
+                        "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc limit 1",
+                        new EventMapper(),
+                        veilederIdent));
             } else {
                 return Optional.of(jdbcTemplate.queryForObject(
                         "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc) where ROWNUM = 1",
@@ -113,9 +111,9 @@ public class EventDAO {
     }
 
     public void slettAlleEventerUtenomNyeste(List<PEvent> eventer) {
-        eventer.stream().sorted((o1, o2) -> o2.id < o1.id ? 1 : -1)
+        eventer.stream().sorted((o1, o2) -> o2.getId() < o1.getId() ? 1 : -1)
                 .limit(eventer.size() - 1)
-                .forEach(pEvent -> deleteEvent(pEvent.id));
+                .forEach(pEvent -> deleteEvent(pEvent.getId()));
     }
 
     public void deleteEvent(long id) {
@@ -136,12 +134,13 @@ public class EventDAO {
 
     private class EventMapper implements RowMapper<PEvent> {
         public PEvent mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new PEvent()
-                    .id(rs.getLong("event_id"))
-                    .veilederIdent(rs.getString("veileder_ident"))
-                    .eventType(rs.getString("event_type"))
-                    .verdi(rs.getString("verdi"))
-                    .created(convert(rs.getTimestamp("created")));
+            return new PEvent(
+                    rs.getLong("event_id"),
+                    rs.getString("veileder_ident"),
+                    rs.getString("event_type"),
+                    convert(rs.getTimestamp("created")),
+                    rs.getString("verdi")
+            );
         }
     }
 }

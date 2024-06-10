@@ -27,40 +27,44 @@ public class ContextServiceTest {
 
     @Before
     @SuppressWarnings("unchecked")
-    public void setup(){
+    public void setup() {
         eventDAO = mock(EventDAO.class);
         RedisPublisher redisPublisher = mock(RedisPublisher.class);
         contextService = new ContextService(eventDAO, redisPublisher);
     }
 
     @Test
-    public void ingen_aktiv_bruker_event(){
+    public void ingen_aktiv_bruker_event() {
         har_ikke_aktiv_bruker();
     }
 
     @Test
     public void eventer_fra_forrige_dag_regnes_ikke_som_aktuelle() {
-        PEvent event = new PEvent().created(now().minusDays(1));
+        PEvent event = new PEvent();
+        event.setCreated(now().minusDays(1));
         boolean result = erFortsattAktuell(event);
         assertThat(result).isFalse();
     }
 
     @Test
     public void eventer_fra_i_dag_regnes_som_aktuelle() {
-        PEvent event = new PEvent().created(now());
+        PEvent event = new PEvent();
+        event.setCreated(now());
         boolean result = erFortsattAktuell(event);
         assertThat(result).isTrue();
     }
 
     @Test
-    public void aktiv_bruker_event(){
+    public void aktiv_bruker_event() {
         LocalDateTime now = now();
         gitt_sist_aktive_bruker_event(now);
-        assertThat(contextService.hentAktivBruker("ident")).isEqualTo(new RSContext().aktivBruker(BRUKER_ID));
+        RSContext rsContext = new RSContext();
+        rsContext.setAktivBruker(BRUKER_ID);
+        assertThat(contextService.hentAktivBruker("ident")).isEqualTo(rsContext);
     }
 
     @Test
-    public void foreldet_aktiv_bruker_event(){
+    public void foreldet_aktiv_bruker_event() {
         gitt_sist_aktive_bruker_event(now().minusDays(2));
         har_ikke_aktiv_bruker();
 
@@ -69,13 +73,15 @@ public class ContextServiceTest {
     }
 
 
-
     private void har_ikke_aktiv_bruker() {
         assertThat(contextService.hentAktivBruker("ident")).isEqualTo(new RSContext());
     }
 
     private void gitt_sist_aktive_bruker_event(LocalDateTime created) {
-        PEvent pEvent = new PEvent().eventType(NY_AKTIV_BRUKER.name()).verdi(BRUKER_ID).created(created);
+        PEvent pEvent = new PEvent();
+        pEvent.setEventType(NY_AKTIV_BRUKER.name());
+        pEvent.setVerdi(BRUKER_ID);
+        pEvent.setCreated(created);
         when(eventDAO.sistAktiveBrukerEvent(anyString())).thenReturn(Optional.of(pEvent));
     }
 

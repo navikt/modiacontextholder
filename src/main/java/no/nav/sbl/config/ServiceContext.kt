@@ -7,6 +7,7 @@ import no.nav.common.client.axsys.CachedAxsysClient
 import no.nav.common.client.msgraph.CachedMsGraphClient
 import no.nav.common.client.msgraph.MsGraphClient
 import no.nav.common.client.msgraph.MsGraphHttpClient
+import no.nav.common.client.nom.NomClient
 import no.nav.common.rest.client.RestClient
 import no.nav.common.token_client.builder.AzureAdTokenClientBuilder
 import no.nav.common.token_client.client.MachineToMachineTokenClient
@@ -26,6 +27,7 @@ import no.nav.utils.LoggingInterceptor
 import no.nav.utils.XCorrelationIdInterceptor
 import no.nav.utils.getCallId
 import okhttp3.OkHttpClient
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -35,23 +37,32 @@ import org.springframework.context.annotation.Import
 open class ServiceContext {
 
     @Bean
-    open fun contextService(eventDAO: EventDAO?, redisPublisher: RedisPublisher?) =
+    open fun contextService(eventDAO: EventDAO, redisPublisher: RedisPublisher) =
         ContextService(eventDAO, redisPublisher)
 
     @Bean
-    open fun eventService() = EventService()
+    open fun eventService(
+        @Autowired eventDAO: EventDAO,
+    ) = EventService(eventDAO)
 
     @Bean
     open fun databaseCleanerService() = DatabaseCleanerService()
 
     @Bean
-    open fun enheterCache() = EnheterCache()
+    open fun enheterCache(
+        norg2Client: Norg2Client,
+    ) = EnheterCache(norg2Client)
 
     @Bean
-    open fun veilederCache() = VeilederService()
+    open fun veilederCache(
+        nomClient: NomClient,
+    ) = VeilederService(nomClient)
 
     @Bean
-    open fun enhetService() = EnheterService()
+    open fun enhetService(
+        client: AxsysClient,
+        enheterCache: EnheterCache,
+    ) = EnheterService(client, enheterCache)
 
     @Bean
     open fun machineToMachineTokenProvider(): MachineToMachineTokenClient = AzureAdTokenClientBuilder
@@ -126,5 +137,5 @@ open class ServiceContext {
     }
 
     @Bean
-    open fun authContextService(msGraphClient: MsGraphClient?) = AuthContextService(msGraphClient)
+    open fun authContextService(msGraphClient: MsGraphClient) = AuthContextService(msGraphClient)
 }
