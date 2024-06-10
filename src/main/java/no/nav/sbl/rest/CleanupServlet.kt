@@ -1,38 +1,30 @@
-package no.nav.sbl.rest;
+package no.nav.sbl.rest
 
-import lombok.extern.slf4j.Slf4j;
-import no.nav.sbl.db.DatabaseCleanerService;
-import no.nav.sbl.service.AuthContextService;
+import jakarta.servlet.ServletException
+import jakarta.servlet.http.HttpServlet
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import no.nav.sbl.db.DatabaseCleanerService
+import no.nav.sbl.service.AuthContextService
+import org.slf4j.LoggerFactory
+import java.io.IOException
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Optional;
+class CleanupServlet(
+    private val databaseCleanerService: DatabaseCleanerService,
+    private val authContextService: AuthContextService
+) : HttpServlet() {
+    private val log = LoggerFactory.getLogger(this::class.java)
 
-
-@Slf4j
-public class CleanupServlet extends HttpServlet {
-
-    private final DatabaseCleanerService databaseCleanerService;
-    private final AuthContextService authContextService;
-
-    public CleanupServlet(DatabaseCleanerService databaseCleanerService, AuthContextService authContextService) {
-        this.databaseCleanerService = databaseCleanerService;
-        this.authContextService = authContextService;
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Optional<String> ident = authContextService.getIdent();
-        if (ident.isPresent()) {
-            log.info("{} sletter context", ident);
-            databaseCleanerService.slettAlleNyAktivBrukerEvents();
-            databaseCleanerService.slettAlleUtenomSisteNyAktivEnhet();
+    @Throws(ServletException::class, IOException::class)
+    override fun doDelete(req: HttpServletRequest, resp: HttpServletResponse) {
+        val ident = authContextService.ident
+        if (ident.isPresent) {
+            log.info("{} sletter context", ident)
+            databaseCleanerService.slettAlleNyAktivBrukerEvents()
+            databaseCleanerService.slettAlleUtenomSisteNyAktivEnhet()
         } else {
-            resp.getWriter().write("not authorized");
-            resp.setStatus(401);
+            resp.writer.write("not authorized")
+            resp.status = 401
         }
     }
 }
