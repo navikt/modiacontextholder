@@ -1,25 +1,22 @@
-package no.nav.sbl.service;
+package no.nav.sbl.service
 
-import no.nav.common.client.nom.NomClient;
-import no.nav.common.client.nom.VeilederNavn;
-import no.nav.common.types.identer.NavIdent;
-import no.nav.sbl.rest.domain.DecoratorDomain;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import no.nav.common.client.nom.NomClient
+import no.nav.common.client.nom.VeilederNavn
+import no.nav.common.types.identer.NavIdent
+import no.nav.sbl.rest.domain.DecoratorDomain
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.Cacheable
 
-public class VeilederService {
-
-    @Autowired
-    NomClient nomClient;
+open class VeilederService(private val nomClient: NomClient) {
 
     @Cacheable("veilederCache")
-    public DecoratorDomain.Saksbehandler hentVeilederNavn(String ident) {
-        VeilederNavn veilederNavn = nomClient.finnNavn(new NavIdent(ident));
+    open fun hentVeilederNavn(ident: String): DecoratorDomain.Saksbehandler {
+        val veilederNavn: VeilederNavn = nomClient.finnNavn(NavIdent(ident))
 
-        return new DecoratorDomain.Saksbehandler(
-                ident,
-                veilederNavn.getFornavn(),
-                veilederNavn.getEtternavn()
-        );
+        return DecoratorDomain.Saksbehandler(
+            ident,
+            veilederNavn.fornavn,
+            veilederNavn.etternavn
+        )
     }
 }

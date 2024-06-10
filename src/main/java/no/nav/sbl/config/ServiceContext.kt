@@ -7,6 +7,7 @@ import no.nav.common.client.axsys.CachedAxsysClient
 import no.nav.common.client.msgraph.CachedMsGraphClient
 import no.nav.common.client.msgraph.MsGraphClient
 import no.nav.common.client.msgraph.MsGraphHttpClient
+import no.nav.common.client.nom.NomClient
 import no.nav.common.rest.client.RestClient
 import no.nav.common.token_client.builder.AzureAdTokenClientBuilder
 import no.nav.common.token_client.client.MachineToMachineTokenClient
@@ -53,7 +54,9 @@ open class ServiceContext {
     ) = EnheterCache(norg2Client)
 
     @Bean
-    open fun veilederCache() = VeilederService()
+    open fun veilederCache(
+        nomClient: NomClient,
+    ) = VeilederService(nomClient)
 
     @Bean
     open fun enhetService(
