@@ -1,99 +1,94 @@
-package no.nav.sbl.service;
+package no.nav.sbl.service
 
-import lombok.extern.slf4j.Slf4j;
-import no.nav.common.json.JsonUtils;
-import no.nav.sbl.db.dao.EventDAO;
-import no.nav.sbl.db.domain.PEvent;
-import no.nav.sbl.mappers.EventMapper;
-import no.nav.sbl.redis.RedisPublisher;
-import no.nav.sbl.rest.domain.RSAktivBruker;
-import no.nav.sbl.rest.domain.RSAktivEnhet;
-import no.nav.sbl.rest.domain.RSContext;
-import no.nav.sbl.rest.domain.RSNyContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import no.nav.common.json.JsonUtils
+import no.nav.sbl.db.dao.EventDAO
+import no.nav.sbl.db.domain.EventType
+import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.mappers.EventMapper
+import no.nav.sbl.redis.RedisPublisher
+import no.nav.sbl.rest.domain.RSAktivBruker
+import no.nav.sbl.rest.domain.RSAktivEnhet
+import no.nav.sbl.rest.domain.RSContext
+import no.nav.sbl.rest.domain.RSNyContext
+import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
+import java.time.LocalDate
 
-import java.time.LocalDate;
+@Service
+class ContextService(
+    private val eventDAO: EventDAO,
+    private val redisPublisher: RedisPublisher
+) {
+    private val log = LoggerFactory.getLogger(ContextService::class.java)
 
-import static no.nav.common.utils.StringUtils.nullOrEmpty;
-import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
-import static no.nav.sbl.mappers.EventMapper.toRSEvent;
-
-@Slf4j
-public class ContextService {
-
-    private final EventDAO eventDAO;
-
-    private final RedisPublisher redisPublisher;
-
-    @Autowired
-    public ContextService(EventDAO eventDAO, RedisPublisher redisPublisher) {
-        this.eventDAO = eventDAO;
-        this.redisPublisher = redisPublisher;
+    companion object {
+        @JvmStatic
+        fun erFortsattAktuell(pEvent: PEvent): Boolean {
+            return LocalDate.now().isEqual(pEvent.created?.toLocalDate())
+        }
     }
 
-    public RSContext hentVeiledersContext(String veilederIdent) {
-        return new RSContext()
-                .aktivBruker(hentAktivBruker(veilederIdent).aktivBruker)
-                .aktivEnhet(hentAktivEnhet(veilederIdent).aktivEnhet);
+    fun hentVeiledersContext(veilederIdent: String): RSContext {
+        return RSContext(
+            hentAktivBruker(veilederIdent).aktivBruker,
+            hentAktivEnhet(veilederIdent).aktivEnhet
+        )
     }
 
-    public void oppdaterVeiledersContext(RSNyContext nyContext, String veilederIdent) {
-        if (NY_AKTIV_BRUKER.name().equals(nyContext.eventType) && nullOrEmpty(nyContext.verdi)) {
-            nullstillAktivBruker(veilederIdent);
-            return;
-        } else if (nullOrEmpty(nyContext.verdi)) {
-            log.warn("Forsøk på å sette aktivEnhet til null, vil generere feil.");
+    fun oppdaterVeiledersContext(nyContext: RSNyContext, veilederIdent: String) {
+        if (EventType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isNullOrEmpty()) {
+            nullstillAktivBruker(veilederIdent)
+            return
+        } else if (nyContext.verdi.isNullOrEmpty()) {
+            log.warn("Forsøk på å sette aktivEnhet til null, vil generere feil.")
         }
 
-        PEvent event = new PEvent()
-                .verdi(nyContext.verdi)
-                .eventType(nyContext.eventType)
-                .veilederIdent(veilederIdent);
+        val event = PEvent(
+            verdi = nyContext.verdi,
+            eventType = nyContext.eventType,
+            veilederIdent = veilederIdent
+        )
 
-        long id = saveToDb(event);
-        event = event.id(id);
-        String message = JsonUtils.toJson(toRSEvent(event));
-        redisPublisher.publishMessage(message);
+        val id = saveToDb(event)
+        val message = JsonUtils.toJson(EventMapper.toRSEvent(event.copy(id = id)))
+        redisPublisher.publishMessage(message)
     }
 
-    private long saveToDb(PEvent event) {
-        return eventDAO.save(event);
+    private fun saveToDb(event: PEvent): Long {
+        return eventDAO.save(event)
     }
 
-    public RSContext hentAktivBruker(String veilederIdent) {
+    fun hentAktivBruker(veilederIdent: String): RSContext {
         return eventDAO.sistAktiveBrukerEvent(veilederIdent)
-                .filter(ContextService::erFortsattAktuell)
-                .map(EventMapper::toRSContext)
-                .orElse(new RSContext());
+            .filter(::erFortsattAktuell)
+            .map(EventMapper::toRSContext)
+            .orElse(RSContext())
     }
 
-    public RSAktivBruker hentAktivBrukerV2(String veilederIdent) {
+    fun hentAktivBrukerV2(veilederIdent: String): RSAktivBruker {
         return eventDAO.sistAktiveBrukerEvent(veilederIdent)
-                .filter(ContextService::erFortsattAktuell)
-                .map(EventMapper::toRSAktivBruker)
-                .orElse(new RSAktivBruker(null));
+            .filter(::erFortsattAktuell)
+            .map(EventMapper::toRSAktivBruker)
+            .orElse(RSAktivBruker(null))
     }
 
-
-    public static boolean erFortsattAktuell(PEvent pEvent) {
-        return LocalDate.now().isEqual(pEvent.created.toLocalDate());
-    }
-
-    public RSContext hentAktivEnhet(String veilederIdent) {
+    fun hentAktivEnhet(veilederIdent: String): RSContext {
         return eventDAO.sistAktiveEnhetEvent(veilederIdent)
-                .map(EventMapper::toRSContext)
-                .orElse(new RSContext());
+            .map(EventMapper::toRSContext)
+            .orElse(RSContext())
     }
 
-    public RSAktivEnhet hentAktivEnhetV2(String veilederIdent) {
-        return eventDAO.sistAktiveEnhetEvent(veilederIdent).map(EventMapper::toRSAktivEnhet).orElse(new RSAktivEnhet(null));
+    fun hentAktivEnhetV2(veilederIdent: String): RSAktivEnhet {
+        return eventDAO.sistAktiveEnhetEvent(veilederIdent)
+            .map(EventMapper::toRSAktivEnhet)
+            .orElse(RSAktivEnhet(null))
     }
 
-    public void nullstillContext(String veilederIdent) {
-        eventDAO.slettAllEventer(veilederIdent);
+    fun nullstillContext(veilederIdent: String) {
+        eventDAO.slettAllEventer(veilederIdent)
     }
 
-    public void nullstillAktivBruker(String veilederIdent) {
-        eventDAO.slettAlleAvEventTypeForVeileder(NY_AKTIV_BRUKER.name(), veilederIdent);
+    fun nullstillAktivBruker(veilederIdent: String) {
+        eventDAO.slettAlleAvEventTypeForVeileder(EventType.NY_AKTIV_BRUKER.name, veilederIdent)
     }
 }

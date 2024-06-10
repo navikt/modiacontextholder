@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Import
 open class ServiceContext {
 
     @Bean
-    open fun contextService(eventDAO: EventDAO?, redisPublisher: RedisPublisher?) =
+    open fun contextService(eventDAO: EventDAO, redisPublisher: RedisPublisher) =
         ContextService(eventDAO, redisPublisher)
 
     @Bean

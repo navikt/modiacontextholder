@@ -28,19 +28,25 @@ public class EventDAOTest {
         ArgumentCaptor<String> sql = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Long> args = ArgumentCaptor.forClass(Long.class);
 
+        PEvent event1 = new PEvent();
+        event1.setId(1L);
+        event1.setVerdi("1");
+        PEvent event2 = new PEvent();
+        event2.setId(2L);
+        event2.setVerdi("2");
+        PEvent event3 = new PEvent();
+        event3.setId(3L);
+        event3.setVerdi("3");
+        PEvent event4 = new PEvent();
+        event4.setId(4L);
+        event4.setVerdi("4");
+
+
         eventDAO.slettAlleEventerUtenomNyeste(asList(
-                new PEvent()
-                        .id(1L)
-                        .verdi("1"),
-                new PEvent()
-                        .id(4L)
-                        .verdi("4"),
-                new PEvent()
-                        .id(2L)
-                        .verdi("2"),
-                new PEvent()
-                        .id(3L)
-                        .verdi("3")
+                event1,
+                event4,
+                event2,
+                event3
         ));
 
         verify(jdbcTemplate, times(3)).update(sql.capture(), args.capture());
