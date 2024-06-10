@@ -40,14 +40,16 @@ open class ServiceContext {
         ContextService(eventDAO, redisPublisher)
 
     @Bean
-    open fun eventService() = EventService()
+    open fun eventService(
+        @Autowired eventDAO: EventDAO,
+    ) = EventService(eventDAO)
 
     @Bean
     open fun databaseCleanerService() = DatabaseCleanerService()
 
     @Bean
     open fun enheterCache(
-        @Autowired norg2Client: Norg2Client,
+        norg2Client: Norg2Client,
     ) = EnheterCache(norg2Client)
 
     @Bean

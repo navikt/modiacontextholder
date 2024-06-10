@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import java.util.*
 
 class EnheterCache(
-    @Autowired private val norg2Client: Norg2Client
+    private val norg2Client: Norg2Client
 ) {
     companion object {
         private const val HVER_TOLVTE_TIME: Long = 12 * 3600 * 1000
