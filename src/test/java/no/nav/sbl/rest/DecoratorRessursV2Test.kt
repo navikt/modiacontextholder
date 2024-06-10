@@ -136,7 +136,7 @@ class DecoratorRessursV2Test {
     }
 
     private fun gitt_logget_inn() {
-        every { authContextService.getIdent() } returns Optional.of(ident)
+        every { authContextService.ident } returns Optional.of(ident)
     }
 
     private fun enhet(id: String, navn: String): DecoratorDomain.Enhet {

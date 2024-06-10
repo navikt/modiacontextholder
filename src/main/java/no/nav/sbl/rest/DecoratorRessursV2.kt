@@ -73,7 +73,7 @@ class DecoratorRessursV2(
     }
 
     private fun getIdent(): String {
-        return authContextUtils.getIdent().getOrElse {
+        return authContextUtils.ident.getOrElse {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fant ingen subjecthandler")
         }
     }

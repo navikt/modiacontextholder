@@ -28,42 +28,42 @@ class ContextRessurs(
     @GetMapping
     @Timed
     fun hentVeiledersContext(): RSContext {
-        return authContextUtils.getIdent().map(contextService::hentVeiledersContext)
+        return authContextUtils.ident.map(contextService::hentVeiledersContext)
             .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident") }
     }
 
     @GetMapping("/aktivbruker")
     @Timed("hentAktivBruker")
     fun hentAktivBruker(): RSContext {
-        return authContextUtils.getIdent().map(contextService::hentAktivBruker)
+        return authContextUtils.ident.map(contextService::hentAktivBruker)
             .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident") }
     }
 
     @GetMapping("/v2/aktivbruker")
     @Timed("hentAktivBrukerV2")
     fun hentAktivBrukerV2(): RSAktivBruker {
-        return authContextUtils.getIdent().map(contextService::hentAktivBrukerV2)
+        return authContextUtils.ident.map(contextService::hentAktivBrukerV2)
             .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident") }
     }
 
     @GetMapping("/aktivenhet")
     @Timed("hentAktivEnhet")
     fun hentAktivEnhet(): RSContext {
-        return authContextUtils.getIdent().map(contextService::hentAktivEnhet)
+        return authContextUtils.ident.map(contextService::hentAktivEnhet)
             .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident") }
     }
 
     @GetMapping("/v2/aktivenhet")
     @Timed("hentAktivEnhetV2")
     fun hentAktivEnhetV2(): RSAktivEnhet {
-        return authContextUtils.getIdent().map(contextService::hentAktivEnhetV2)
+        return authContextUtils.ident.map(contextService::hentAktivEnhetV2)
             .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident") }
     }
 
     @DeleteMapping
     @Timed("nullstillContext")
     fun nullstillBrukerContext(@RequestHeader(value = "referer", required = false) referer: String) {
-        val ident = authContextUtils.getIdent()
+        val ident = authContextUtils.ident
         val url = Pair(AuditIdentifier.REFERER, referer)
         withAudit(describe(ident, Action.DELETE, AuditResources.NullstillKontekst, url)) {
             ident.ifPresent(contextService::nullstillContext)
@@ -79,7 +79,7 @@ class ContextRessurs(
     @DeleteMapping("/aktivbruker")
     @Timed("nullstillAktivBrukerContext")
     fun nullstillAktivBrukerContext(@RequestHeader(value = "referer", required = false) referer: String) {
-        val ident = authContextUtils.getIdent()
+        val ident = authContextUtils.ident
         val url = Pair(AuditIdentifier.REFERER, referer)
         withAudit(describe(ident, Action.DELETE, AuditResources.NullstillBrukerIKontekst, url)) {
             ident.ifPresent(contextService::nullstillAktivBruker)
@@ -91,7 +91,7 @@ class ContextRessurs(
     fun oppdaterVeiledersContext(
         @RequestHeader(value = "referer", required = false) referer: String, @RequestBody rsNyContext: RSNyContext
     ): RSContext {
-        val ident = authContextUtils.getIdent()
+        val ident = authContextUtils.ident
         val context = RSNyContext().apply {
             verdi = rsNyContext.verdi
             eventType = EventType.valueOf(rsNyContext.eventType).name

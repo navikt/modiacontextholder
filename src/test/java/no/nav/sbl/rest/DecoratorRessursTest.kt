@@ -1,161 +1,138 @@
-package no.nav.sbl.rest;
+package no.nav.sbl.rest
 
-import io.vavr.control.Try;
-import no.nav.common.types.identer.AzureObjectId;
-import no.nav.sbl.azure.AnsattRolle;
-import no.nav.sbl.azure.AzureADService;
-import no.nav.sbl.rest.domain.DecoratorDomain;
-import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig;
-import no.nav.sbl.service.AuthContextService;
-import no.nav.sbl.service.EnheterService;
-import no.nav.sbl.service.VeilederService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.web.server.ResponseStatusException;
+import io.mockk.every
+import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
+import io.vavr.control.Try
+import no.nav.common.types.identer.AzureObjectId
+import no.nav.sbl.azure.AnsattRolle
+import no.nav.sbl.azure.AzureADService
+import no.nav.sbl.rest.domain.DecoratorDomain
+import no.nav.sbl.service.AuthContextService
+import no.nav.sbl.service.EnheterService
+import no.nav.sbl.service.VeilederService
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.web.server.ResponseStatusException
+import java.util.Optional
 
-import java.util.List;
-import java.util.Optional;
+@ExtendWith(MockKExtension::class)
+class DecoratorRessursTest {
+    private val ident = "Z999999"
+    private val adminGroupName = "0000-GA-Modia_Admin"
+    private val regionalGroupName = "0000-GA-GOSYS_REGIONAL"
+    private val azureObjectId = AzureObjectId("d2987104-63b2-4110-83ac-20ff6afe24a2")
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+    private val azureADService: AzureADService = mockk {
+        every { fetchRoller(any(), any()) } returns listOf(AnsattRolle(regionalGroupName, azureObjectId))
+    }
+    private val enheterService: EnheterService = mockk()
+    private val veilederService: VeilederService = mockk()
+    private val authContextService: AuthContextService = mockk(relaxed = true)
 
-@RunWith(MockitoJUnitRunner.class)
-public class DecoratorRessursTest {
-    private static final String IDENT = "Z999999";
-    private static final String  GROUP_NAME = "0000-GA-Modia_Admin";
-    private static final AzureObjectId azureObjectId = new AzureObjectId("d2987104-63b2-4110-83ac-20ff6afe24a2");
-
-    @Mock
-    AzureADService azureADService;
-    @Mock
-    EnheterService enheterService;
-    @Mock
-    VeilederService veilederService;
-    @Mock
-    AuthContextService authContextService;
-
-    @InjectMocks
-    DecoratorRessurs rest;
+    private val rest = DecoratorRessurs(azureADService, enheterService, veilederService, mockk(), authContextService)
 
     @Test
-    public void ingen_saksbehandlerident() {
-        gitt_saksbehandler_i_ad();
-        shouldWorkRegardlessOfFeatureToggle(() ->
-                assertThatThrownBy(() -> rest.hentSaksbehandlerInfoOgEnheter())
-                        .isInstanceOf(ResponseStatusException.class)
-                        .hasMessage("500 INTERNAL_SERVER_ERROR \"Fant ingen subjecthandler\"")
-        );
+    fun `ingen saksbehandlerident`() {
+        gittSaksbehandlerIAd()
+        assertThrows(ResponseStatusException::class.java) {
+            rest.hentSaksbehandlerInfoOgEnheter()
+        }.apply {
+            assertEquals("500 INTERNAL_SERVER_ERROR \"Fant ingen subjecthandler\"", message)
+        }
     }
 
     @Test
-    public void feil_ved_henting_av_enheter() {
-        gitt_logget_inn();
-        gitt_saksbehandler_i_ad();
-        when(enheterService.hentEnheter(IDENT)).thenReturn(Try.failure(new IllegalStateException("Noe gikk feil")));
+    fun `feil ved henting av enheter`() {
+        gittLoggetInn()
+        gittSaksbehandlerIAd()
+        every { enheterService.hentEnheter(ident) } returns Try.failure(IllegalStateException("Noe gikk feil"))
+        every { enheterService.hentAlleEnheter() } returns listOf(
+            enhet("0001", "Test 1"),
+            enhet("0002", "Test 2"),
+            enhet("0003", "Test 3"),
+            enhet("0004", "Test 4"),
+            enhet("0005", "Test 5")
+        )
 
-        shouldWorkRegardlessOfFeatureToggle(() ->
-                assertThatThrownBy(() -> rest.hentSaksbehandlerInfoOgEnheter())
-                        .hasRootCauseInstanceOf(IllegalStateException.class)
-                        .isInstanceOf(ResponseStatusException.class)
-                        .hasMessageStartingWith("500 INTERNAL_SERVER_ERROR \"Kunne ikke hente data\"")
-        );
+        assertThrows(ResponseStatusException::class.java) {
+            rest.hentSaksbehandlerInfoOgEnheter()
+        }.apply {
+            assertEquals("500 INTERNAL_SERVER_ERROR \"Kunne ikke hente data\"", message)
+        }
     }
 
     @Test
-    public void returnerer_saksbehandlernavn() {
-        gitt_logget_inn();
-        gitt_saksbehandler_i_ad();
-        gitt_tilgang_til_enheter(emptyList());
+    fun `returnerer saksbehandlernavn`() {
+        gittLoggetInn()
+        gittSaksbehandlerIAd()
+        gittTilgangTilEnheter(emptyList())
 
-        shouldWorkRegardlessOfFeatureToggle(() -> {
-                DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
+        val decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter()
 
-                assertThat(decoratorConfig.ident).isEqualTo(IDENT);
-                assertThat(decoratorConfig.fornavn).isEqualTo("Fornavn");
-                assertThat(decoratorConfig.etternavn).isEqualTo("Etternavn");
-        });
-
-        shouldWorkRegardlessOfFeatureToggle(() -> {
-                    DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
-
-                    assertThat(decoratorConfig.ident).isEqualTo(IDENT);
-                    assertThat(decoratorConfig.fornavn).isEqualTo("Fornavn");
-                    assertThat(decoratorConfig.etternavn).isEqualTo("Etternavn");
-        });
+        assertEquals(ident, decoratorConfig.ident)
+        assertEquals("Fornavn", decoratorConfig.fornavn)
+        assertEquals("Etternavn", decoratorConfig.etternavn)
     }
 
-
     @Test
-    public void bare_aktive_enheter() {
-        gitt_logget_inn();
-        gitt_saksbehandler_i_ad();
-        gitt_tilgang_til_enheter(asList(
+    fun `bare aktive enheter`() {
+        gittLoggetInn()
+        gittSaksbehandlerIAd()
+        gittTilgangTilEnheter(
+            listOf(
                 enhet("0001", "Test 1"),
                 enhet("0002", "Test 2"),
                 enhet("0003", "Test 3")
-        ));
+            )
+        )
 
-        shouldWorkRegardlessOfFeatureToggle(() -> {
-                DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
-                assertThat(decoratorConfig.enheter).hasSize(3);
-        });
+        val decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter()
+        assertEquals(3, decoratorConfig.enheter.size)
     }
 
     @Test
-    public void alle_enheter_om_saksbehandler_har_modia_admin() {
-        gitt_logget_inn();
-        gitt_modia_admin_rolle();
-        gitt_saksbehandler_i_ad();
-        gitt_tilgang_til_enheter(List.of(
+    fun `alle enheter om saksbehandler har modia admin`() {
+        gittLoggetInn()
+        every { azureADService.fetchRoller(any(), any()) } returns listOf(AnsattRolle(adminGroupName, azureObjectId))
+        gittSaksbehandlerIAd()
+        gittTilgangTilEnheter(
+            listOf(
                 enhet("0001", "Test 1")
-        ));
+            )
+        )
 
-        shouldWorkRegardlessOfFeatureToggle(() -> {
-                DecoratorConfig decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter();
-                assertThat(decoratorConfig.enheter).hasSize(5);
-        });
+        val decoratorConfig = rest.hentSaksbehandlerInfoOgEnheter()
+        assertEquals(5, decoratorConfig.enheter.size)
     }
 
-    private void gitt_modia_admin_rolle() {
-        when(azureADService.fetchRoller(anyString(), any())).thenReturn(List.of(new AnsattRolle(GROUP_NAME, azureObjectId)));
-
+    private fun gittTilgangTilEnheter(data: List<DecoratorDomain.Enhet>) {
+        every { enheterService.hentEnheter(ident) } returns Try.of { data }
+        every { enheterService.hentAlleEnheter() } returns listOf(
+            enhet("0001", "Test 1"),
+            enhet("0002", "Test 2"),
+            enhet("0003", "Test 3"),
+            enhet("0004", "Test 4"),
+            enhet("0005", "Test 5")
+        )
     }
 
-    private void gitt_tilgang_til_enheter(List<DecoratorDomain.Enhet> data) {
-        when(enheterService.hentEnheter(IDENT)).thenReturn(Try.of(() -> data));
-        when(enheterService.hentAlleEnheter()).thenReturn(asList(
-                enhet("0001", "Test 1"),
-                enhet("0002", "Test 2"),
-                enhet("0003", "Test 3"),
-                enhet("0004", "Test 4"),
-                enhet("0005", "Test 5")
-        ));
+    private fun gittSaksbehandlerIAd() {
+        every { veilederService.hentVeilederNavn(any()) } returns DecoratorDomain.Saksbehandler(
+            ident,
+            "Fornavn",
+            "Etternavn"
+        )
     }
 
-    private void gitt_saksbehandler_i_ad() {
-        when(veilederService.hentVeilederNavn(anyString())).thenReturn(
-                new DecoratorDomain.Saksbehandler(IDENT, "Fornavn", "Etternavn")
-        );
+    private fun gittLoggetInn() {
+        every { authContextService.requireIdToken() } returns "token"
+        every { authContextService.ident } returns Optional.of(ident)
     }
 
-    private void gitt_logget_inn() {
-        when(authContextService.requireIdToken()).thenReturn("token");
-        when(authContextService.getIdent()).thenReturn(Optional.of(IDENT));
-    }
-
-    private static DecoratorDomain.Enhet enhet(String id, String navn) {
-        return new DecoratorDomain.Enhet(id, navn);
-    }
-
-    private void shouldWorkRegardlessOfFeatureToggle(Runnable executable) {
-        executable.run();
+    private fun enhet(id: String, navn: String): DecoratorDomain.Enhet {
+        return DecoratorDomain.Enhet(id, navn)
     }
 }

@@ -129,5 +129,5 @@ open class ServiceContext {
     }
 
     @Bean
-    open fun authContextService(msGraphClient: MsGraphClient?) = AuthContextService(msGraphClient)
+    open fun authContextService(msGraphClient: MsGraphClient) = AuthContextService(msGraphClient)
 }

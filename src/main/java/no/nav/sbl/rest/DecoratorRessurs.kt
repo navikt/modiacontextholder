@@ -11,6 +11,7 @@ import no.nav.sbl.service.*
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+import kotlin.jvm.optionals.getOrElse
 
 @RestController
 @RequestMapping("/api/decorator")
@@ -67,7 +68,7 @@ class DecoratorRessurs(
 
     private fun getIdent(): String {
         return authContextUtils.ident
-            .orElseThrow { ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fant ingen subjecthandler") }
+            .getOrElse { throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fant ingen subjecthandler") }
     }
 
     private fun exceptionHandler(throwable: Throwable): ResponseStatusException {

@@ -1,60 +1,53 @@
-package no.nav.sbl.service;
+package no.nav.sbl.service
 
-import com.nimbusds.jwt.JWTClaimsSet;
-import lombok.SneakyThrows;
-import no.nav.common.client.msgraph.MsGraphClient;
-import no.nav.common.utils.StringUtils;
-import no.nav.sbl.util.AuthContextUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nimbusds.jwt.JWTClaimsSet
+import no.nav.common.client.msgraph.MsGraphClient
+import no.nav.common.utils.StringUtils
+import no.nav.sbl.util.AuthContextUtils
+import org.springframework.stereotype.Service
+import java.text.ParseException
+import java.util.*
 
-import java.text.ParseException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-
-public class AuthContextService {
-    public static final String AAD_NAV_IDENT_CLAIM = "NAVident";
-    private final MsGraphClient msGraphClient;
-
-    @Autowired
-    public AuthContextService(MsGraphClient msGraphClient) {
-        this.msGraphClient = msGraphClient;
+@Service
+class AuthContextService(
+    private val msGraphClient: MsGraphClient
+) {
+    companion object {
+        const val AAD_NAV_IDENT_CLAIM = "NAVident"
     }
 
-    public Optional<String> getIdent() {
-        return AuthContextUtils
-                .getAccessToken()
-                .map(msGraphClient::hentOnPremisesSamAccountName)
-                .or(() -> AuthContextUtils.getIdTokenClaims().map(AuthContextService::getSubject))
-                .filter(StringUtils::notNullOrEmpty);
-    }
+    val ident: Optional<String>
+        get() = AuthContextUtils
+            .getAccessToken()
+            .map { msGraphClient.hentOnPremisesSamAccountName(it) }
+            .or { AuthContextUtils.getIdTokenClaims().map { claims -> getSubject(claims) } }
+            .filter { StringUtils.notNullOrEmpty(it) }
 
-    public Optional<String> getAuthorizedPartyName() {
+    fun getAuthorizedPartyName(): Optional<String> {
         return AuthContextUtils.getIdTokenClaims()
-                .flatMap(AuthContextService::getAuthorizedParty);
+            .flatMap { claims -> getAuthorizedParty(claims) }
     }
 
-    public Map<String, Object> getClaims() {
+    fun getClaims(): Map<String, Any> {
         return AuthContextUtils.getIdTokenClaims()
-                .map(JWTClaimsSet::getClaims)
-                .orElse(Collections.emptyMap());
+            .map { claims -> claims.claims }
+            .orElse(emptyMap())
     }
 
-    private static Optional<String> getAuthorizedParty(JWTClaimsSet claims) {
-        try {
-            return Optional.ofNullable(claims.getStringClaim("azp_name"));
-        } catch (ParseException e) {
-            return Optional.empty();
+    private fun getAuthorizedParty(claims: JWTClaimsSet): Optional<String> {
+        return try {
+            Optional.ofNullable(claims.getStringClaim("azp_name"))
+        } catch (_: ParseException) {
+            Optional.empty()
         }
     }
 
-    @SneakyThrows
-    private static String getSubject(JWTClaimsSet claims) {
-        String navIdent = claims.getStringClaim(AAD_NAV_IDENT_CLAIM);
-        return navIdent != null ? navIdent : claims.getSubject();
+    private fun getSubject(claims: JWTClaimsSet): String {
+        val navIdent = claims.getStringClaim(AAD_NAV_IDENT_CLAIM)
+        return navIdent ?: claims.subject
     }
 
-    public String requireIdToken() {
-        return AuthContextUtils.requireIdTokenString();
+    fun requireIdToken(): String {
+        return AuthContextUtils.requireIdTokenString()
     }
 }
