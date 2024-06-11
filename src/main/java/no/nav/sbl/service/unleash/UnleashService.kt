@@ -1,9 +1,7 @@
-package no.nav.sbl.service.unleash;
+package no.nav.sbl.service.unleash
 
 
-public interface UnleashService {
-
-    boolean isEnabled(Feature feature);
-
-    boolean isEnabled(String feature);
+interface UnleashService {
+    fun isEnabled(feature: Feature): Boolean
+    fun isEnabled(feature: String): Boolean
 }

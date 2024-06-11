@@ -1,38 +1,30 @@
-package no.nav.sbl.service.unleash;
+package no.nav.sbl.service.unleash
 
-import io.getunleash.UnleashContext;
-import io.getunleash.UnleashContextProvider;
-import no.nav.sbl.service.AuthContextService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import io.getunleash.UnleashContext
+import io.getunleash.UnleashContextProvider
+import no.nav.sbl.service.AuthContextService
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
 
-public class UnleashContextProviderImpl implements UnleashContextProvider {
+class UnleashContextProviderImpl(
+    private val authContextService: AuthContextService,
+) : UnleashContextProvider {
 
-    private final AuthContextService authContextService;
+    override fun getContext(): UnleashContext {
+        val ident = authContextService.ident.orElse(null)
 
-    @Autowired
-    public UnleashContextProviderImpl(AuthContextService authContextService) {
-        this.authContextService = authContextService;
-    }
+        val remoteAddr = runCatching {
+            val attributes = RequestContextHolder.currentRequestAttributes() as ServletRequestAttributes
+            attributes.getRequest().remoteAddr
+        }.getOrNull()
 
-    @Override
-    public UnleashContext getContext() {
-        String ident = authContextService.getIdent().orElse(null);
-        String remoteAddr = null;
-
-        try {
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            remoteAddr = attributes.getRequest().getRemoteAddr();
-        } catch (Exception ignored) {
-
-        }
-
-        return UnleashContext.builder()
-                .appName("modiacontextholder")
-                .environment(System.getProperty("UNLEASH_ENVIRONMENT"))
-                .userId(ident)
-                .remoteAddress(remoteAddr)
-                .build();
+        return UnleashContext.builder().apply {
+            appName("modiacontextholder")
+            environment(System.getProperty("UNLEASH_ENVIRONMENT"))
+            userId(ident)
+            if (remoteAddr != null) {
+                remoteAddress(remoteAddr)
+            }
+        }.build()
     }
 }
