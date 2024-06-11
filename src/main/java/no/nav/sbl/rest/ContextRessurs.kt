@@ -62,7 +62,7 @@ class ContextRessurs(
 
     @DeleteMapping
     @Timed("nullstillContext")
-    fun nullstillBrukerContext(@RequestHeader(value = "referer", required = false) referer: String) {
+    fun nullstillBrukerContext(@RequestHeader(value = "referer", required = false) referer: String?) {
         val ident = authContextUtils.ident
         val url = Pair(AuditIdentifier.REFERER, referer)
         withAudit(describe(ident, Action.DELETE, AuditResources.NullstillKontekst, url)) {
@@ -72,13 +72,13 @@ class ContextRessurs(
 
     @DeleteMapping("/nullstill")
     @Deprecated("migrer over til den som ligger på '/' da dette er mest riktig REST-semantisk.")
-    fun deprecatedNullstillContext(@RequestHeader(value = "referer", required = false) referer: String) {
+    fun deprecatedNullstillContext(@RequestHeader(value = "referer", required = false) referer: String?) {
         nullstillBrukerContext(referer)
     }
 
     @DeleteMapping("/aktivbruker")
     @Timed("nullstillAktivBrukerContext")
-    fun nullstillAktivBrukerContext(@RequestHeader(value = "referer", required = false) referer: String) {
+    fun nullstillAktivBrukerContext(@RequestHeader(value = "referer", required = false) referer: String?) {
         val ident = authContextUtils.ident
         val url = Pair(AuditIdentifier.REFERER, referer)
         withAudit(describe(ident, Action.DELETE, AuditResources.NullstillBrukerIKontekst, url)) {
@@ -89,7 +89,7 @@ class ContextRessurs(
     @PostMapping
     @Timed("oppdaterVeiledersContext")
     fun oppdaterVeiledersContext(
-        @RequestHeader(value = "referer", required = false) referer: String, @RequestBody rsNyContext: RSNyContext
+        @RequestHeader(value = "referer", required = false) referer: String?, @RequestBody rsNyContext: RSNyContext
     ): RSContext {
         val ident = authContextUtils.ident
         val context = RSNyContext().apply {
