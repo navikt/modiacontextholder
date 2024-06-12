@@ -14,12 +14,15 @@ import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.azure.AzureADServiceImpl
+import no.nav.sbl.consumers.modiacontextholder.HttpModiaContextHolderClient
+import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.consumers.norg2.Norg2Client
 import no.nav.sbl.db.DatabaseCleanerService
 import no.nav.sbl.db.dao.EventDAO
 import no.nav.sbl.redis.RedisConfig
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.service.*
+import no.nav.sbl.service.unleash.UnleashService
 import no.nav.sbl.util.DownstreamApi.Companion.parse
 import no.nav.sbl.util.bindTo
 import no.nav.sbl.util.createMachineToMachineToken
@@ -35,10 +38,17 @@ import org.springframework.context.annotation.Import
 @Configuration
 @Import(FeatureToggleConfig::class, RedisConfig::class)
 open class ServiceContext {
+    @Bean
+    open fun contextHolderClient() = HttpModiaContextHolderClient()
 
     @Bean
-    open fun contextService(eventDAO: EventDAO, redisPublisher: RedisPublisher) =
-        ContextService(eventDAO, redisPublisher)
+    open fun contextService(
+        eventDAO: EventDAO,
+        redisPublisher: RedisPublisher,
+        contextHolderClient: ModiaContextHolderClient,
+        unleashService: UnleashService,
+        applicationCluster: ApplicationCluster,
+    ) = ContextService(eventDAO, redisPublisher, contextHolderClient, unleashService, applicationCluster)
 
     @Bean
     open fun eventService(

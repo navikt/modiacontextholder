@@ -30,7 +30,7 @@ public class ContextServiceTest {
     public void setup() {
         eventDAO = mock(EventDAO.class);
         RedisPublisher redisPublisher = mock(RedisPublisher.class);
-        contextService = new ContextService(eventDAO, redisPublisher);
+        contextService = new ContextService(eventDAO, redisPublisher, mock(), mock(), mock());
     }
 
     @Test

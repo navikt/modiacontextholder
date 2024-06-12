@@ -3,13 +3,6 @@ package no.nav.sbl.config
 enum class ApplicationCluster {
     LOCAL, DEV_FSS, PROD_FSS, DEV_GCP, PROD_GCP;
 
-    fun isGcp(): Boolean {
-        return when (this) {
-            DEV_GCP, PROD_GCP -> true
-            else -> false
-        }
-    }
-
     companion object {
         fun fromClusterName(clusterName: String): ApplicationCluster {
             return when (clusterName) {
@@ -19,6 +12,20 @@ enum class ApplicationCluster {
                 "prod-gcp" -> PROD_GCP
                 else -> LOCAL
             }
+        }
+    }
+
+    fun isGcp(): Boolean {
+        return when (this) {
+            DEV_GCP, PROD_GCP -> true
+            else -> false
+        }
+    }
+
+    fun isFss(): Boolean {
+        return when (this) {
+            DEV_FSS, PROD_FSS -> true
+            else -> false
         }
     }
 }
