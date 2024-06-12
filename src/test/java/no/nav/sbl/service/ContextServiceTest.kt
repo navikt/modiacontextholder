@@ -1,88 +1,86 @@
-package no.nav.sbl.service;
+package no.nav.sbl.service
 
-import no.nav.sbl.db.dao.EventDAO;
-import no.nav.sbl.db.domain.PEvent;
-import no.nav.sbl.redis.RedisPublisher;
-import no.nav.sbl.rest.domain.RSContext;
-import org.junit.Before;
-import org.junit.Test;
+import io.mockk.every
+import io.mockk.mockk
+import no.nav.sbl.config.ApplicationCluster
+import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
+import no.nav.sbl.db.dao.EventDAO
+import no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER
+import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.redis.RedisPublisher
+import no.nav.sbl.rest.domain.RSContext
+import no.nav.sbl.service.ContextService.Companion.erFortsattAktuell
+import no.nav.sbl.service.unleash.Feature
+import no.nav.sbl.service.unleash.UnleashService
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
+import java.time.LocalDateTime
+import java.util.Optional
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+class ContextServiceTest {
 
-import static java.time.LocalDateTime.now;
-import static no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER;
-import static no.nav.sbl.service.ContextService.erFortsattAktuell;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+    private val brukerId = "bruker"
 
-public class ContextServiceTest {
+    private val eventDAO: EventDAO = mockk()
+    private val redisPublisher: RedisPublisher = mockk()
+    private val contextHolderClient: ModiaContextHolderClient = mockk(relaxed = true)
+    private val unleashService: UnleashService = mockk {
+        every { isEnabled(any<Feature>()) } returns false
+    }
+    private val applicationCluster: ApplicationCluster = ApplicationCluster.PROD_FSS
+    private val contextService: ContextService = ContextService(
+        eventDAO, redisPublisher,
+        contextHolderClient, unleashService, applicationCluster
+    )
 
-    private static final String BRUKER_ID = "bruker";
-
-    private EventDAO eventDAO;
-    private ContextService contextService;
-
-    @Before
-    @SuppressWarnings("unchecked")
-    public void setup() {
-        eventDAO = mock(EventDAO.class);
-        RedisPublisher redisPublisher = mock(RedisPublisher.class);
-        contextService = new ContextService(eventDAO, redisPublisher, mock(), mock(), mock());
+    @Test
+    fun ingen_aktiv_bruker_event() {
+        every { contextService.hentAktivBruker(any()) } returns RSContext()
+        every { eventDAO.sistAktiveBrukerEvent(any()) } returns Optional.empty()
+        har_ikke_aktiv_bruker()
     }
 
     @Test
-    public void ingen_aktiv_bruker_event() {
-        har_ikke_aktiv_bruker();
+    fun eventer_fra_forrige_dag_regnes_ikke_som_aktuelle() {
+        val event = PEvent().apply { created = LocalDateTime.now().minusDays(1) }
+        val result = erFortsattAktuell(event)
+        assertThat(result).isFalse()
     }
 
     @Test
-    public void eventer_fra_forrige_dag_regnes_ikke_som_aktuelle() {
-        PEvent event = new PEvent();
-        event.setCreated(now().minusDays(1));
-        boolean result = erFortsattAktuell(event);
-        assertThat(result).isFalse();
+    fun eventer_fra_i_dag_regnes_som_aktuelle() {
+        val event = PEvent().apply { created = LocalDateTime.now() }
+        val result = erFortsattAktuell(event)
+        assertThat(result).isTrue()
     }
 
     @Test
-    public void eventer_fra_i_dag_regnes_som_aktuelle() {
-        PEvent event = new PEvent();
-        event.setCreated(now());
-        boolean result = erFortsattAktuell(event);
-        assertThat(result).isTrue();
+    fun aktiv_bruker_event() {
+        val now = LocalDateTime.now()
+        gitt_sist_aktive_bruker_event(now)
+        val rsContext = RSContext().apply { aktivBruker = brukerId }
+        assertThat(contextService.hentAktivBruker("ident")).isEqualTo(rsContext)
     }
 
     @Test
-    public void aktiv_bruker_event() {
-        LocalDateTime now = now();
-        gitt_sist_aktive_bruker_event(now);
-        RSContext rsContext = new RSContext();
-        rsContext.setAktivBruker(BRUKER_ID);
-        assertThat(contextService.hentAktivBruker("ident")).isEqualTo(rsContext);
+    fun foreldet_aktiv_bruker_event() {
+        gitt_sist_aktive_bruker_event(LocalDateTime.now().minusDays(2))
+        har_ikke_aktiv_bruker()
+
+        gitt_sist_aktive_bruker_event(LocalDateTime.now().minusDays(1).plusSeconds(1)) // i går men mindre enn en dag
+        har_ikke_aktiv_bruker()
     }
 
-    @Test
-    public void foreldet_aktiv_bruker_event() {
-        gitt_sist_aktive_bruker_event(now().minusDays(2));
-        har_ikke_aktiv_bruker();
-
-        gitt_sist_aktive_bruker_event(now().minusDays(1).plusSeconds(1)); // i går men mindre enn en dag
-        har_ikke_aktiv_bruker();
+    private fun har_ikke_aktiv_bruker() {
+        assertThat(contextService.hentAktivBruker("ident")).isEqualTo(RSContext())
     }
 
-
-    private void har_ikke_aktiv_bruker() {
-        assertThat(contextService.hentAktivBruker("ident")).isEqualTo(new RSContext());
+    private fun gitt_sist_aktive_bruker_event(created: LocalDateTime) {
+        val pEvent = PEvent().apply {
+            eventType = NY_AKTIV_BRUKER.name
+            verdi = brukerId
+            this.created = created
+        }
+        every { eventDAO.sistAktiveBrukerEvent(any<String>()) } returns Optional.of(pEvent)
     }
-
-    private void gitt_sist_aktive_bruker_event(LocalDateTime created) {
-        PEvent pEvent = new PEvent();
-        pEvent.setEventType(NY_AKTIV_BRUKER.name());
-        pEvent.setVerdi(BRUKER_ID);
-        pEvent.setCreated(created);
-        when(eventDAO.sistAktiveBrukerEvent(anyString())).thenReturn(Optional.of(pEvent));
-    }
-
 }
