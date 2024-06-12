@@ -5,6 +5,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.db.DbHelsesjekk;
 import no.nav.sbl.db.dao.EventDAO;
+import org.flywaydb.core.Flyway;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,10 +14,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.flywaydb.core.Flyway;
 
 import javax.sql.DataSource;
-
 import java.util.List;
 
 import static no.nav.common.utils.EnvironmentUtils.getRequiredProperty;
@@ -52,6 +52,7 @@ public class DatabaseConfig {
 
         return dataSource;
     }
+
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
@@ -68,8 +69,11 @@ public class DatabaseConfig {
     }
 
     @Bean
-    public EventDAO eventDAO() {
-        return new EventDAO();
+    @Autowired
+    public EventDAO eventDAO(
+            JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate, ApplicationCluster applicationCluster
+    ) {
+        return new EventDAO(jdbcTemplate, namedParameterJdbcTemplate, applicationCluster);
     }
 
     @Bean

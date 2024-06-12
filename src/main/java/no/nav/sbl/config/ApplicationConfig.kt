@@ -109,4 +109,9 @@ open class ApplicationConfig {
         val cleanupServlet = CleanupServlet(databaseCleanerService, authContextService)
         return ServletRegistrationBean(cleanupServlet, "/internal/cleanup")
     }
+
+    @Bean
+    open fun applicationCluster(
+        @Value("\${NAIS_CLUSTER_NAME}") clusterName: String
+    ): ApplicationCluster = ApplicationCluster.fromClusterName(clusterName)
 }
