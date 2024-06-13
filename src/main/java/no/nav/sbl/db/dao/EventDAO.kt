@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.transaction.annotation.Transactional
 import java.sql.ResultSet
 import java.time.LocalDateTime
-import java.util.Optional
 
 @Transactional
 open class EventDAO(
@@ -53,53 +52,45 @@ open class EventDAO(
         }
     }
 
-    fun sistAktiveBrukerEvent(veilederIdent: String): Optional<PEvent> {
+    fun sistAktiveBrukerEvent(veilederIdent: String): PEvent? {
         return try {
             if (applicationCluster.isGcp()) {
-                Optional.of(
-                    jdbcTemplate.queryForObject(
-                        "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc limit 1",
-                        EventMapper,
-                        veilederIdent
-                    )!!
-                )
+                jdbcTemplate.queryForObject(
+                    "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc limit 1",
+                    EventMapper,
+                    veilederIdent
+                )!!
             } else {
-                Optional.of(
-                    jdbcTemplate.queryForObject(
-                        "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc) where ROWNUM = 1",
-                        EventMapper,
-                        veilederIdent
-                    )!!
-                )
+                jdbcTemplate.queryForObject(
+                    "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc) where ROWNUM = 1",
+                    EventMapper,
+                    veilederIdent
+                )!!
             }
         } catch (e: DataAccessException) {
             log.warn("Feilet ved henting av aktiv bruker", e)
-            Optional.empty()
+            null
         }
     }
 
-    fun sistAktiveEnhetEvent(veilederIdent: String): Optional<PEvent> {
+    fun sistAktiveEnhetEvent(veilederIdent: String): PEvent? {
         return try {
             if (applicationCluster.isGcp()) {
-                Optional.of(
-                    jdbcTemplate.queryForObject(
-                        "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc limit 1",
-                        EventMapper,
-                        veilederIdent
-                    )!!
-                )
+                jdbcTemplate.queryForObject(
+                    "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc limit 1",
+                    EventMapper,
+                    veilederIdent
+                )!!
             } else {
-                Optional.of(
-                    jdbcTemplate.queryForObject(
-                        "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc) where ROWNUM = 1",
-                        EventMapper,
-                        veilederIdent
-                    )!!
-                )
+                jdbcTemplate.queryForObject(
+                    "select * from (select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc) where ROWNUM = 1",
+                    EventMapper,
+                    veilederIdent
+                )!!
             }
         } catch (e: DataAccessException) {
             log.warn("Feilet ved henting av aktiv enhet", e)
-            Optional.empty()
+            null
         }
     }
 

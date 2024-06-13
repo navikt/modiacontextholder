@@ -6,35 +6,35 @@ import no.nav.sbl.rest.domain.RSContext
 import no.nav.sbl.rest.domain.RSNyContext
 
 class HttpModiaContextHolderClient : ModiaContextHolderClient {
-    override fun hentVeiledersContext(veilederIdent: String): RSContext {
+    override fun hentVeiledersContext(veilederIdent: String): Result<RSContext> {
         TODO("Not yet implemented")
     }
 
-    override fun oppdaterVeiledersContext(nyContext: RSNyContext, veilederIdent: String) {
+    override fun oppdaterVeiledersContext(nyContext: RSNyContext, veilederIdent: String): Result<Unit> {
         TODO("Not yet implemented")
     }
 
-    override fun hentAktivBruker(veilederIdent: String): RSContext {
+    override fun hentAktivBruker(veilederIdent: String): Result<RSContext> {
         TODO("Not yet implemented")
     }
 
-    override fun hentAktivBrukerV2(veilederIdent: String): RSAktivBruker {
+    override fun hentAktivBrukerV2(veilederIdent: String): Result<RSAktivBruker> {
         TODO("Not yet implemented")
     }
 
-    override fun hentAktivEnhet(veilederIdent: String): RSContext {
+    override fun hentAktivEnhet(veilederIdent: String): Result<RSContext> {
         TODO("Not yet implemented")
     }
 
-    override fun hentAktivEnhetV2(veilederIdent: String): RSAktivEnhet {
+    override fun hentAktivEnhetV2(veilederIdent: String): Result<RSAktivEnhet> {
         TODO("Not yet implemented")
     }
 
-    override fun nullstillContext(veilederident: String) {
+    override fun nullstillContext(veilederident: String): Result<Unit> {
         TODO("Not yet implemented")
     }
 
-    override fun nullstillAktivBruker(veilederIdent: String) {
+    override fun nullstillAktivBruker(veilederIdent: String): Result<Unit> {
         TODO("Not yet implemented")
     }
 }

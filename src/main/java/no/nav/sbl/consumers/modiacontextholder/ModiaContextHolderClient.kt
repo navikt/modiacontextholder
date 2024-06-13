@@ -6,12 +6,12 @@ import no.nav.sbl.rest.domain.RSContext
 import no.nav.sbl.rest.domain.RSNyContext
 
 interface ModiaContextHolderClient {
-    fun hentVeiledersContext(veilederIdent: String): RSContext
-    fun oppdaterVeiledersContext(nyContext: RSNyContext, veilederIdent: String)
-    fun hentAktivBruker(veilederIdent: String): RSContext
-    fun hentAktivBrukerV2(veilederIdent: String): RSAktivBruker
-    fun hentAktivEnhet(veilederIdent: String): RSContext
-    fun hentAktivEnhetV2(veilederIdent: String): RSAktivEnhet
-    fun nullstillContext(veilederident: String)
-    fun nullstillAktivBruker(veilederIdent: String)
+    fun hentVeiledersContext(veilederIdent: String): Result<RSContext>
+    fun oppdaterVeiledersContext(nyContext: RSNyContext, veilederIdent: String): Result<Unit>
+    fun hentAktivBruker(veilederIdent: String): Result<RSContext>
+    fun hentAktivBrukerV2(veilederIdent: String): Result<RSAktivBruker>
+    fun hentAktivEnhet(veilederIdent: String): Result<RSContext>
+    fun hentAktivEnhetV2(veilederIdent: String): Result<RSAktivEnhet>
+    fun nullstillContext(veilederident: String): Result<Unit>
+    fun nullstillAktivBruker(veilederIdent: String): Result<Unit>
 }

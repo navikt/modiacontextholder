@@ -1,6 +1,6 @@
-package no.nav.sbl.db.domain;
+package no.nav.sbl.db.domain
 
-public enum EventType {
+enum class EventType {
     NY_AKTIV_BRUKER,
     NY_AKTIV_ENHET
 }

@@ -15,10 +15,8 @@ import no.nav.sbl.service.unleash.UnleashService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDateTime
-import java.util.Optional
 
 class ContextServiceTest {
-
     private val brukerId = "bruker"
 
     private val eventDAO: EventDAO = mockk()
@@ -36,7 +34,7 @@ class ContextServiceTest {
     @Test
     fun ingen_aktiv_bruker_event() {
         every { contextService.hentAktivBruker(any()) } returns RSContext()
-        every { eventDAO.sistAktiveBrukerEvent(any()) } returns Optional.empty()
+        every { eventDAO.sistAktiveBrukerEvent(any()) } returns null
         har_ikke_aktiv_bruker()
     }
 
@@ -81,6 +79,6 @@ class ContextServiceTest {
             verdi = brukerId
             this.created = created
         }
-        every { eventDAO.sistAktiveBrukerEvent(any<String>()) } returns Optional.of(pEvent)
+        every { eventDAO.sistAktiveBrukerEvent(any<String>()) } returns pEvent
     }
 }

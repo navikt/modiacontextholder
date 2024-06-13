@@ -38,6 +38,7 @@ class ContextService(
     fun hentVeiledersContext(veilederIdent: String): RSContext {
         return if (burdeHenteContextFraGcp()) {
             contextHolderClient.hentVeiledersContext(veilederIdent)
+                .getOrThrow()
         } else {
             RSContext(
                 hentAktivBruker(veilederIdent).aktivBruker,
@@ -50,10 +51,10 @@ class ContextService(
         if (burdeSendeContextTilGcp()) {
             contextHolderClient.oppdaterVeiledersContext(nyContext, veilederIdent)
         }
-        if (EventType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isNullOrEmpty()) {
+        if (EventType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isEmpty()) {
             nullstillAktivBruker(veilederIdent)
             return
-        } else if (nyContext.verdi.isNullOrEmpty()) {
+        } else if (nyContext.verdi.isEmpty()) {
             log.warn("Forsøk på å sette aktivEnhet til null, vil generere feil.")
         }
 
@@ -71,42 +72,46 @@ class ContextService(
     fun hentAktivBruker(veilederIdent: String): RSContext {
         return if (burdeHenteContextFraGcp()) {
             contextHolderClient.hentAktivBruker(veilederIdent)
+                .getOrThrow()
         } else {
             eventDAO.sistAktiveBrukerEvent(veilederIdent)
-                .filter(::erFortsattAktuell)
-                .map(EventMapper::toRSContext)
-                .orElse(RSContext())
+                ?.takeIf(::erFortsattAktuell)
+                ?.let(EventMapper::toRSContext)
+                ?: RSContext()
         }
     }
 
     fun hentAktivBrukerV2(veilederIdent: String): RSAktivBruker {
         return if (burdeHenteContextFraGcp()) {
             contextHolderClient.hentAktivBrukerV2(veilederIdent)
+                .getOrThrow()
         } else {
             eventDAO.sistAktiveBrukerEvent(veilederIdent)
-                .filter(::erFortsattAktuell)
-                .map(EventMapper::toRSAktivBruker)
-                .orElse(RSAktivBruker(null))
+                ?.takeIf(::erFortsattAktuell)
+                ?.let(EventMapper::toRSAktivBruker)
+                ?: RSAktivBruker(null)
         }
     }
 
     fun hentAktivEnhet(veilederIdent: String): RSContext {
         return if (burdeHenteContextFraGcp()) {
             contextHolderClient.hentAktivEnhet(veilederIdent)
+                .getOrThrow()
         } else {
             eventDAO.sistAktiveEnhetEvent(veilederIdent)
-                .map(EventMapper::toRSContext)
-                .orElse(RSContext())
+                ?.let(EventMapper::toRSContext)
+                ?: RSContext()
         }
     }
 
     fun hentAktivEnhetV2(veilederIdent: String): RSAktivEnhet {
         return if (burdeHenteContextFraGcp()) {
             contextHolderClient.hentAktivEnhetV2(veilederIdent)
+                .getOrThrow()
         } else {
             eventDAO.sistAktiveEnhetEvent(veilederIdent)
-                .map(EventMapper::toRSAktivEnhet)
-                .orElse(RSAktivEnhet(null))
+                ?.let(EventMapper::toRSAktivEnhet)
+                ?: RSAktivEnhet(null)
         }
     }
 
