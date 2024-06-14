@@ -36,7 +36,7 @@ class ContextService(
     }
 
     fun hentVeiledersContext(veilederIdent: String): RSContext {
-        return if (burdeHenteContextFraGcp()) {
+        return if (burdeSynceContextMedGcp()) {
             contextHolderClient.hentVeiledersContext(veilederIdent)
                 .getOrThrow()
         } else {
@@ -53,7 +53,7 @@ class ContextService(
             eventType = nyContext.eventType,
             veilederIdent = veilederIdent
         )
-        val id = if (burdeSendeContextTilGcp()) {
+        val id = if (burdeSynceContextMedGcp()) {
             contextHolderClient.oppdaterVeiledersContext(nyContext, veilederIdent)
                 .getOrThrow()
         } else {
@@ -73,7 +73,7 @@ class ContextService(
     }
 
     fun hentAktivBruker(veilederIdent: String): RSContext {
-        return if (burdeHenteContextFraGcp()) {
+        return if (burdeSynceContextMedGcp()) {
             contextHolderClient.hentAktivBruker(veilederIdent)
                 .getOrThrow()
         } else {
@@ -85,7 +85,7 @@ class ContextService(
     }
 
     fun hentAktivBrukerV2(veilederIdent: String): RSAktivBruker {
-        return if (burdeHenteContextFraGcp()) {
+        return if (burdeSynceContextMedGcp()) {
             contextHolderClient.hentAktivBrukerV2(veilederIdent)
                 .getOrThrow()
         } else {
@@ -97,7 +97,7 @@ class ContextService(
     }
 
     fun hentAktivEnhet(veilederIdent: String): RSContext {
-        return if (burdeHenteContextFraGcp()) {
+        return if (burdeSynceContextMedGcp()) {
             contextHolderClient.hentAktivEnhet(veilederIdent)
                 .getOrThrow()
         } else {
@@ -108,7 +108,7 @@ class ContextService(
     }
 
     fun hentAktivEnhetV2(veilederIdent: String): RSAktivEnhet {
-        return if (burdeHenteContextFraGcp()) {
+        return if (burdeSynceContextMedGcp()) {
             contextHolderClient.hentAktivEnhetV2(veilederIdent)
                 .getOrThrow()
         } else {
@@ -119,7 +119,7 @@ class ContextService(
     }
 
     fun nullstillContext(veilederIdent: String) {
-        if (burdeSendeContextTilGcp()) {
+        if (burdeSynceContextMedGcp()) {
             contextHolderClient.nullstillContext(veilederIdent)
         } else {
             eventDAO.slettAllEventer(veilederIdent)
@@ -127,7 +127,7 @@ class ContextService(
     }
 
     fun nullstillAktivBruker(veilederIdent: String) {
-        if (burdeSendeContextTilGcp()) {
+        if (burdeSynceContextMedGcp()) {
             contextHolderClient.nullstillAktivBruker(veilederIdent)
         } else {
             eventDAO.slettAlleAvEventTypeForVeileder(EventType.NY_AKTIV_BRUKER.name, veilederIdent)
@@ -138,9 +138,6 @@ class ContextService(
         return eventDAO.save(event)
     }
 
-    private fun burdeHenteContextFraGcp(): Boolean =
-        applicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.HENT_CONTEXT_FRA_GCP)
-
-    private fun burdeSendeContextTilGcp(): Boolean =
-        applicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SEND_CONTEXT_TIL_GCP)
+    private fun burdeSynceContextMedGcp(): Boolean =
+        applicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SYNC_CONTEXT_MED_GCP)
 }
