@@ -10,7 +10,7 @@ class HttpModiaContextHolderClient : ModiaContextHolderClient {
         TODO("Not yet implemented")
     }
 
-    override fun oppdaterVeiledersContext(nyContext: RSNyContext, veilederIdent: String): Result<Unit> {
+    override fun oppdaterVeiledersContext(nyContext: RSNyContext, veilederIdent: String): Result<Long> {
         TODO("Not yet implemented")
     }
 

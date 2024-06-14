@@ -10,8 +10,8 @@ import no.nav.sbl.db.domain.PEvent
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.rest.domain.RSContext
 import no.nav.sbl.service.ContextService.Companion.erFortsattAktuell
-import no.nav.sbl.service.unleash.Feature
-import no.nav.sbl.service.unleash.UnleashService
+import no.nav.sbl.service.unleash.ToggleableFeature
+import no.nav.sbl.service.unleash.ToggleableFeatureService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDateTime
@@ -22,13 +22,13 @@ class ContextServiceTest {
     private val eventDAO: EventDAO = mockk()
     private val redisPublisher: RedisPublisher = mockk()
     private val contextHolderClient: ModiaContextHolderClient = mockk(relaxed = true)
-    private val unleashService: UnleashService = mockk {
-        every { isEnabled(any<Feature>()) } returns false
+    private val toggleableFeatureService: ToggleableFeatureService = mockk {
+        every { isEnabled(any<ToggleableFeature>()) } returns false
     }
     private val applicationCluster: ApplicationCluster = ApplicationCluster.PROD_FSS
     private val contextService: ContextService = ContextService(
         eventDAO, redisPublisher,
-        contextHolderClient, unleashService, applicationCluster
+        contextHolderClient, toggleableFeatureService, applicationCluster
     )
 
     @Test

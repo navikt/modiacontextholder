@@ -1,7 +1,11 @@
 package no.nav.sbl.service.unleash
 
+import io.getunleash.Unleash
 
-interface UnleashService {
-    fun isEnabled(feature: Feature): Boolean
-    fun isEnabled(feature: String): Boolean
+class UnleashService(
+    private val unleash: Unleash
+) : ToggleableFeatureService {
+    override fun isEnabled(feature: ToggleableFeature): Boolean = isEnabled(feature.featureName)
+
+    override fun isEnabled(feature: String): Boolean = unleash.isEnabled(feature)
 }

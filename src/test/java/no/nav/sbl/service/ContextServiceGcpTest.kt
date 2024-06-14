@@ -14,8 +14,8 @@ import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet
 import no.nav.sbl.rest.domain.RSContext
 import no.nav.sbl.rest.domain.RSNyContext
-import no.nav.sbl.service.unleash.Feature
-import no.nav.sbl.service.unleash.UnleashService
+import no.nav.sbl.service.unleash.ToggleableFeature
+import no.nav.sbl.service.unleash.ToggleableFeatureService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -29,15 +29,15 @@ class ContextServiceGcpTest {
         every { isFss() } returns false
         every { isGcp() } returns true
     }
-    private val unleashService = mockk<UnleashService> {
-        every { isEnabled(any<Feature>()) } returns true
+    private val toggleableFeatureService = mockk<ToggleableFeatureService> {
+        every { isEnabled(any<ToggleableFeature>()) } returns true
     }
     private val contextHolderClient = mockk<ModiaContextHolderClient>()
     private val redisPublisher = mockk<RedisPublisher>(relaxed = true)
     private val eventDAO = mockk<EventDAO>()
 
     private val contextService = ContextService(
-        eventDAO, redisPublisher, contextHolderClient, unleashService, applicationCluster
+        eventDAO, redisPublisher, contextHolderClient, toggleableFeatureService, applicationCluster
     )
 
     private val veilederIdent = "veilederIdent"

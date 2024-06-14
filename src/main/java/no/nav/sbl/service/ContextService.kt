@@ -12,8 +12,8 @@ import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet
 import no.nav.sbl.rest.domain.RSContext
 import no.nav.sbl.rest.domain.RSNyContext
-import no.nav.sbl.service.unleash.Feature
-import no.nav.sbl.service.unleash.UnleashService
+import no.nav.sbl.service.unleash.ToggleableFeatureService
+import no.nav.sbl.service.unleash.ToggleableFeatures
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -23,7 +23,7 @@ class ContextService(
     private val eventDAO: EventDAO,
     private val redisPublisher: RedisPublisher,
     private val contextHolderClient: ModiaContextHolderClient,
-    private val unleashService: UnleashService,
+    private val toggleableFeatureService: ToggleableFeatureService,
     private val applicationCluster: ApplicationCluster,
 ) {
     private val log = LoggerFactory.getLogger(ContextService::class.java)
@@ -48,23 +48,26 @@ class ContextService(
     }
 
     fun oppdaterVeiledersContext(nyContext: RSNyContext, veilederIdent: String) {
-        if (burdeSendeContextTilGcp()) {
-            contextHolderClient.oppdaterVeiledersContext(nyContext, veilederIdent)
-        }
-        if (EventType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isEmpty()) {
-            nullstillAktivBruker(veilederIdent)
-            return
-        } else if (nyContext.verdi.isEmpty()) {
-            log.warn("Forsøk på å sette aktivEnhet til null, vil generere feil.")
-        }
-
         val event = PEvent(
             verdi = nyContext.verdi,
             eventType = nyContext.eventType,
             veilederIdent = veilederIdent
         )
+        val id = if (burdeSendeContextTilGcp()) {
+            contextHolderClient.oppdaterVeiledersContext(nyContext, veilederIdent)
+                .getOrThrow()
+        } else {
+            if (EventType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isEmpty()) {
+                nullstillAktivBruker(veilederIdent)
+                return
+            } else if (nyContext.verdi.isEmpty()) {
+                log.warn("Forsøk på å sette aktivEnhet til null, vil generere feil.")
+            }
 
-        val id = saveToDb(event)
+            saveToDb(event)
+        }
+
+
         val message = JsonUtils.toJson(EventMapper.toRSEvent(event.copy(id = id)))
         redisPublisher.publishMessage(message)
     }
@@ -118,15 +121,17 @@ class ContextService(
     fun nullstillContext(veilederIdent: String) {
         if (burdeSendeContextTilGcp()) {
             contextHolderClient.nullstillContext(veilederIdent)
+        } else {
+            eventDAO.slettAllEventer(veilederIdent)
         }
-        eventDAO.slettAllEventer(veilederIdent)
     }
 
     fun nullstillAktivBruker(veilederIdent: String) {
         if (burdeSendeContextTilGcp()) {
             contextHolderClient.nullstillAktivBruker(veilederIdent)
+        } else {
+            eventDAO.slettAlleAvEventTypeForVeileder(EventType.NY_AKTIV_BRUKER.name, veilederIdent)
         }
-        eventDAO.slettAlleAvEventTypeForVeileder(EventType.NY_AKTIV_BRUKER.name, veilederIdent)
     }
 
     private fun saveToDb(event: PEvent): Long {
@@ -134,8 +139,8 @@ class ContextService(
     }
 
     private fun burdeHenteContextFraGcp(): Boolean =
-        applicationCluster.isFss() && unleashService.isEnabled(Feature.HENT_CONTEXT_FRA_GCP)
+        applicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.HENT_CONTEXT_FRA_GCP)
 
     private fun burdeSendeContextTilGcp(): Boolean =
-        applicationCluster.isFss() && unleashService.isEnabled(Feature.SEND_CONTEXT_TIL_GCP)
+        applicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SEND_CONTEXT_TIL_GCP)
 }

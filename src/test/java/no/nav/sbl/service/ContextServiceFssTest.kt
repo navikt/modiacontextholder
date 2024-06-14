@@ -1,5 +1,6 @@
 package no.nav.sbl.service
 
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -11,8 +12,8 @@ import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet
 import no.nav.sbl.rest.domain.RSContext
 import no.nav.sbl.rest.domain.RSNyContext
-import no.nav.sbl.service.unleash.Feature
-import no.nav.sbl.service.unleash.UnleashService
+import no.nav.sbl.service.unleash.ToggleableFeature
+import no.nav.sbl.service.unleash.ToggleableFeatureService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -25,8 +26,8 @@ class ContextServiceFssTest {
         every { isFss() } returns true
         every { isGcp() } returns false
     }
-    private val unleashService = mockk<UnleashService> {
-        every { isEnabled(any<Feature>()) } returns true
+    private val toggleableFeatureService = mockk<ToggleableFeatureService> {
+        every { isEnabled(any<ToggleableFeature>()) } returns true
     }
     private val contextHolderClient = mockk<ModiaContextHolderClient>()
     private val redisPublisher = mockk<RedisPublisher>(relaxed = true)
@@ -34,7 +35,7 @@ class ContextServiceFssTest {
 
 
     private val contextService = ContextService(
-        eventDAO, redisPublisher, contextHolderClient, unleashService, applicationCluster
+        eventDAO, redisPublisher, contextHolderClient, toggleableFeatureService, applicationCluster
     )
 
     private val veilederIdent = "veilederIdent"
@@ -54,14 +55,13 @@ class ContextServiceFssTest {
     }
 
     @Test
-    fun `oppdater veileders context burde oppdatere context i proxy, lagre til egen database og publisere til redis`() {
-        every { contextHolderClient.oppdaterVeiledersContext(any(), any()) } returns Result.success(Unit)
-        every { eventDAO.save(any()) } returns 1L
+    fun `oppdater veileders context burde oppdatere context i proxy og publisere til redis`() {
+        every { contextHolderClient.oppdaterVeiledersContext(any(), any()) } returns Result.success(1L)
 
         contextService.oppdaterVeiledersContext(nyContext, veilederIdent)
 
         verify { contextHolderClient.oppdaterVeiledersContext(any(), any()) }
-        verify { eventDAO.save(any()) }
+        verify { eventDAO wasNot Called }
         verify { redisPublisher.publishMessage(any()) }
     }
 
@@ -106,24 +106,22 @@ class ContextServiceFssTest {
     }
 
     @Test
-    fun `nullstill context burde nullstille context i proxy og slette fra egen database`() {
+    fun `nullstill context burde nullstille context i proxy`() {
         every { contextHolderClient.nullstillContext(any()) } returns Result.success(Unit)
-        every { eventDAO.slettAllEventer(any()) } returns Unit
 
         contextService.nullstillContext(veilederIdent)
 
         verify { contextHolderClient.nullstillContext(any()) }
-        verify { eventDAO.slettAllEventer(any()) }
+        verify { eventDAO wasNot Called }
     }
 
     @Test
-    fun `nullstill aktiv bruker burde nullstille aktiv bruker i proxy og slette fra egen database`() {
+    fun `nullstill aktiv bruker burde nullstille aktiv bruker i proxy`() {
         every { contextHolderClient.nullstillAktivBruker(any()) } returns Result.success(Unit)
-        every { eventDAO.slettAlleAvEventTypeForVeileder(any(), any()) } returns Unit
 
         contextService.nullstillAktivBruker(veilederIdent)
 
         verify { contextHolderClient.nullstillAktivBruker(any()) }
-        verify { eventDAO.slettAlleAvEventTypeForVeileder(any(), any()) }
+        verify { eventDAO wasNot Called }
     }
 }

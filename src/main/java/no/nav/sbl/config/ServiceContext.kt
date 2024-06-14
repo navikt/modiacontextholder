@@ -22,7 +22,7 @@ import no.nav.sbl.db.dao.EventDAO
 import no.nav.sbl.redis.RedisConfig
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.service.*
-import no.nav.sbl.service.unleash.UnleashService
+import no.nav.sbl.service.unleash.ToggleableFeatureService
 import no.nav.sbl.util.DownstreamApi.Companion.parse
 import no.nav.sbl.util.bindTo
 import no.nav.sbl.util.createMachineToMachineToken
@@ -46,9 +46,9 @@ open class ServiceContext {
         eventDAO: EventDAO,
         redisPublisher: RedisPublisher,
         contextHolderClient: ModiaContextHolderClient,
-        unleashService: UnleashService,
+        toggleableFeatureService: ToggleableFeatureService,
         applicationCluster: ApplicationCluster,
-    ) = ContextService(eventDAO, redisPublisher, contextHolderClient, unleashService, applicationCluster)
+    ) = ContextService(eventDAO, redisPublisher, contextHolderClient, toggleableFeatureService, applicationCluster)
 
     @Bean
     open fun eventService(
