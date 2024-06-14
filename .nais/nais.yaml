@@ -111,6 +111,9 @@ spec:
         - application: modiapersonoversikt
           namespace: personoversikt
           cluster: prod-fss
+        - application: modiapersonoversikt
+          namespace: personoversikt
+          cluster: prod-gcp
         - application: rekrutteringsbistand-kandidatsok-api
           namespace: toi
           cluster: prod-gcp
