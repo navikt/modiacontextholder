@@ -11,6 +11,7 @@ import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet
 import no.nav.sbl.rest.domain.RSContext
+import no.nav.sbl.rest.domain.RSEvent
 import no.nav.sbl.rest.domain.RSNyContext
 import no.nav.sbl.service.unleash.ToggleableFeatureService
 import no.nav.sbl.service.unleash.ToggleableFeatures
@@ -67,8 +68,8 @@ class ContextService(
             saveToDb(event)
         }
 
-
-        val message = JsonUtils.toJson(EventMapper.toRSEvent(event.copy(id = id)))
+        saveToDb(event)
+        val message = JsonUtils.toJson(RSEvent.from(event))
         redisPublisher.publishMessage(message)
     }
 
@@ -113,7 +114,7 @@ class ContextService(
                 .getOrThrow()
         } else {
             eventDAO.sistAktiveEnhetEvent(veilederIdent)
-                ?.let(EventMapper::toRSAktivEnhet)
+                ?.let(RSAktivEnhet::from)
                 ?: RSAktivEnhet(null)
         }
     }
