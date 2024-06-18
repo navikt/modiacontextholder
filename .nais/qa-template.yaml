@@ -70,6 +70,10 @@ spec:
     outbound:
       external:
         - host: personoversikt-unleash-api.nav.cloud.nais.io
+      rules:
+        - application: modiacontextholder
+          namespace: personoversikt
+          cluster: dev-gcp
     inbound:
       rules:
         - application: arbeidssokerregistrering-veileder
@@ -170,3 +174,5 @@ spec:
       value: "https://navdialog--sit2.lightning.force.com"
     - name: UNLEASH_ENVIRONMENT
       value: "development"
+    - name: MODIACONTEXTHOLDER_PROXY_API_URL
+      value: "https://modiacontextholder.intern.dev.nav.no/modiacontextholder"

@@ -45,7 +45,7 @@ open class ServiceContext {
         authContextService: AuthContextService,
     ) = HttpModiaContextHolderClient(
         client = RestClient.baseClient(),
-        baseUrl = EnvironmentUtils.getRequiredProperty("MODIACONTEXT_API_URL"),
+        baseUrl = EnvironmentUtils.getRequiredProperty("MODIACONTEXTHOLDER_PROXY_API_URL"),
         authContextService = authContextService,
         objectMapper = jacksonObjectMapper().configure(
             DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,

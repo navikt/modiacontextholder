@@ -159,3 +159,6 @@ spec:
       value: "modiacontextholder-db"
     - name: UNLEASH_ENVIRONMENT
       value: "development"
+    # Ikke brukt i GCP
+    - name: MODIACONTEXTHOLDER_PROXY_API_URL
+      value: "https://modiacontextholder.intern.dev.nav.no/modiacontextholder"
