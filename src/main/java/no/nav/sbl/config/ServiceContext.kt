@@ -1,5 +1,7 @@
 package no.nav.sbl.config
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.http.*
 import no.nav.common.client.axsys.AxsysClient
 import no.nav.common.client.axsys.AxsysV2ClientImpl
@@ -39,7 +41,18 @@ import org.springframework.context.annotation.Import
 @Import(FeatureToggleConfig::class, RedisConfig::class)
 open class ServiceContext {
     @Bean
-    open fun contextHolderClient() = HttpModiaContextHolderClient()
+    open fun contextHolderClient(
+        authContextService: AuthContextService,
+    ) = HttpModiaContextHolderClient(
+        client = RestClient.baseClient(),
+        baseUrl = EnvironmentUtils.getRequiredProperty("MODIACONTEXT_API_URL"),
+        authContextService = authContextService,
+        objectMapper = jacksonObjectMapper().configure(
+            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+            false
+        )
+    )
+
 
     @Bean
     open fun contextService(

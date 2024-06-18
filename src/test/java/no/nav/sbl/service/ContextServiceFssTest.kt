@@ -56,7 +56,7 @@ class ContextServiceFssTest {
 
     @Test
     fun `oppdater veileders context burde oppdatere context i proxy og publisere til redis`() {
-        every { contextHolderClient.oppdaterVeiledersContext(any(), any()) } returns Result.success(1L)
+        every { contextHolderClient.oppdaterVeiledersContext(any(), any()) } returns Result.success(rsContext)
 
         contextService.oppdaterVeiledersContext(nyContext, veilederIdent)
 
@@ -107,11 +107,11 @@ class ContextServiceFssTest {
 
     @Test
     fun `nullstill context burde nullstille context i proxy`() {
-        every { contextHolderClient.nullstillContext(any()) } returns Result.success(Unit)
+        every { contextHolderClient.nullstillBrukerContext(any()) } returns Result.success(Unit)
 
         contextService.nullstillContext(veilederIdent)
 
-        verify { contextHolderClient.nullstillContext(any()) }
+        verify { contextHolderClient.nullstillBrukerContext(any()) }
         verify { eventDAO wasNot Called }
     }
 

@@ -54,7 +54,7 @@ class ContextService(
             eventType = nyContext.eventType,
             veilederIdent = veilederIdent
         )
-        val id = if (burdeSynceContextMedGcp()) {
+        if (burdeSynceContextMedGcp()) {
             contextHolderClient.oppdaterVeiledersContext(nyContext, veilederIdent)
                 .getOrThrow()
         } else {
@@ -68,7 +68,6 @@ class ContextService(
             saveToDb(event)
         }
 
-        saveToDb(event)
         val message = JsonUtils.toJson(RSEvent.from(event))
         redisPublisher.publishMessage(message)
     }
@@ -121,7 +120,7 @@ class ContextService(
 
     fun nullstillContext(veilederIdent: String) {
         if (burdeSynceContextMedGcp()) {
-            contextHolderClient.nullstillContext(veilederIdent)
+            contextHolderClient.nullstillBrukerContext(veilederIdent)
         } else {
             eventDAO.slettAllEventer(veilederIdent)
         }

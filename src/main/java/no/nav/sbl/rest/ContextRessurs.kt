@@ -1,7 +1,6 @@
 package no.nav.sbl.rest
 
 import io.micrometer.core.annotation.Timed
-import no.nav.sbl.db.domain.EventType
 import no.nav.sbl.naudit.Audit.Action
 import no.nav.sbl.naudit.Audit.Companion.describe
 import no.nav.sbl.naudit.Audit.Companion.withAudit
