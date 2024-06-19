@@ -3,8 +3,6 @@ package no.nav.sbl
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.common.utils.NaisUtils
 import no.nav.common.utils.SslUtils
-import no.nav.sbl.config.ApplicationConfig.SRV_PASSWORD_PROPERTY
-import no.nav.sbl.config.ApplicationConfig.SRV_USERNAME_PROPERTY
 import no.nav.sbl.config.DatabaseConfig.GCP_CLUSTERS
 import no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_PASSWORD
 import no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_URL_PROPERTY
@@ -27,8 +25,16 @@ open class Main {
 
         private fun setupVault() {
             val serviceUser = NaisUtils.getCredentials("service_user")
-            EnvironmentUtils.setProperty(SRV_USERNAME_PROPERTY, serviceUser.username, EnvironmentUtils.Type.PUBLIC)
-            EnvironmentUtils.setProperty(SRV_PASSWORD_PROPERTY, serviceUser.password, EnvironmentUtils.Type.SECRET)
+            EnvironmentUtils.setProperty(
+                "SRVMODIACONTEXTHOLDER_USERNAME",
+                serviceUser.username,
+                EnvironmentUtils.Type.PUBLIC
+            )
+            EnvironmentUtils.setProperty(
+                "SRVMODIACONTEXTHOLDER_PASSWORD",
+                serviceUser.password,
+                EnvironmentUtils.Type.SECRET
+            )
 
             val dbCredentials = NaisUtils.getCredentials("modiacontextholderDB")
             EnvironmentUtils.setProperty(

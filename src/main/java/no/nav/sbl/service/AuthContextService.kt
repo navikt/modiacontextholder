@@ -7,6 +7,7 @@ import no.nav.sbl.util.AuthContextUtils
 import org.springframework.stereotype.Service
 import java.text.ParseException
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class AuthContextService(
@@ -28,10 +29,8 @@ class AuthContextService(
             .flatMap { claims -> getAuthorizedParty(claims) }
     }
 
-    fun getClaims(): Map<String, Any> {
-        return AuthContextUtils.getIdTokenClaims()
-            .map { claims -> claims.claims }
-            .orElse(emptyMap())
+    fun getAccessToken(): String? {
+        return AuthContextUtils.getAccessToken().getOrNull()
     }
 
     private fun getAuthorizedParty(claims: JWTClaimsSet): Optional<String> {

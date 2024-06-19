@@ -79,6 +79,9 @@ spec:
         - application: norg2
           namespace: org
           cluster: prod-fss
+        - application: modiacontextholder
+          namespace: personoversikt
+          cluster: prod-gcp
     inbound:
       rules:
         - application: arbeidssokerregistrering-veileder
@@ -182,3 +185,7 @@ spec:
       value: "https://navdialog.lightning.force.com"
     - name: UNLEASH_ENVIRONMENT
       value: "production"
+    - name: MODIACONTEXTHOLDER_PROXY_API_URL
+      value: "https://modiacontextholder.intern.nav.no/modiacontextholder"
+    - name: MODIACONTEXTHOLDER_PROXY_API_SCOPE
+      value: "prod-gcp:modiacontextholder:modiacontextholder"
