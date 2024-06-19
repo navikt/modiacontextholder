@@ -188,4 +188,4 @@ spec:
     - name: MODIACONTEXTHOLDER_PROXY_API_URL
       value: "https://modiacontextholder.intern.nav.no/modiacontextholder"
     - name: MODIACONTEXTHOLDER_PROXY_API_SCOPE
-      value: "prod-gcp:modiacontextholder:modiacontextholder"
+      value: "prod-gcp:personoversikt:modiacontextholder"
