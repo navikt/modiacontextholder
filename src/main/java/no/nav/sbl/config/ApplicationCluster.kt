@@ -9,13 +9,13 @@ import no.nav.sbl.config.ApplicationCluster.Cluster.PROD_GCP
 open class ApplicationCluster(
     clusterName: String,
 ) {
-    fun isGcp(): Boolean =
+    open fun isGcp(): Boolean =
         when (cluster) {
             DEV_GCP, PROD_GCP -> true
             else -> false
         }
 
-    fun isFss(): Boolean =
+    open fun isFss(): Boolean =
         when (cluster) {
             DEV_FSS, PROD_FSS -> true
             else -> false
