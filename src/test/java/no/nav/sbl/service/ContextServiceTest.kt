@@ -2,6 +2,7 @@ package no.nav.sbl.service
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.db.dao.EventDAO
@@ -13,7 +14,8 @@ import no.nav.sbl.service.ContextService.Companion.erFortsattAktuell
 import no.nav.sbl.service.unleash.ToggleableFeature
 import no.nav.sbl.service.unleash.ToggleableFeatureService
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 class ContextServiceTest {
@@ -26,15 +28,23 @@ class ContextServiceTest {
         mockk {
             every { isEnabled(any<ToggleableFeature>()) } returns false
         }
-    private val applicationCluster: ApplicationCluster = ApplicationCluster(ApplicationCluster.Cluster.PROD_FSS)
     private val contextService: ContextService =
         ContextService(
             eventDAO,
             redisPublisher,
             contextHolderClient,
             toggleableFeatureService,
-            applicationCluster,
         )
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll() {
+            mockkObject(ApplicationCluster)
+            every { ApplicationCluster.isFss() } returns true
+            every { ApplicationCluster.isGcp() } returns false
+        }
+    }
 
     @Test
     fun ingen_aktiv_bruker_event() {

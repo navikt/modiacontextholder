@@ -12,7 +12,6 @@ import no.nav.sbl.db.DatabaseCleanerService
 import no.nav.sbl.rest.CleanupServlet
 import no.nav.sbl.service.AuthContextService
 import no.nav.sbl.util.AccesstokenServletFilter
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.boot.web.servlet.ServletRegistrationBean
@@ -106,13 +105,5 @@ open class ApplicationConfig {
     ): ServletRegistrationBean<CleanupServlet> {
         val cleanupServlet = CleanupServlet(databaseCleanerService, authContextService)
         return ServletRegistrationBean(cleanupServlet, "/internal/cleanup")
-    }
-
-    @Bean
-    open fun applicationCluster(
-        @Value("\${NAIS_CLUSTER_NAME}") clusterName: String,
-    ): ApplicationCluster {
-        LoggerFactory.getLogger(ApplicationCluster::class.java).info("Cluster name: $clusterName")
-        return ApplicationCluster(ApplicationCluster.Cluster.from(clusterName))
     }
 }

@@ -25,7 +25,6 @@ class ContextService(
     private val redisPublisher: RedisPublisher,
     private val contextHolderClient: ModiaContextHolderClient,
     private val toggleableFeatureService: ToggleableFeatureService,
-    private val applicationCluster: ApplicationCluster,
 ) {
     private val log = LoggerFactory.getLogger(ContextService::class.java)
 
@@ -144,5 +143,5 @@ class ContextService(
     private fun saveToDb(event: PEvent): Long = eventDAO.save(event)
 
     private fun burdeSynceContextMedGcp(): Boolean =
-        applicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SYNC_CONTEXT_MED_GCP)
+        ApplicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SYNC_CONTEXT_MED_GCP)
 }

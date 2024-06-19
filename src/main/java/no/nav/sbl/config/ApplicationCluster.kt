@@ -1,42 +1,17 @@
 package no.nav.sbl.config
 
-import no.nav.sbl.config.ApplicationCluster.Cluster.DEV_FSS
-import no.nav.sbl.config.ApplicationCluster.Cluster.DEV_GCP
-import no.nav.sbl.config.ApplicationCluster.Cluster.PROD_FSS
-import no.nav.sbl.config.ApplicationCluster.Cluster.PROD_GCP
+import no.nav.common.utils.EnvironmentUtils
 
-open class ApplicationCluster(
-    private val cluster: Cluster,
-) {
-    open fun isGcp(): Boolean =
-        when (cluster) {
-            DEV_GCP, PROD_GCP -> true
+object ApplicationCluster {
+    fun isGcp(): Boolean =
+        when (EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME")) {
+            "dev-gcp", "prod-gcp" -> true
             else -> false
         }
 
-    open fun isFss(): Boolean =
-        when (cluster) {
-            DEV_FSS, PROD_FSS -> true
+    fun isFss(): Boolean =
+        when (EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME")) {
+            "dev-fss", "prod-fss" -> true
             else -> false
         }
-
-    enum class Cluster {
-        LOCAL,
-        DEV_FSS,
-        PROD_FSS,
-        DEV_GCP,
-        PROD_GCP,
-        ;
-
-        companion object {
-            fun from(clusterName: String): Cluster =
-                when (clusterName) {
-                    "dev-fss" -> DEV_FSS
-                    "prod-fss" -> PROD_FSS
-                    "dev-gcp" -> DEV_GCP
-                    "prod-gcp" -> PROD_GCP
-                    else -> LOCAL
-                }
-        }
-    }
 }

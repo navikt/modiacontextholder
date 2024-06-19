@@ -6,6 +6,8 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
 import no.nav.sbl.config.ApplicationCluster
+
+
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.db.dao.EventDAO
 import no.nav.sbl.db.domain.PEvent
@@ -25,20 +27,21 @@ import org.junit.jupiter.api.Test
  * og Unleash er aktivert.
  */
 class ContextServiceGcpTest {
-    private val applicationCluster = mockk<ApplicationCluster> {
-        every { isFss() } returns false
-        every { isGcp() } returns true
-    }
-    private val toggleableFeatureService = mockk<ToggleableFeatureService> {
-        every { isEnabled(any<ToggleableFeature>()) } returns true
-    }
+    private val toggleableFeatureService =
+        mockk<ToggleableFeatureService> {
+            every { isEnabled(any<ToggleableFeature>()) } returns true
+        }
     private val contextHolderClient = mockk<ModiaContextHolderClient>()
     private val redisPublisher = mockk<RedisPublisher>(relaxed = true)
     private val eventDAO = mockk<EventDAO>()
 
-    private val contextService = ContextService(
-        eventDAO, redisPublisher, contextHolderClient, toggleableFeatureService, applicationCluster
-    )
+    private val contextService =
+        ContextService(
+            eventDAO,
+            redisPublisher,
+            contextHolderClient,
+            toggleableFeatureService,
+        )
 
     private val veilederIdent = "veilederIdent"
     private val enhetContext = RSContext(aktivEnhet = "enhet")
@@ -49,6 +52,9 @@ class ContextServiceGcpTest {
         @JvmStatic
         @BeforeAll
         fun beforeAll() {
+            mockkObject(ApplicationCluster)
+            every { ApplicationCluster.isFss() } returns false
+            every { ApplicationCluster.isGcp() } returns true
             mockkObject(ContextService.Companion)
             every { ContextService.erFortsattAktuell(any()) } returns true
         }

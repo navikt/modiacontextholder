@@ -3,6 +3,7 @@ package no.nav.sbl.service
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.verify
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
@@ -15,6 +16,7 @@ import no.nav.sbl.rest.domain.RSNyContext
 import no.nav.sbl.service.unleash.ToggleableFeature
 import no.nav.sbl.service.unleash.ToggleableFeatureService
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 /**
@@ -22,27 +24,37 @@ import org.junit.jupiter.api.Test
  * og Unleash er aktivert.
  */
 class ContextServiceFssTest {
-    private val applicationCluster = mockk<ApplicationCluster> {
-        every { isFss() } returns true
-        every { isGcp() } returns false
-    }
-    private val toggleableFeatureService = mockk<ToggleableFeatureService> {
-        every { isEnabled(any<ToggleableFeature>()) } returns true
-    }
+    private val toggleableFeatureService =
+        mockk<ToggleableFeatureService> {
+            every { isEnabled(any<ToggleableFeature>()) } returns true
+        }
     private val contextHolderClient = mockk<ModiaContextHolderClient>()
     private val redisPublisher = mockk<RedisPublisher>(relaxed = true)
     private val eventDAO = mockk<EventDAO>()
 
-
-    private val contextService = ContextService(
-        eventDAO, redisPublisher, contextHolderClient, toggleableFeatureService, applicationCluster
-    )
+    private val contextService =
+        ContextService(
+            eventDAO,
+            redisPublisher,
+            contextHolderClient,
+            toggleableFeatureService,
+        )
 
     private val veilederIdent = "veilederIdent"
     private val rsContext = RSContext("bruker", "enhet")
     private val nyContext = RSNyContext("verdi", "NY_AKTIV_ENHET")
     private val aktivBruker = RSAktivBruker("bruker")
     private val aktivEnhet = RSAktivEnhet("enhet")
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll() {
+            mockkObject(ApplicationCluster)
+            every { ApplicationCluster.isFss() } returns true
+            every { ApplicationCluster.isGcp() } returns false
+        }
+    }
 
     @Test
     fun `hent veileders context burde hente context fra proxy`() {

@@ -83,8 +83,7 @@ open class ServiceContext {
         redisPublisher: RedisPublisher,
         contextHolderClient: ModiaContextHolderClient,
         toggleableFeatureService: ToggleableFeatureService,
-        applicationCluster: ApplicationCluster,
-    ) = ContextService(eventDAO, redisPublisher, contextHolderClient, toggleableFeatureService, applicationCluster)
+    ) = ContextService(eventDAO, redisPublisher, contextHolderClient, toggleableFeatureService)
 
     @Bean
     open fun eventService(
