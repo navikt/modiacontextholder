@@ -1,43 +1,40 @@
 package no.nav.sbl.config
 
+import no.nav.sbl.config.ApplicationCluster.Cluster.DEV_FSS
+import no.nav.sbl.config.ApplicationCluster.Cluster.DEV_GCP
+import no.nav.sbl.config.ApplicationCluster.Cluster.LOCAL
+import no.nav.sbl.config.ApplicationCluster.Cluster.PROD_FSS
+import no.nav.sbl.config.ApplicationCluster.Cluster.PROD_GCP
+
 open class ApplicationCluster(
     clusterName: String,
 ) {
-    private val cluster = Cluster.fromClusterName(clusterName)
+    fun isGcp(): Boolean =
+        when (cluster) {
+            DEV_GCP, PROD_GCP -> true
+            else -> false
+        }
 
-    fun isGcp(): Boolean = cluster.isGcp()
+    fun isFss(): Boolean =
+        when (cluster) {
+            DEV_FSS, PROD_FSS -> true
+            else -> false
+        }
 
-    fun isFss(): Boolean = cluster.isFss()
+    private val cluster =
+        when (clusterName) {
+            "dev-fss" -> DEV_FSS
+            "prod-fss" -> PROD_FSS
+            "dev-gcp" -> DEV_GCP
+            "prod-gcp" -> PROD_GCP
+            else -> LOCAL
+        }
 
-    enum class Cluster {
+    private enum class Cluster {
         LOCAL,
         DEV_FSS,
         PROD_FSS,
         DEV_GCP,
         PROD_GCP,
-        ;
-
-        companion object {
-            fun fromClusterName(clusterName: String): Cluster =
-                when (clusterName) {
-                    "dev-fss" -> DEV_FSS
-                    "prod-fss" -> PROD_FSS
-                    "dev-gcp" -> DEV_GCP
-                    "prod-gcp" -> PROD_GCP
-                    else -> LOCAL
-                }
-        }
-
-        fun isGcp(): Boolean =
-            when (this) {
-                DEV_GCP, PROD_GCP -> true
-                else -> false
-            }
-
-        fun isFss(): Boolean =
-            when (this) {
-                DEV_FSS, PROD_FSS -> true
-                else -> false
-            }
     }
 }
