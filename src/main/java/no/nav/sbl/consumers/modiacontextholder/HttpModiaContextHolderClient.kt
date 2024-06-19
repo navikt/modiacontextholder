@@ -5,7 +5,6 @@ import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet
 import no.nav.sbl.rest.domain.RSContext
 import no.nav.sbl.rest.domain.RSNyContext
-import no.nav.sbl.service.AuthContextService
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -16,14 +15,12 @@ import org.springframework.web.context.request.ServletRequestAttributes
 class HttpModiaContextHolderClient(
     private val client: OkHttpClient,
     private val baseUrl: String,
-    private val authContextService: AuthContextService,
     private val objectMapper: ObjectMapper,
 ) : ModiaContextHolderClient {
     override fun hentVeiledersContext(veilederIdent: String): Result<RSContext> = runCatching {
         val request = client.newCall(
             Request.Builder().apply {
                 url("$baseUrl/api/context")
-                header("Authorization", "Bearer ${authContextService.getAccessToken()}")
             }.build()
         )
 
@@ -38,7 +35,6 @@ class HttpModiaContextHolderClient(
             val request = client.newCall(
                 Request.Builder().apply {
                     url("$baseUrl/api/context")
-                    header("Authorization", "Bearer ${authContextService.getAccessToken()}")
                     getRefererHeader()?.let { referer ->
                         header("referer", referer)
                     }
@@ -56,7 +52,6 @@ class HttpModiaContextHolderClient(
         val request = client.newCall(
             Request.Builder().apply {
                 url("$baseUrl/api/context/aktivbruker")
-                header("Authorization", "Bearer ${authContextService.getAccessToken()}")
             }.build()
         )
 
@@ -69,7 +64,6 @@ class HttpModiaContextHolderClient(
         val request = client.newCall(
             Request.Builder().apply {
                 url("$baseUrl/api/context/v2/aktivbruker")
-                header("Authorization", "Bearer ${authContextService.getAccessToken()}")
             }.build()
         )
 
@@ -82,7 +76,6 @@ class HttpModiaContextHolderClient(
         val request = client.newCall(
             Request.Builder().apply {
                 url("$baseUrl/api/context/aktivenhet")
-                header("Authorization", "Bearer ${authContextService.getAccessToken()}")
             }.build()
         )
         request.execute().use { response ->
@@ -94,7 +87,6 @@ class HttpModiaContextHolderClient(
         val request = client.newCall(
             Request.Builder().apply {
                 url("$baseUrl/api/context/v2/aktivenhet")
-                header("Authorization", "Bearer ${authContextService.getAccessToken()}")
             }.build()
         )
 
@@ -107,7 +99,6 @@ class HttpModiaContextHolderClient(
         val request = client.newCall(
             Request.Builder().apply {
                 url("$baseUrl/api/context")
-                header("Authorization", "Bearer ${authContextService.getAccessToken()}")
                 getRefererHeader()?.let { referer ->
                     header("referer", referer)
                 }
@@ -127,7 +118,6 @@ class HttpModiaContextHolderClient(
         val request = client.newCall(
             Request.Builder().apply {
                 url("$baseUrl/api/context/aktivbruker")
-                header("Authorization", "Bearer ${authContextService.getAccessToken()}")
                 getRefererHeader()?.let { referer ->
                     header("referer", referer)
                 }

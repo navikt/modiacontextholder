@@ -25,7 +25,7 @@ import no.nav.sbl.redis.RedisConfig
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.service.*
 import no.nav.sbl.service.unleash.ToggleableFeatureService
-import no.nav.sbl.util.DownstreamApi.Companion.parse
+import no.nav.sbl.util.DownstreamApi
 import no.nav.sbl.util.bindTo
 import no.nav.sbl.util.createMachineToMachineToken
 import no.nav.utils.LoggingInterceptor
@@ -33,6 +33,7 @@ import no.nav.utils.XCorrelationIdInterceptor
 import no.nav.utils.getCallId
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -43,16 +44,26 @@ open class ServiceContext {
     @Bean
     open fun contextHolderClient(
         authContextService: AuthContextService,
-    ) = HttpModiaContextHolderClient(
-        client = RestClient.baseClient(),
-        baseUrl = EnvironmentUtils.getRequiredProperty("MODIACONTEXTHOLDER_PROXY_API_URL"),
-        authContextService = authContextService,
-        objectMapper = jacksonObjectMapper().configure(
-            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-            false
-        )
-    )
+        onBehalfOfTokenClient: OnBehalfOfTokenClient,
+        @Value("\${MODIACONTEXTHOLDER_PROXY_API_URL}") baseUrl: String,
+        @Value("\${MODIACONTEXTHOLDER_PROXY_API_SCOPE}") scope: String,
+    ): HttpModiaContextHolderClient {
+        val downstreamApi = DownstreamApi.parse(scope)
+        val boundOnBehalfOfTokenClient = onBehalfOfTokenClient.bindTo(downstreamApi)
 
+        val client: OkHttpClient = RestClient.baseClient().newBuilder()
+            .addInterceptor { chain ->
+                val token = boundOnBehalfOfTokenClient.exchangeOnBehalfOfToken(authContextService.requireIdToken())
+                val request = chain.request().newBuilder()
+                    .header("Authorization", "Bearer $token")
+                    .build()
+                chain.proceed(request)
+            }.build()
+
+        val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        return HttpModiaContextHolderClient(client, baseUrl, objectMapper)
+    }
 
     @Bean
     open fun contextService(
@@ -102,7 +113,7 @@ open class ServiceContext {
 
     @Bean
     open fun pdlService(machineToMachineTokenProvider: MachineToMachineTokenClient) =
-        PdlService(machineToMachineTokenProvider.bindTo(parse(EnvironmentUtils.getRequiredProperty("PDL_SCOPE"))))
+        PdlService(machineToMachineTokenProvider.bindTo(DownstreamApi.parse(EnvironmentUtils.getRequiredProperty("PDL_SCOPE"))))
 
 
     @Bean
@@ -128,7 +139,7 @@ open class ServiceContext {
                     },
                 )
                 .build()
-        val downstreamApi = parse(EnvironmentUtils.getRequiredProperty("AXSYS_SCOPE"))
+        val downstreamApi = DownstreamApi.parse(EnvironmentUtils.getRequiredProperty("AXSYS_SCOPE"))
         val tokenSupplier = {
             machineToMachineTokenProvider.createMachineToMachineToken(downstreamApi)
         }

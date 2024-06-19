@@ -176,3 +176,5 @@ spec:
       value: "development"
     - name: MODIACONTEXTHOLDER_PROXY_API_URL
       value: "https://modiacontextholder.intern.dev.nav.no/modiacontextholder"
+    - name: MODIACONTEXTHOLDER_PROXY_API_SCOPE
+      value: "dev-gcp:modiacontextholder:modiacontextholder"
