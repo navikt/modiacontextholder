@@ -119,6 +119,9 @@ spec:
         - application: speil
           namespace: tbd
           cluster: dev-gcp
+        - application: modiacontextholder
+          namespace: personoversikt
+          cluster: dev-fss
   secureLogs:
     enabled: true
   envFrom:
