@@ -6,7 +6,6 @@ import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.db.DbHelsesjekk
 import no.nav.sbl.db.dao.EventDAO
 import org.flywaydb.core.Flyway
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
@@ -66,7 +65,6 @@ open class DatabaseConfig {
     open fun namedParameterJdbcTemplate(dataSource: DataSource): NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
 
     @Bean
-    @Autowired
     open fun eventDAO(
         jdbcTemplate: JdbcTemplate,
         namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
