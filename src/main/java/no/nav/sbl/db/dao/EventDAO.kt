@@ -18,12 +18,11 @@ import java.time.LocalDateTime
 open class EventDAO(
     private val jdbcTemplate: JdbcTemplate,
     private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
-    private val applicationCluster: ApplicationCluster,
 ) {
     private val log = LoggerFactory.getLogger(EventDAO::class.java)
 
     fun save(pEvent: PEvent): Long =
-        if (applicationCluster.isGcp()) {
+        if (ApplicationCluster.isGcp()) {
             val jdbcInsert =
                 SimpleJdbcInsert(jdbcTemplate)
                     .withTableName("EVENT")
@@ -56,7 +55,7 @@ open class EventDAO(
 
     fun sistAktiveBrukerEvent(veilederIdent: String): PEvent? =
         try {
-            if (applicationCluster.isGcp()) {
+            if (ApplicationCluster.isGcp()) {
                 jdbcTemplate.queryForObject(
                     "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc limit 1",
                     EventMapper,
@@ -76,7 +75,7 @@ open class EventDAO(
 
     fun sistAktiveEnhetEvent(veilederIdent: String): PEvent? =
         try {
-            if (applicationCluster.isGcp()) {
+            if (ApplicationCluster.isGcp()) {
                 jdbcTemplate.queryForObject(
                     "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_ENHET' order by created desc limit 1",
                     EventMapper,

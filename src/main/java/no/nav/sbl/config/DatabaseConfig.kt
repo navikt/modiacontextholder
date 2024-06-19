@@ -68,8 +68,7 @@ open class DatabaseConfig {
     open fun eventDAO(
         jdbcTemplate: JdbcTemplate,
         namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
-        applicationCluster: ApplicationCluster,
-    ): EventDAO = EventDAO(jdbcTemplate, namedParameterJdbcTemplate, applicationCluster)
+    ): EventDAO = EventDAO(jdbcTemplate, namedParameterJdbcTemplate)
 
     @Bean
     open fun dbHelsesjekk(jdbcTemplate: JdbcTemplate): DbHelsesjekk = DbHelsesjekk(jdbcTemplate)
