@@ -17,120 +17,152 @@ class HttpModiaContextHolderClient(
     private val baseUrl: String,
     private val objectMapper: ObjectMapper,
 ) : ModiaContextHolderClient {
-    override fun hentVeiledersContext(veilederIdent: String): Result<RSContext> = runCatching {
-        val request = client.newCall(
-            Request.Builder().apply {
-                url("$baseUrl/api/context")
-            }.build()
-        )
-
-        request.execute().use { response ->
-            objectMapper.readValue(response.body?.byteStream(), RSContext::class.java)
-        }
-    }
-
-    override fun oppdaterVeiledersContext(nyContext: RSNyContext, veilederIdent: String): Result<RSContext> =
+    override fun hentVeiledersContext(veilederIdent: String): Result<RSContext> =
         runCatching {
-            val requestBody = objectMapper.writeValueAsString(nyContext)
-            val request = client.newCall(
-                Request.Builder().apply {
-                    url("$baseUrl/api/context")
-                    getRefererHeader()?.let { referer ->
-                        header("referer", referer)
-                    }
-                    post(requestBody.toRequestBody("application/json".toMediaType()))
-                }.build()
-            )
+            val request =
+                client.newCall(
+                    Request
+                        .Builder()
+                        .apply {
+                            url("$baseUrl/api/context")
+                        }.build(),
+                )
 
             request.execute().use { response ->
                 objectMapper.readValue(response.body?.byteStream(), RSContext::class.java)
             }
         }
 
-    override fun hentAktivBruker(veilederIdent: String): Result<RSContext> = runCatching {
+    override fun oppdaterVeiledersContext(
+        nyContext: RSNyContext,
+        veilederIdent: String,
+    ): Result<RSContext> =
+        runCatching {
+            val requestBody = objectMapper.writeValueAsString(nyContext)
+            val request =
+                client.newCall(
+                    Request
+                        .Builder()
+                        .apply {
+                            url("$baseUrl/api/context")
+                            getRefererHeader()?.let { referer ->
+                                header("referer", referer)
+                            }
+                            post(requestBody.toRequestBody("application/json".toMediaType()))
+                        }.build(),
+                )
 
-        val request = client.newCall(
-            Request.Builder().apply {
-                url("$baseUrl/api/context/aktivbruker")
-            }.build()
-        )
-
-        request.execute().use { response ->
-            objectMapper.readValue(response.body?.byteStream(), RSContext::class.java)
-        }
-    }
-
-    override fun hentAktivBrukerV2(veilederIdent: String): Result<RSAktivBruker> = runCatching {
-        val request = client.newCall(
-            Request.Builder().apply {
-                url("$baseUrl/api/context/v2/aktivbruker")
-            }.build()
-        )
-
-        request.execute().use { response ->
-            objectMapper.readValue(response.body?.byteStream(), RSAktivBruker::class.java)
-        }
-    }
-
-    override fun hentAktivEnhet(veilederIdent: String): Result<RSContext> = runCatching {
-        val request = client.newCall(
-            Request.Builder().apply {
-                url("$baseUrl/api/context/aktivenhet")
-            }.build()
-        )
-        request.execute().use { response ->
-            objectMapper.readValue(response.body?.byteStream(), RSContext::class.java)
-        }
-    }
-
-    override fun hentAktivEnhetV2(veilederIdent: String): Result<RSAktivEnhet> = runCatching {
-        val request = client.newCall(
-            Request.Builder().apply {
-                url("$baseUrl/api/context/v2/aktivenhet")
-            }.build()
-        )
-
-        request.execute().use { response ->
-            objectMapper.readValue(response.body?.byteStream(), RSAktivEnhet::class.java)
-        }
-    }
-
-    override fun nullstillBrukerContext(veilederident: String): Result<Unit> = runCatching {
-        val request = client.newCall(
-            Request.Builder().apply {
-                url("$baseUrl/api/context")
-                getRefererHeader()?.let { referer ->
-                    header("referer", referer)
-                }
-                delete()
-            }.build()
-        )
-
-        request.execute().use { response ->
-            if (!response.isSuccessful) {
-                throw RuntimeException("Failed to nullstillContext")
+            request.execute().use { response ->
+                objectMapper.readValue(response.body?.byteStream(), RSContext::class.java)
             }
         }
 
-    }
+    override fun hentAktivBruker(veilederIdent: String): Result<RSContext> =
+        runCatching {
+            val request =
+                client.newCall(
+                    Request
+                        .Builder()
+                        .apply {
+                            url("$baseUrl/api/context/aktivbruker")
+                        }.build(),
+                )
 
-    override fun nullstillAktivBruker(veilederIdent: String): Result<Unit> = runCatching {
-        val request = client.newCall(
-            Request.Builder().apply {
-                url("$baseUrl/api/context/aktivbruker")
-                getRefererHeader()?.let { referer ->
-                    header("referer", referer)
-                }
-                delete()
-            }.build()
-        )
-
-        request.execute().use { response ->
-            if (!response.isSuccessful) {
-                throw RuntimeException("Failed to nullstillAktivBruker")
+            request.execute().use { response ->
+                objectMapper.readValue(response.body?.byteStream(), RSContext::class.java)
             }
         }
-    }
+
+    override fun hentAktivBrukerV2(veilederIdent: String): Result<RSAktivBruker> =
+        runCatching {
+            val request =
+                client.newCall(
+                    Request
+                        .Builder()
+                        .apply {
+                            url("$baseUrl/api/context/v2/aktivbruker")
+                        }.build(),
+                )
+
+            request.execute().use { response ->
+                objectMapper.readValue(response.body?.byteStream(), RSAktivBruker::class.java)
+            }
+        }
+
+    override fun hentAktivEnhet(veilederIdent: String): Result<RSContext> =
+        runCatching {
+            val request =
+                client.newCall(
+                    Request
+                        .Builder()
+                        .apply {
+                            url("$baseUrl/api/context/aktivenhet")
+                        }.build(),
+                )
+            request.execute().use { response ->
+                objectMapper.readValue(response.body?.byteStream(), RSContext::class.java)
+            }
+        }
+
+    override fun hentAktivEnhetV2(veilederIdent: String): Result<RSAktivEnhet> =
+        runCatching {
+            val request =
+                client.newCall(
+                    Request
+                        .Builder()
+                        .apply {
+                            url("$baseUrl/api/context/v2/aktivenhet")
+                        }.build(),
+                )
+
+            request.execute().use { response ->
+                objectMapper.readValue(response.body?.byteStream(), RSAktivEnhet::class.java)
+            }
+        }
+
+    override fun nullstillBrukerContext(veilederident: String): Result<Unit> =
+        runCatching {
+            val request =
+                client.newCall(
+                    Request
+                        .Builder()
+                        .apply {
+                            url("$baseUrl/api/context")
+                            getRefererHeader()?.let { referer ->
+                                header("referer", referer)
+                            }
+                            delete()
+                        }.build(),
+                )
+
+            request.execute().use { response ->
+                if (!response.isSuccessful) {
+                    throw RuntimeException("Failed to nullstillContext")
+                }
+            }
+        }
+
+    override fun nullstillAktivBruker(veilederIdent: String): Result<Unit> =
+        runCatching {
+            val request =
+                client.newCall(
+                    Request
+                        .Builder()
+                        .apply {
+                            url("$baseUrl/api/context/aktivbruker")
+                            getRefererHeader()?.let { referer ->
+                                header("referer", referer)
+                            }
+                            delete()
+                        }.build(),
+                )
+
+            request.execute().use { response ->
+                if (!response.isSuccessful) {
+                    throw RuntimeException("Failed to nullstillAktivBruker")
+                }
+            }
+        }
 
     private fun getRefererHeader(): String? =
         (RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes)?.request?.getHeader("referer")

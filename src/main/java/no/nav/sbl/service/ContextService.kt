@@ -31,31 +31,34 @@ class ContextService(
 
     companion object {
         @JvmStatic
-        fun erFortsattAktuell(pEvent: PEvent): Boolean {
-            return LocalDate.now().isEqual(pEvent.created?.toLocalDate())
-        }
+        fun erFortsattAktuell(pEvent: PEvent): Boolean = LocalDate.now().isEqual(pEvent.created?.toLocalDate())
     }
 
-    fun hentVeiledersContext(veilederIdent: String): RSContext {
-        return if (burdeSynceContextMedGcp()) {
-            contextHolderClient.hentVeiledersContext(veilederIdent)
+    fun hentVeiledersContext(veilederIdent: String): RSContext =
+        if (burdeSynceContextMedGcp()) {
+            contextHolderClient
+                .hentVeiledersContext(veilederIdent)
                 .getOrThrow()
         } else {
             RSContext(
                 hentAktivBruker(veilederIdent).aktivBruker,
-                hentAktivEnhet(veilederIdent).aktivEnhet
+                hentAktivEnhet(veilederIdent).aktivEnhet,
             )
         }
-    }
 
-    fun oppdaterVeiledersContext(nyContext: RSNyContext, veilederIdent: String) {
-        val event = PEvent(
-            verdi = nyContext.verdi,
-            eventType = nyContext.eventType,
-            veilederIdent = veilederIdent
-        )
+    fun oppdaterVeiledersContext(
+        nyContext: RSNyContext,
+        veilederIdent: String,
+    ) {
+        val event =
+            PEvent(
+                verdi = nyContext.verdi,
+                eventType = nyContext.eventType,
+                veilederIdent = veilederIdent,
+            )
         if (burdeSynceContextMedGcp()) {
-            contextHolderClient.oppdaterVeiledersContext(nyContext, veilederIdent)
+            contextHolderClient
+                .oppdaterVeiledersContext(nyContext, veilederIdent)
                 .getOrThrow()
         } else {
             if (EventType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isEmpty()) {
@@ -72,51 +75,55 @@ class ContextService(
         redisPublisher.publishMessage(message)
     }
 
-    fun hentAktivBruker(veilederIdent: String): RSContext {
-        return if (burdeSynceContextMedGcp()) {
-            contextHolderClient.hentAktivBruker(veilederIdent)
+    fun hentAktivBruker(veilederIdent: String): RSContext =
+        if (burdeSynceContextMedGcp()) {
+            contextHolderClient
+                .hentAktivBruker(veilederIdent)
                 .getOrThrow()
         } else {
-            eventDAO.sistAktiveBrukerEvent(veilederIdent)
+            eventDAO
+                .sistAktiveBrukerEvent(veilederIdent)
                 ?.takeIf(::erFortsattAktuell)
                 ?.let(EventMapper::toRSContext)
                 ?: RSContext()
         }
-    }
 
-    fun hentAktivBrukerV2(veilederIdent: String): RSAktivBruker {
-        return if (burdeSynceContextMedGcp()) {
-            contextHolderClient.hentAktivBrukerV2(veilederIdent)
+    fun hentAktivBrukerV2(veilederIdent: String): RSAktivBruker =
+        if (burdeSynceContextMedGcp()) {
+            contextHolderClient
+                .hentAktivBrukerV2(veilederIdent)
                 .getOrThrow()
         } else {
-            eventDAO.sistAktiveBrukerEvent(veilederIdent)
+            eventDAO
+                .sistAktiveBrukerEvent(veilederIdent)
                 ?.takeIf(::erFortsattAktuell)
                 ?.let(EventMapper::toRSAktivBruker)
                 ?: RSAktivBruker(null)
         }
-    }
 
-    fun hentAktivEnhet(veilederIdent: String): RSContext {
-        return if (burdeSynceContextMedGcp()) {
-            contextHolderClient.hentAktivEnhet(veilederIdent)
+    fun hentAktivEnhet(veilederIdent: String): RSContext =
+        if (burdeSynceContextMedGcp()) {
+            contextHolderClient
+                .hentAktivEnhet(veilederIdent)
                 .getOrThrow()
         } else {
-            eventDAO.sistAktiveEnhetEvent(veilederIdent)
+            eventDAO
+                .sistAktiveEnhetEvent(veilederIdent)
                 ?.let(EventMapper::toRSContext)
                 ?: RSContext()
         }
-    }
 
-    fun hentAktivEnhetV2(veilederIdent: String): RSAktivEnhet {
-        return if (burdeSynceContextMedGcp()) {
-            contextHolderClient.hentAktivEnhetV2(veilederIdent)
+    fun hentAktivEnhetV2(veilederIdent: String): RSAktivEnhet =
+        if (burdeSynceContextMedGcp()) {
+            contextHolderClient
+                .hentAktivEnhetV2(veilederIdent)
                 .getOrThrow()
         } else {
-            eventDAO.sistAktiveEnhetEvent(veilederIdent)
+            eventDAO
+                .sistAktiveEnhetEvent(veilederIdent)
                 ?.let(RSAktivEnhet::from)
                 ?: RSAktivEnhet(null)
         }
-    }
 
     fun nullstillContext(veilederIdent: String) {
         if (burdeSynceContextMedGcp()) {
@@ -134,9 +141,7 @@ class ContextService(
         }
     }
 
-    private fun saveToDb(event: PEvent): Long {
-        return eventDAO.save(event)
-    }
+    private fun saveToDb(event: PEvent): Long = eventDAO.save(event)
 
     private fun burdeSynceContextMedGcp(): Boolean =
         applicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SYNC_CONTEXT_MED_GCP)
