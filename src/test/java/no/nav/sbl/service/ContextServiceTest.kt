@@ -26,7 +26,7 @@ class ContextServiceTest {
         mockk {
             every { isEnabled(any<ToggleableFeature>()) } returns false
         }
-    private val applicationCluster: ApplicationCluster = ApplicationCluster("prod-fss")
+    private val applicationCluster: ApplicationCluster = ApplicationCluster(ApplicationCluster.Cluster.PROD_FSS)
     private val contextService: ContextService =
         ContextService(
             eventDAO,

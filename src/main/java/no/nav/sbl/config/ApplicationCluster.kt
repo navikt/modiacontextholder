@@ -2,12 +2,11 @@ package no.nav.sbl.config
 
 import no.nav.sbl.config.ApplicationCluster.Cluster.DEV_FSS
 import no.nav.sbl.config.ApplicationCluster.Cluster.DEV_GCP
-import no.nav.sbl.config.ApplicationCluster.Cluster.LOCAL
 import no.nav.sbl.config.ApplicationCluster.Cluster.PROD_FSS
 import no.nav.sbl.config.ApplicationCluster.Cluster.PROD_GCP
 
 open class ApplicationCluster(
-    clusterName: String,
+    private val cluster: Cluster,
 ) {
     open fun isGcp(): Boolean =
         when (cluster) {
@@ -21,20 +20,23 @@ open class ApplicationCluster(
             else -> false
         }
 
-    private val cluster =
-        when (clusterName) {
-            "dev-fss" -> DEV_FSS
-            "prod-fss" -> PROD_FSS
-            "dev-gcp" -> DEV_GCP
-            "prod-gcp" -> PROD_GCP
-            else -> LOCAL
-        }
-
-    private enum class Cluster {
+    enum class Cluster {
         LOCAL,
         DEV_FSS,
         PROD_FSS,
         DEV_GCP,
         PROD_GCP,
+        ;
+
+        companion object {
+            fun from(clusterName: String): Cluster =
+                when (clusterName) {
+                    "dev-fss" -> DEV_FSS
+                    "prod-fss" -> PROD_FSS
+                    "dev-gcp" -> DEV_GCP
+                    "prod-gcp" -> PROD_GCP
+                    else -> LOCAL
+                }
+        }
     }
 }

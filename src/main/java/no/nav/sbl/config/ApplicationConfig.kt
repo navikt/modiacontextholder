@@ -113,6 +113,6 @@ open class ApplicationConfig {
         @Value("\${NAIS_CLUSTER_NAME}") clusterName: String,
     ): ApplicationCluster {
         LoggerFactory.getLogger(ApplicationCluster::class.java).info("Cluster name: $clusterName")
-        return ApplicationCluster(clusterName)
+        return ApplicationCluster(ApplicationCluster.Cluster.from(clusterName))
     }
 }
