@@ -22,14 +22,19 @@ class ContextServiceTest {
     private val eventDAO: EventDAO = mockk()
     private val redisPublisher: RedisPublisher = mockk()
     private val contextHolderClient: ModiaContextHolderClient = mockk(relaxed = true)
-    private val toggleableFeatureService: ToggleableFeatureService = mockk {
-        every { isEnabled(any<ToggleableFeature>()) } returns false
-    }
-    private val applicationCluster: ApplicationCluster = ApplicationCluster.PROD_FSS
-    private val contextService: ContextService = ContextService(
-        eventDAO, redisPublisher,
-        contextHolderClient, toggleableFeatureService, applicationCluster
-    )
+    private val toggleableFeatureService: ToggleableFeatureService =
+        mockk {
+            every { isEnabled(any<ToggleableFeature>()) } returns false
+        }
+    private val applicationCluster: ApplicationCluster = ApplicationCluster("prod-fss")
+    private val contextService: ContextService =
+        ContextService(
+            eventDAO,
+            redisPublisher,
+            contextHolderClient,
+            toggleableFeatureService,
+            applicationCluster,
+        )
 
     @Test
     fun ingen_aktiv_bruker_event() {
@@ -74,11 +79,12 @@ class ContextServiceTest {
     }
 
     private fun gitt_sist_aktive_bruker_event(created: LocalDateTime) {
-        val pEvent = PEvent().apply {
-            eventType = NY_AKTIV_BRUKER.name
-            verdi = brukerId
-            this.created = created
-        }
+        val pEvent =
+            PEvent().apply {
+                eventType = NY_AKTIV_BRUKER.name
+                verdi = brukerId
+                this.created = created
+            }
         every { eventDAO.sistAktiveBrukerEvent(any<String>()) } returns pEvent
     }
 }
