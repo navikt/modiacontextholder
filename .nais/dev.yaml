@@ -30,7 +30,7 @@ spec:
       cpu: 400m
       memory: 768Mi
   ingresses:
-    - https://modiacontextholder.intern.dev.nav.no/modiacontextholder
+    - https://modiacontextholder.intern.dev.nav.no
   replicas:
     min: 2
     max: 4
@@ -167,6 +167,6 @@ spec:
       value: "development"
     # MODIACONTEXTHOLDER_PROXY_* er ikke brukt i GCP
     - name: MODIACONTEXTHOLDER_PROXY_API_URL
-      value: "https://modiacontextholder.intern.dev.nav.no/modiacontextholder"
+      value: "https://modiacontextholder.intern.dev.nav.no"
     - name: MODIACONTEXTHOLDER_PROXY_API_SCOPE
       value: "dev-gcp:personoversikt:modiacontextholder"
