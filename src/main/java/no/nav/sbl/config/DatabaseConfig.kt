@@ -6,7 +6,6 @@ import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.db.DbHelsesjekk
 import no.nav.sbl.db.dao.EventDAO
 import org.flywaydb.core.Flyway
-import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
@@ -69,10 +68,7 @@ open class DatabaseConfig {
     open fun eventDAO(
         jdbcTemplate: JdbcTemplate,
         namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
-    ): EventDAO {
-        LoggerFactory.getLogger(EventDAO::class.java).info("Creating EventDAO with $jdbcTemplate and $namedParameterJdbcTemplate")
-        return EventDAO(jdbcTemplate, namedParameterJdbcTemplate)
-    }
+    ): EventDAO = EventDAO(jdbcTemplate, namedParameterJdbcTemplate)
 
     @Bean
     open fun dbHelsesjekk(jdbcTemplate: JdbcTemplate): DbHelsesjekk = DbHelsesjekk(jdbcTemplate)

@@ -21,11 +21,6 @@ open class EventDAO(
 ) {
     private val log = LoggerFactory.getLogger(EventDAO::class.java)
 
-    init {
-        log.info("Initialisert EventDAO med jdbcTemplate: $jdbcTemplate")
-        log.info("Initialisert EventDAO med namedParameterJdbcTemplate: $namedParameterJdbcTemplate")
-    }
-
     open fun save(pEvent: PEvent): Long =
         if (ApplicationCluster.isGcp()) {
             val jdbcInsert =
@@ -61,7 +56,6 @@ open class EventDAO(
     open fun sistAktiveBrukerEvent(veilederIdent: String): PEvent? =
         try {
             if (ApplicationCluster.isGcp()) {
-                log.info("Henter siste aktiv bruker event for veileder med jdbcTemplate: $jdbcTemplate")
                 jdbcTemplate.queryForObject(
                     "select * from event where veileder_ident = ? and event_type = 'NY_AKTIV_BRUKER' order by created desc limit 1",
                     EventMapper,
