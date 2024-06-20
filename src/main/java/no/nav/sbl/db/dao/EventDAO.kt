@@ -26,7 +26,7 @@ open class EventDAO(
         log.info("Initialisert EventDAO med namedParameterJdbcTemplate: $namedParameterJdbcTemplate")
     }
 
-    fun save(pEvent: PEvent): Long =
+    open fun save(pEvent: PEvent): Long =
         if (ApplicationCluster.isGcp()) {
             val jdbcInsert =
                 SimpleJdbcInsert(jdbcTemplate)
@@ -58,7 +58,7 @@ open class EventDAO(
             nesteSekvensverdi
         }
 
-    fun sistAktiveBrukerEvent(veilederIdent: String): PEvent? =
+    open fun sistAktiveBrukerEvent(veilederIdent: String): PEvent? =
         try {
             if (ApplicationCluster.isGcp()) {
                 log.info("Henter siste aktiv bruker event for veileder med jdbcTemplate: $jdbcTemplate")
@@ -79,7 +79,7 @@ open class EventDAO(
             null
         }
 
-    fun sistAktiveEnhetEvent(veilederIdent: String): PEvent? =
+    open fun sistAktiveEnhetEvent(veilederIdent: String): PEvent? =
         try {
             if (ApplicationCluster.isGcp()) {
                 jdbcTemplate.queryForObject(
@@ -99,31 +99,31 @@ open class EventDAO(
             null
         }
 
-    fun finnAlleEventerEtterId(id: Long): List<PEvent> = jdbcTemplate.query("select * from event where event_id > ?", EventMapper, id)
+    open fun finnAlleEventerEtterId(id: Long): List<PEvent> = jdbcTemplate.query("select * from event where event_id > ?", EventMapper, id)
 
-    fun slettAlleAvEventType(eventType: String) {
+    open fun slettAlleAvEventType(eventType: String) {
         jdbcTemplate.update("delete from event where event_type = ?", eventType)
     }
 
-    fun slettAlleAvEventTypeForVeileder(
+    open fun slettAlleAvEventTypeForVeileder(
         eventType: String,
         veilederIdent: String,
     ) {
         jdbcTemplate.update("delete from event where event_type = ? and veileder_ident = ?", eventType, veilederIdent)
     }
 
-    fun slettAlleEventerUtenomNyeste(eventer: List<PEvent>) {
+    open fun slettAlleEventerUtenomNyeste(eventer: List<PEvent>) {
         eventer
             .sortedByDescending { it.id }
             .drop(1)
             .forEach { deleteEvent(it.id!!) }
     }
 
-    fun deleteEvent(id: Long) {
+    open fun deleteEvent(id: Long) {
         jdbcTemplate.update("delete from event where event_id = ?", id)
     }
 
-    fun hentVeiledersEventerAvType(
+    open fun hentVeiledersEventerAvType(
         eventType: String,
         veilederIdent: String,
     ): List<PEvent> =
@@ -134,10 +134,10 @@ open class EventDAO(
             eventType,
         )
 
-    fun hentUnikeVeilederIdenter(): List<String> =
+    open fun hentUnikeVeilederIdenter(): List<String> =
         jdbcTemplate.query("select distinct veileder_ident from event") { rs, _ -> rs.getString("veileder_ident") }
 
-    fun slettAllEventer(veilederIdent: String) {
+    open fun slettAllEventer(veilederIdent: String) {
         jdbcTemplate.update("delete from event where veileder_ident = ?", veilederIdent)
     }
 
