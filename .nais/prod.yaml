@@ -30,7 +30,7 @@ spec:
       cpu: 400m
       memory: 768Mi
   ingresses:
-    - https://modiacontextholder.intern.dev.nav.no
+    - https://modiacontextholder.intern.nav.no
   replicas:
     min: 2
     max: 4
@@ -52,79 +52,79 @@ spec:
     outbound:
       external:
         - host: personoversikt-unleash-api.nav.cloud.nais.io
-        - host: axsys.dev-fss-pub.nais.io
-        - host: pdl-api.dev-fss-pub.nais.io
-        - host: norg2.dev-fss-pub.nais.io
+        - host: axsys.prod-fss-pub.nais.io
+        - host: pdl-api.prod-fss-pub.nais.io
+        - host: norg2.prod-fss-pub.nais.io
       rules:
         - application: modiacontextholder-redis-med-passord
     inbound:
       rules:
         - application: arbeidssokerregistrering-veileder
           namespace: paw
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: arbeidssokerregistrering-for-veileder
-          cluster: dev-gcp
+          cluster: prod-gcp
           namespace: paw
         - application: veilarbpersonflate
           namespace: poao
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: veilarbportefoljeflatefs
           namespace: obo
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: beslutteroversikt
           namespace: obo
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: smregistrering
           namespace: teamsykmelding
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: syfosmmanuell
           namespace: teamsykmelding
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: syk-dig
           namespace: teamsykmelding
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: modiaflatefs-{{ namespace }}
           namespace: personoversikt
-          cluster: dev-fss
+          cluster: prod-fss
         - application: modiapersonoversikt
           namespace: personoversikt
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: modiapersonoversikt-{{ namespace }}
           namespace: personoversikt
-          cluster: dev-fss
+          cluster: prod-fss
         - application: rekrutteringsbistand-kandidatsok-api
           namespace: toi
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: rekrutteringsbistand
           namespace: toi
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: spinnsyn-frontend-interne
           namespace: flex
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: finnfastlege
           namespace: teamsykefravr
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: syfomodiaperson
           namespace: teamsykefravr
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: syfomoteoversikt
           namespace: teamsykefravr
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: syfooversikt
           namespace: teamsykefravr
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: sosialhjelp-modia-oidc-auth-proxy
           namespace: teamdigisos
-          cluster: dev-fss
+          cluster: prod-fss
         - application: speil
           namespace: tbd
-          cluster: dev-gcp
+          cluster: prod-gcp
         - application: modiacontextholder-q1
           namespace: personoversikt
-          cluster: dev-fss
+          cluster: prod-fss
         - application: modiacontextholder-q2
           namespace: personoversikt
-          cluster: dev-fss
+          cluster: prod-fss
   secureLogs:
     enabled: true
   envFrom:
@@ -132,21 +132,21 @@ spec:
     - secret: modiacontextholder-redis-passord
   env:
     - name: AXSYS_URL
-      value: "https://axsys.dev-fss-pub.nais.io"
+      value: "https://axsys.prod-fss-pub.nais.io"
     - name: AXSYS_SCOPE
-      value: "dev-fss:org:axsys"
+      value: "prod-fss:org:axsys"
     - name: PDL_API_URL
-      value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
+      value: "https://pdl-api.prod-fss-pub.nais.io/graphql"
     - name: PDL_SCOPE
-      value: "dev-fss:pdl:pdl-api"
+      value: "prod-fss:pdl:pdl-api"
     - name: NORG2_API_URL
-      value: "https://norg2.dev-fss-pub.nais.io/norg2"
+      value: "https://norg2.prod-fss-pub.nais.io/norg2"
     - name: NORG2_SCOPE
-      value: "dev-fss:org:norg2"
+      value: "prod-fss:org:norg2"
     - name: NOM_URL
-      value: "https://nom-api.intern.dev.nav.no"
+      value: "https://nom-api.intern.nav.no"
     - name: NOM_SCOPE
-      value: "dev-gcp:nom:nom-api"
+      value: "prod-gcp:nom:nom-api"
     - name: MS_GRAPH_URL
       value: "https://graph.microsoft.com/"
     - name: MS_GRAPH_SCOPE
@@ -154,7 +154,7 @@ spec:
     - name: APP_ENVIRONMENT_NAME
       value: "{{ namespace }}"
     - name: AAREG_URL
-      value: "https://arbeid-og-inntekt-q2.dev-fss-pub.nais.io"
+      value: "https://arbeid-og-inntekt-q2.prod-fss-pub.nais.io"
     - name: REDIS_PORT
       value: "6379"
     - name: REDIS_HOST
@@ -164,9 +164,9 @@ spec:
     - name: DB_NAME
       value: "modiacontextholder-db"
     - name: UNLEASH_ENVIRONMENT
-      value: "development"
+      value: "production"
     # MODIACONTEXTHOLDER_PROXY_* er ikke brukt i GCP
     - name: MODIACONTEXTHOLDER_PROXY_API_URL
-      value: "https://modiacontextholder.intern.dev.nav.no"
+      value: "https://modiacontextholder.intern.nav.no"
     - name: MODIACONTEXTHOLDER_PROXY_API_SCOPE
-      value: "dev-gcp:personoversikt:modiacontextholder"
+      value: "prod-gcp:personoversikt:modiacontextholder"

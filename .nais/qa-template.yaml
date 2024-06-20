@@ -175,6 +175,8 @@ spec:
     - name: UNLEASH_ENVIRONMENT
       value: "development"
     - name: MODIACONTEXTHOLDER_PROXY_API_URL
-      value: "https://modiacontextholder.intern.dev.nav.no/modiacontextholder"
+      value: "https://modiacontextholder.intern.dev.nav.no"
     - name: MODIACONTEXTHOLDER_PROXY_API_SCOPE
       value: "dev-gcp:personoversikt:modiacontextholder"
+    - name: SERVER_SERVLET_CONTEXT_PATH
+      value: "/modiacontextholder"

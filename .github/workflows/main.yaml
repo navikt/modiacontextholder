@@ -107,3 +107,20 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: .nais/dev.yaml
           VAR: namespace=${{matrix.namespace}},image=${{ needs.build-and-push.outputs.image }}
+
+  deploy-gcp-prod:
+    name: Deploy to prod gcp
+    needs: build-and-push
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          PRINT_PAYLOAD: true
+          CLUSTER: prod-gcp
+          RESOURCE: .nais/prod.yaml
+          VAR: image=${{ needs.build-and-push.outputs.image }}
