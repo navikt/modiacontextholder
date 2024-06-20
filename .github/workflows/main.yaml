@@ -109,7 +109,7 @@ jobs:
           VAR: namespace=${{matrix.namespace}},image=${{ needs.build-and-push.outputs.image }}
 
   deploy-gcp-prod:
-name: Deploy to prod gcp
+    name: Deploy to prod gcp
     needs: build-and-push
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
