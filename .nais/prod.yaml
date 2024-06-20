@@ -10,16 +10,16 @@ spec:
   image: "{{ image }}"
   port: 8080
   liveness:
-    path: modiacontextholder/internal/isAlive
+    path: internal/isAlive
     initialDelay: 50
     timeout: 1
     periodSeconds: 5
     failureThreshold: 10
   prometheus:
     enabled: true
-    path: modiacontextholder/internal/prometheus
+    path: internal/prometheus
   readiness:
-    path: modiacontextholder/internal/isReady
+    path: internal/isReady
     initialDelay: 50
     timeout: 1
   resources:
