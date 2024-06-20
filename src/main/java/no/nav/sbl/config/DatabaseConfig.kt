@@ -6,7 +6,6 @@ import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.db.DbHelsesjekk
 import no.nav.sbl.db.dao.EventDAO
 import org.flywaydb.core.Flyway
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
@@ -26,7 +25,7 @@ open class DatabaseConfig {
         const val MODIACONTEXTHOLDERDB_PASSWORD = "MODIACONTEXTHOLDERDB_PASSWORD"
     }
 
-    @Bean("naisDataSource")
+    @Bean
     open fun getDataSource(): DataSource {
         val clusterName = EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME")
 
@@ -56,25 +55,19 @@ open class DatabaseConfig {
         return dataSource
     }
 
-    @Bean("naisJdbcTemplate")
-    open fun jdbcTemplate(
-        @Qualifier("naisDataSource") dataSource: DataSource,
-    ): JdbcTemplate = JdbcTemplate(dataSource)
+    @Bean
+    open fun jdbcTemplate(dataSource: DataSource): JdbcTemplate = JdbcTemplate(dataSource)
 
-    @Bean(name = ["transactionManager"])
-    open fun transactionManager(
-        @Qualifier("naisDataSource") dataSource: DataSource,
-    ): PlatformTransactionManager = DataSourceTransactionManager(dataSource)
+    @Bean
+    open fun transactionManager(dataSource: DataSource): PlatformTransactionManager = DataSourceTransactionManager(dataSource)
 
-    @Bean("naisNamedParameterJdbcTemplate")
-    open fun namedParameterJdbcTemplate(
-        @Qualifier("naisDataSource") dataSource: DataSource,
-    ): NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
+    @Bean
+    open fun namedParameterJdbcTemplate(dataSource: DataSource): NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
 
     @Bean
     open fun eventDAO(
-        @Qualifier("naisJdbcTemplate") jdbcTemplate: JdbcTemplate,
-        @Qualifier("naisNamedParameterJdbcTemplate") namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
+        jdbcTemplate: JdbcTemplate,
+        namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
     ): EventDAO = EventDAO(jdbcTemplate, namedParameterJdbcTemplate)
 
     @Bean
