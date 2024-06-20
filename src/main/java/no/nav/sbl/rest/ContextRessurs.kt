@@ -1,7 +1,6 @@
 package no.nav.sbl.rest
 
 import io.micrometer.core.annotation.Timed
-import no.nav.sbl.db.domain.EventType
 import no.nav.sbl.naudit.Audit.Action
 import no.nav.sbl.naudit.Audit.Companion.describe
 import no.nav.sbl.naudit.Audit.Companion.withAudit
@@ -92,12 +91,8 @@ class ContextRessurs(
         @RequestHeader(value = "referer", required = false) referer: String?, @RequestBody rsNyContext: RSNyContext
     ): RSContext {
         val ident = authContextUtils.ident
-        val context = RSNyContext().apply {
-            verdi = rsNyContext.verdi
-            eventType = EventType.valueOf(rsNyContext.eventType).name
-        }
-        val type = Pair(AuditIdentifier.TYPE, context.eventType)
-        val verdi = Pair(AuditIdentifier.VALUE, context.verdi)
+        val type = Pair(AuditIdentifier.TYPE, rsNyContext.eventType)
+        val verdi = Pair(AuditIdentifier.VALUE, rsNyContext.verdi)
         val url = Pair(AuditIdentifier.REFERER, referer)
 
         if (ident.isEmpty) {
@@ -106,7 +101,7 @@ class ContextRessurs(
 
         return withAudit(describe(ident, Action.UPDATE, AuditResources.OppdaterKontekst, type, verdi, url)) {
             val veilederIdent = ident.get()
-            contextService.oppdaterVeiledersContext(context, veilederIdent)
+            contextService.oppdaterVeiledersContext(rsNyContext, veilederIdent)
             contextService.hentVeiledersContext(veilederIdent)
         }
     }

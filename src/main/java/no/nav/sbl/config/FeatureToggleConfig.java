@@ -7,8 +7,8 @@ import io.getunleash.util.UnleashConfig;
 import no.nav.common.utils.EnvironmentUtils;
 import no.nav.sbl.service.AuthContextService;
 import no.nav.sbl.service.unleash.UnleashContextProviderImpl;
+import no.nav.sbl.service.unleash.ToggleableFeatureService;
 import no.nav.sbl.service.unleash.UnleashService;
-import no.nav.sbl.service.unleash.UnleashServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ public class FeatureToggleConfig {
     String apiToken = EnvironmentUtils.getRequiredProperty("UNLEASH_SERVER_API_TOKEN");
 
     @Bean
-    public UnleashService unleashService(UnleashContextProvider unleashContextProvider) {
+    public ToggleableFeatureService unleashService(UnleashContextProvider unleashContextProvider) {
         UnleashConfig unleashConfig = UnleashConfig.builder()
                 .appName("modiacontextholder")
                 .environment(System.getProperty("UNLEASH_ENVIRONMENT"))
@@ -33,7 +33,7 @@ public class FeatureToggleConfig {
 
         Unleash defaultUnleash = new DefaultUnleash(unleashConfig);
 
-        return new UnleashServiceImpl(defaultUnleash);
+        return new UnleashService(defaultUnleash);
     }
 
     @Bean

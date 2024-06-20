@@ -119,6 +119,12 @@ spec:
         - application: speil
           namespace: tbd
           cluster: dev-gcp
+        - application: modiacontextholder-q1
+          namespace: personoversikt
+          cluster: dev-fss
+        - application: modiacontextholder-q2
+          namespace: personoversikt
+          cluster: dev-fss
   secureLogs:
     enabled: true
   envFrom:
@@ -159,3 +165,8 @@ spec:
       value: "modiacontextholder-db"
     - name: UNLEASH_ENVIRONMENT
       value: "development"
+    # MODIACONTEXTHOLDER_PROXY_* er ikke brukt i GCP
+    - name: MODIACONTEXTHOLDER_PROXY_API_URL
+      value: "https://modiacontextholder.intern.dev.nav.no/modiacontextholder"
+    - name: MODIACONTEXTHOLDER_PROXY_API_SCOPE
+      value: "dev-gcp:personoversikt:modiacontextholder"

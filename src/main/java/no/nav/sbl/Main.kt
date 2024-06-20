@@ -3,12 +3,10 @@ package no.nav.sbl
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.common.utils.NaisUtils
 import no.nav.common.utils.SslUtils
-import no.nav.sbl.config.ApplicationConfig.SRV_PASSWORD_PROPERTY
-import no.nav.sbl.config.ApplicationConfig.SRV_USERNAME_PROPERTY
-import no.nav.sbl.config.DatabaseConfig.GCP_CLUSTERS
-import no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_PASSWORD
-import no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_URL_PROPERTY
-import no.nav.sbl.config.DatabaseConfig.MODIACONTEXTHOLDERDB_USERNAME
+import no.nav.sbl.config.DatabaseConfig.Companion.GCP_CLUSTERS
+import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_PASSWORD
+import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_URL_PROPERTY
+import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_USERNAME
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
@@ -27,19 +25,27 @@ open class Main {
 
         private fun setupVault() {
             val serviceUser = NaisUtils.getCredentials("service_user")
-            EnvironmentUtils.setProperty(SRV_USERNAME_PROPERTY, serviceUser.username, EnvironmentUtils.Type.PUBLIC)
-            EnvironmentUtils.setProperty(SRV_PASSWORD_PROPERTY, serviceUser.password, EnvironmentUtils.Type.SECRET)
+            EnvironmentUtils.setProperty(
+                "SRVMODIACONTEXTHOLDER_USERNAME",
+                serviceUser.username,
+                EnvironmentUtils.Type.PUBLIC,
+            )
+            EnvironmentUtils.setProperty(
+                "SRVMODIACONTEXTHOLDER_PASSWORD",
+                serviceUser.password,
+                EnvironmentUtils.Type.SECRET,
+            )
 
             val dbCredentials = NaisUtils.getCredentials("modiacontextholderDB")
             EnvironmentUtils.setProperty(
                 MODIACONTEXTHOLDERDB_USERNAME,
                 dbCredentials.username,
-                EnvironmentUtils.Type.PUBLIC
+                EnvironmentUtils.Type.PUBLIC,
             )
             EnvironmentUtils.setProperty(
                 MODIACONTEXTHOLDERDB_PASSWORD,
                 dbCredentials.password,
-                EnvironmentUtils.Type.SECRET
+                EnvironmentUtils.Type.SECRET,
             )
 
             val dbUrl = NaisUtils.getFileContent("/var/run/secrets/nais.io/db_config/jdbc_url")
