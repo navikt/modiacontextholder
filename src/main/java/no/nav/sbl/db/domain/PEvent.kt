@@ -7,5 +7,5 @@ data class PEvent(
     var veilederIdent: String? = null,
     var eventType: String? = null,
     var created: LocalDateTime? = null,
-    var verdi: String? = null
+    var verdi: String? = null,
 )

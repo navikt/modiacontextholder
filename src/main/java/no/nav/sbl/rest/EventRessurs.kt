@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/events")
 class EventRessurs {
-
     @Autowired
     lateinit var eventService: EventService
 
     @GetMapping("{eventId}")
-    fun hentNyeEvents(@PathVariable("eventId") eventId: String): RSEvents {
-        return RSEvents().apply {
-            events = eventService.hentEventerEtterId(eventId.toLong())
-        }
-    }
+    fun hentNyeEvents(
+        @PathVariable("eventId") eventId: String,
+    ): RSEvents =
+        RSEvents(
+            events = eventService.hentEventerEtterId(eventId.toLong()),
+        )
 }

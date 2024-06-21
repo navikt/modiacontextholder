@@ -6,7 +6,6 @@ import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.db.dao.EventDAO
 import no.nav.sbl.db.domain.EventType
 import no.nav.sbl.db.domain.PEvent
-import no.nav.sbl.mappers.EventMapper
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet
@@ -83,7 +82,7 @@ class ContextService(
             eventDAO
                 .sistAktiveBrukerEvent(veilederIdent)
                 ?.takeIf(::erFortsattAktuell)
-                ?.let(EventMapper::toRSContext)
+                ?.let(RSContext::from)
                 ?: RSContext()
         }
 
@@ -96,7 +95,7 @@ class ContextService(
             eventDAO
                 .sistAktiveBrukerEvent(veilederIdent)
                 ?.takeIf(::erFortsattAktuell)
-                ?.let(EventMapper::toRSAktivBruker)
+                ?.let(RSAktivBruker::from)
                 ?: RSAktivBruker(null)
         }
 
@@ -108,7 +107,7 @@ class ContextService(
         } else {
             eventDAO
                 .sistAktiveEnhetEvent(veilederIdent)
-                ?.let(EventMapper::toRSContext)
+                ?.let(RSContext::from)
                 ?: RSContext()
         }
 

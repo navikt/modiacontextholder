@@ -32,11 +32,11 @@ import no.nav.sbl.service.PdlService
 import no.nav.sbl.service.VeilederService
 import no.nav.sbl.service.unleash.ToggleableFeatureService
 import no.nav.sbl.util.DownstreamApi
+import no.nav.sbl.util.LoggingInterceptor
+import no.nav.sbl.util.XCorrelationIdInterceptor
 import no.nav.sbl.util.bindTo
 import no.nav.sbl.util.createMachineToMachineToken
-import no.nav.utils.LoggingInterceptor
-import no.nav.utils.XCorrelationIdInterceptor
-import no.nav.utils.getCallId
+import no.nav.sbl.util.getCallId
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -91,7 +91,7 @@ open class ServiceContext {
     ) = EventService(eventDAO)
 
     @Bean
-    open fun databaseCleanerService() = DatabaseCleanerService()
+    open fun databaseCleanerService(eventDAO: EventDAO) = DatabaseCleanerService(eventDAO)
 
     @Bean
     open fun enheterCache(norg2Client: Norg2Client) = EnheterCache(norg2Client)
