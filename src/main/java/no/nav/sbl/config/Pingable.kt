@@ -1,7 +1,7 @@
-package no.nav.sbl.config;
+package no.nav.sbl.config
 
-import no.nav.common.health.selftest.SelfTestCheck;
+import no.nav.common.health.selftest.SelfTestCheck
 
-public interface Pingable {
-    public SelfTestCheck ping();
+interface Pingable {
+    fun ping(): SelfTestCheck?
 }
