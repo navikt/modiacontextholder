@@ -1,8 +1,6 @@
 package no.nav.sbl.db.dao
 
 import no.nav.sbl.config.ApplicationCluster
-import no.nav.sbl.db.dao.DbUtil.convert
-import no.nav.sbl.db.dao.DbUtil.nesteSekvensverdi
 import no.nav.sbl.db.domain.PEvent
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataAccessException
@@ -12,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.transaction.annotation.Transactional
 import java.sql.ResultSet
+import java.sql.Timestamp
 import java.time.LocalDateTime
 
 @Transactional
@@ -33,24 +32,29 @@ open class EventDAO(
                         "veileder_ident" to pEvent.veilederIdent,
                         "event_type" to pEvent.eventType,
                         "verdi" to pEvent.verdi,
-                        "created" to convert(LocalDateTime.now()),
+                        "created" to Timestamp.valueOf(LocalDateTime.now()),
                     ),
                 ).toLong()
         } else {
-            val nesteSekvensverdi = nesteSekvensverdi("EVENT_ID_SEQ", jdbcTemplate)
+            val nesteSekvensverdi =
+                jdbcTemplate.queryForObject("select ${"EVENT_ID_SEQ"}.nextval from dual") { rs: ResultSet, _: Int ->
+                    rs.getLong(
+                        1,
+                    )
+                }
             val namedParameters =
                 mapOf(
                     "event_id" to nesteSekvensverdi,
                     "veileder_ident" to pEvent.veilederIdent,
                     "event_type" to pEvent.eventType,
                     "verdi" to pEvent.verdi,
-                    "created" to convert(LocalDateTime.now()),
+                    "created" to Timestamp.valueOf(LocalDateTime.now()),
                 )
             namedParameterJdbcTemplate.update(
                 "insert into event (event_id, veileder_ident, event_type, verdi, created) VALUES (:event_id, :veileder_ident, :event_type, :verdi, :created)",
                 namedParameters,
             )
-            nesteSekvensverdi
+            nesteSekvensverdi!!
         }
 
     open fun sistAktiveBrukerEvent(veilederIdent: String): PEvent? =
@@ -144,7 +148,7 @@ open class EventDAO(
                 rs.getLong("event_id"),
                 rs.getString("veileder_ident"),
                 rs.getString("event_type"),
-                convert(rs.getTimestamp("created")),
+                rs.getTimestamp("created")?.toLocalDateTime(),
                 rs.getString("verdi"),
             )
     }
