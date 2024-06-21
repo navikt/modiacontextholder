@@ -9,27 +9,27 @@ import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.types.identer.NavIdent
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.util.DownstreamApi
+import no.nav.sbl.util.LoggingInterceptor
+import no.nav.sbl.util.createMachineToMachineToken
+import no.nav.sbl.util.getCallId
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import no.nav.sbl.util.createMachineToMachineToken
-import no.nav.utils.LoggingInterceptor
-import no.nav.utils.getCallId
 
 @Configuration
 open class NomConfig {
     private val scope = DownstreamApi.parse(EnvironmentUtils.getRequiredProperty("NOM_SCOPE"))
     private val url: String = EnvironmentUtils.getRequiredProperty("NOM_URL")
     private val httpClient: OkHttpClient =
-        RestClient.baseClient()
+        RestClient
+            .baseClient()
             .newBuilder()
             .addInterceptor(
                 LoggingInterceptor("Nom") {
                     getCallId()
                 },
-            )
-            .build()
+            ).build()
 
     @Autowired
     lateinit var tokenProvider: MachineToMachineTokenClient
@@ -47,13 +47,9 @@ open class NomConfig {
 private class DevNomClient : NomClient {
     override fun checkHealth(): HealthCheckResult = HealthCheckResult.healthy()
 
-    override fun finnNavn(navIdent: NavIdent): VeilederNavn {
-        return lagVeilederNavn(navIdent)
-    }
+    override fun finnNavn(navIdent: NavIdent): VeilederNavn = lagVeilederNavn(navIdent)
 
-    override fun finnNavn(identer: MutableList<NavIdent>): List<VeilederNavn> {
-        return identer.map(::lagVeilederNavn)
-    }
+    override fun finnNavn(identer: MutableList<NavIdent>): List<VeilederNavn> = identer.map(::lagVeilederNavn)
 
     private fun lagVeilederNavn(navIdent: NavIdent): VeilederNavn {
         val ident = navIdent.get()

@@ -1,8 +1,9 @@
-package no.nav.utils
+package no.nav.sbl.util
 
 import no.nav.personoversikt.common.logging.TjenestekallLogg
-import no.nav.sbl.util.HttpRequestConstants
-import okhttp3.*
+import okhttp3.Interceptor
+import okhttp3.Request
+import okhttp3.Response
 import okio.Buffer
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -17,6 +18,7 @@ class LoggingInterceptor(
         val ignoreRequestBody: Boolean = false,
         val ignoreResponseBody: Boolean = false,
     )
+
     companion object {
         @JvmField
         val DEFAULT_CONFIG = Config()
@@ -33,7 +35,7 @@ class LoggingInterceptor(
         return buffer.readUtf8()
     }
 
-    private fun Response.peekContent(config: Config): String? {
+    private fun Response.peekContent(config: Config): String {
         if (config.ignoreResponseBody) return "IGNORED"
         return when {
             this.header("Content-Length") == "0" -> "Content-Length: 0, didn't try to peek at body"
@@ -116,23 +118,6 @@ open class HeadersInterceptor(
 class XCorrelationIdInterceptor :
     HeadersInterceptor({
         mapOf("X-Correlation-ID" to getCallId())
-    })
-class navIdInterceptor :
-    HeadersInterceptor({
-        mapOf(HttpRequestConstants.HEADER_NAV_CALL_ID to getCallId())
-    })
-
-class AuthorizationInterceptor(
-    val tokenProvider: () -> String,
-) : HeadersInterceptor({
-        mapOf("Authorization" to "Bearer ${tokenProvider()}")
-    })
-
-class BasicAuthorizationInterceptor(
-    private val username: String,
-    private val password: String,
-) : HeadersInterceptor({
-        mapOf("Authorization" to Credentials.basic(username, password))
     })
 
 fun getCallId(): String = MDC.get("CallId") ?: UUID.randomUUID().toString()
