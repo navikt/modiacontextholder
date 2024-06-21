@@ -119,10 +119,7 @@ spec:
         - application: speil
           namespace: tbd
           cluster: prod-gcp
-        - application: modiacontextholder-q1
-          namespace: personoversikt
-          cluster: prod-fss
-        - application: modiacontextholder-q2
+        - application: modiacontextholder
           namespace: personoversikt
           cluster: prod-fss
   secureLogs:
