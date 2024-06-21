@@ -35,7 +35,6 @@ spec:
       memory: 768Mi
   ingresses:
     - https://modiacontextholder.prod-fss-pub.nais.io/modiacontextholder
-    - https://modiacontextholder.intern.nav.no/modiacontextholder
     - https://modiacontextholder.nais.adeo.no/modiacontextholder
     - https://modapp.adeo.no/modiacontextholder
     - https://app.adeo.no/modiacontextholder
