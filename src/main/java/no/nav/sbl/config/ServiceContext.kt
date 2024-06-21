@@ -91,7 +91,7 @@ open class ServiceContext {
     ) = EventService(eventDAO)
 
     @Bean
-    open fun databaseCleanerService() = DatabaseCleanerService()
+    open fun databaseCleanerService(eventDAO: EventDAO) = DatabaseCleanerService(eventDAO)
 
     @Bean
     open fun enheterCache(norg2Client: Norg2Client) = EnheterCache(norg2Client)
