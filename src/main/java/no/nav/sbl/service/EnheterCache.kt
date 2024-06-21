@@ -4,12 +4,11 @@ import no.nav.sbl.consumers.norg2.Norg2Client
 import no.nav.sbl.consumers.norg2.domain.Enhet
 import no.nav.sbl.rest.domain.DecoratorDomain
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import java.util.*
 
 class EnheterCache(
-    private val norg2Client: Norg2Client
+    private val norg2Client: Norg2Client,
 ) {
     companion object {
         private const val HVER_TOLVTE_TIME: Long = 12 * 3600 * 1000
@@ -24,25 +23,24 @@ class EnheterCache(
         try {
             val enheter: List<Enhet> = norg2Client.hentAlleEnheter()
 
-            cacheList = Collections.unmodifiableList(enheter
-                .map { enhet -> DecoratorDomain.Enhet(enhet.enhetNr, enhet.navn) }
-                .sortedBy { it.enhetId }
-            )
+            cacheList =
+                Collections.unmodifiableList(
+                    enheter
+                        .map { enhet -> DecoratorDomain.Enhet(enhet.enhetNr, enhet.navn) }
+                        .sortedBy { it.enhetId },
+                )
 
-            cache = Collections.unmodifiableMap(cacheList
-                .associateBy { it.enhetId }
-            )
-
+            cache =
+                Collections.unmodifiableMap(
+                    cacheList
+                        .associateBy { it.enhetId },
+                )
         } catch (e: Exception) {
             log.error("Kunne ikke hente ut alle aktive enheter fra NORG2-rest", e)
         }
     }
 
-    fun get(): Map<String, DecoratorDomain.Enhet> {
-        return this.cache
-    }
+    fun get(): Map<String, DecoratorDomain.Enhet> = this.cache
 
-    fun getAll(): List<DecoratorDomain.Enhet> {
-        return cacheList
-    }
+    fun getAll(): List<DecoratorDomain.Enhet> = cacheList
 }
