@@ -1,12 +1,15 @@
 package no.nav.sbl.rest.domain
 
-import lombok.Data
-import lombok.EqualsAndHashCode
-import lombok.experimental.Accessors
+import no.nav.sbl.db.domain.EventType
+import no.nav.sbl.db.domain.PEvent
 
-@Data
-@Accessors(fluent = true)
-@EqualsAndHashCode
 data class RSAktivBruker(
     val aktivBruker: String?,
-)
+) {
+    companion object {
+        fun from(pEvent: PEvent): RSAktivBruker =
+            RSAktivBruker(
+                if (EventType.NY_AKTIV_BRUKER.name == pEvent.eventType) pEvent.verdi else null,
+            )
+    }
+}
