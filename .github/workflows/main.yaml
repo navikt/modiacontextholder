@@ -14,7 +14,6 @@ jobs:
   build:
     name: Test and build
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -28,6 +27,8 @@ jobs:
 
   build-and-push:
     name: Build and push Docker container
+    needs: build
+    if: github.ref == 'refs/heads/master'
     permissions:
       packages: write
       contents: read
@@ -54,7 +55,8 @@ jobs:
   deploy-qa:
     name: Deploy to preprod
     needs: build-and-push
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/master'
+    environment: dev-fss
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -75,6 +77,7 @@ jobs:
     name: Deploy to prod
     needs: build-and-push
     if: github.ref == 'refs/heads/master'
+    environment: prod-fss
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -91,7 +94,8 @@ jobs:
   deploy-gcp-dev:
     name: Deploy to dev gcp
     needs: build-and-push
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/master'
+    environment: dev-gcp
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -112,6 +116,7 @@ jobs:
     name: Deploy to prod gcp
     needs: build-and-push
     if: github.ref == 'refs/heads/master'
+    environment: prod-gcp
     runs-on: ubuntu-latest
     permissions:
       contents: read
