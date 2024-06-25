@@ -57,6 +57,9 @@ spec:
         - host: norg2.prod-fss-pub.nais.io
       rules:
         - application: modiacontextholder-redis-med-passord
+        - application: nom-api
+          namespace: nom
+          cluster: prod-gcp
     inbound:
       rules:
         - application: arbeidssokerregistrering-veileder
