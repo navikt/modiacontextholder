@@ -40,6 +40,7 @@ spec:
       - type: POSTGRES_15
         databases:
           - name: modiacontextholder-db
+        tier: db-custom-4-6400
   azure:
     application:
       enabled: true
