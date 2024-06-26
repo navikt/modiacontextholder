@@ -39,8 +39,8 @@ open class DatabaseConfig {
             config.username = EnvironmentUtils.getRequiredProperty(MODIACONTEXTHOLDERDB_USERNAME)
             config.password = EnvironmentUtils.getRequiredProperty(MODIACONTEXTHOLDERDB_PASSWORD)
         }
-        config.maximumPoolSize = 300
-        config.minimumIdle = 1
+        config.maximumPoolSize = 180
+        config.minimumIdle = 5
 
         val dataSource = HikariDataSource(config)
 
