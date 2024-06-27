@@ -22,7 +22,7 @@
         <kotlin.version>2.0.0</kotlin.version>
         <serialization.version>1.7.1</serialization.version>
         <coroutines.version>1.3.9</coroutines.version>
-        <modia-common-utils.version>1.2024.06.07-08.12-d0197775eca3</modia-common-utils.version>
+        <modia-common-utils.version>1.2024.06.26-10.11-d6295491fb9f</modia-common-utils.version>
     </properties>
 
     <repositories>
