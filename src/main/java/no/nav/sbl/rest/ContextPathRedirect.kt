@@ -12,6 +12,6 @@ class ContextPathRedirect {
     fun redirectWithUsingRedirectView(request: HttpServletRequest): RedirectView {
         val requestUri = request.requestURI
         val newUri = requestUri.replaceFirst("/modiacontextholder", "")
-        return RedirectView(newUri )
+        return RedirectView(newUri, true)
     }
 }
