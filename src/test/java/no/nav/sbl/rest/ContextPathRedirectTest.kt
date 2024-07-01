@@ -1,75 +1,45 @@
-package no.nav.sbl.metric
+package no.nav.sbl.rest
 
-import io.mockk.mockk
-import no.nav.sbl.service.AuthContextService
-import no.nav.sbl.util.RewriteContextPathFilter
+import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.servlet.FilterRegistrationBean
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.mock.web.MockServletContext
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
 
-@SpringBootTest(
-    classes = [ContextPathRedirectTestConfiguration::class],
+@WebMvcTest(
+    ContextPathRedirect::class,
 )
-@AutoConfigureMockMvc
-class ContextPathRedirectTest{
+@TestPropertySource(locations = ["classpath:application.properties"])
+class ContextPathRedirectTest {
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    @Before
+    fun setUp() {
+        (mockMvc.dispatcherServlet.servletContext as MockServletContext).contextPath = "/modiacontextholder"
+    }
+
     @Test
-    fun `Redirects requests still using the context path`() {
-        mockMvc.get("/modiacontextholder/test").andExpect {
-            status { isOk() }
-            forwardedUrl("/test")
+    fun `Redirects requests still using the context path correctly`() {
+        mockMvc.get("/modiacontextholder/test/path").andExpect {
+            redirectedUrl("/test/path")
         }
     }
 
     @Test
     fun `Works with context path`() {
-       mockMvc.get("/modiacontextholder/modiacontextholder/test") { contextPath = "/modiacontextholder" }.andExpect {
-           status { isOk() }
-           forwardedUrl("/modiacontextholder/test")
-       }
+        mockMvc.get("/modiacontextholder/modiacontextholder/test/path") { contextPath = "/modiacontextholder" }.andExpect {
+            redirectedUrl("/modiacontextholder/test/path")
+        }
     }
 
     @Test
     fun `Does not redirect requests on the context path`() {
-       val res = mockMvc.get("/modiacontextholder/test") { contextPath = "/modiacontextholder" }.andExpect {
-            status { isOk() }
-        }.andReturn().response.contentAsString
-        assert(res.equals("test"))
-    }
-
-
-}
-
-@Configuration
-open class ContextPathRedirectTestConfiguration {
-    @Bean
-    open fun authContextService(): AuthContextService = AuthContextService(mockk())
-
-    @Bean
-    open fun redirectContextPathFilter(
-    ): FilterRegistrationBean<RewriteContextPathFilter> =
-        FilterRegistrationBean(
-            RewriteContextPathFilter()
-        ).apply {
-            urlPatterns = listOf("*")
-            order = -1
-        }
-
-    @RestController
-    open class TestController {
-        @GetMapping("/test", produces = ["text/plain"])
-        fun test(): String {
-            return "test"
+        mockMvc.get("/modiacontextholder/test/path") { contextPath = "/modiacontextholder" }.andExpect {
+            status { isNotFound() }
         }
     }
 }
