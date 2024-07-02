@@ -11,7 +11,7 @@ class RewriteContextPathFilter : OncePerRequestFilter() {
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
-        if (request.pathInfo != null && request.pathInfo.startsWith("/modiacontextholder")) {
+        if (request.requestURI.startsWith("${request.contextPath}/modiacontextholder")) {
             val newUri = request.requestURI.replaceFirst("/modiacontextholder", "")
             request.getRequestDispatcher(newUri).forward(request, response)
         } else {
