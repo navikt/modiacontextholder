@@ -36,7 +36,7 @@ open class ApplicationConfig {
         return FilterRegistrationBean<CorsFilter>().apply {
             filter = corsFilter
             order = 0
-            addUrlPatterns("/api/*", "/redirect/*")
+            addUrlPatterns("/api/*", "/redirect/*", "/modiacontextholder/*")
         }
     }
 
@@ -59,7 +59,7 @@ open class ApplicationConfig {
         return FilterRegistrationBean<OidcAuthenticationFilter>().apply {
             filter = OidcAuthenticationFilter(authenticators)
             order = 1
-            addUrlPatterns("/api/*", "/redirect/*")
+            addUrlPatterns("/api/*", "/redirect/*", "/modiacontextholder/*")
         }
     }
 
@@ -68,7 +68,7 @@ open class ApplicationConfig {
         FilterRegistrationBean<AccesstokenServletFilter>().apply {
             filter = AccesstokenServletFilter()
             order = 2
-            addUrlPatterns("/api/*", "/redirect/*")
+            addUrlPatterns("/api/*", "/redirect/*", "/modiacontextholder/*")
         }
 
     @Bean
@@ -95,7 +95,7 @@ open class ApplicationConfig {
         FilterRegistrationBean<ServerHttpObservationFilter>().apply {
             filter = ServerHttpObservationFilter(observationRegistry, serverRequestObservationConvention)
             order = 5
-            addUrlPatterns("/api/*", "/redirect/*")
+            addUrlPatterns("/api/*", "/redirect/*", "/modiacontextholder/*")
         }
 
     @Bean
