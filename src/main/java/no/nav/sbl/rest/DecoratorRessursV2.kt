@@ -13,29 +13,27 @@ import org.springframework.web.server.ResponseStatusException
 import kotlin.jvm.optionals.getOrElse
 
 @RestController
-@RequestMapping("/api/v2/decorator")
+@RequestMapping(value = ["/api/v2/decorator", "/modiacontextholder/api/v2/decorator"])
 class DecoratorRessursV2(
     private val azureADService: AzureADService,
     private val enheterService: EnheterService,
     private val veilederService: VeilederService,
     private val pdlService: PdlService,
-    private val authContextUtils: AuthContextService
+    private val authContextUtils: AuthContextService,
 ) {
     companion object {
         private const val ROLLE_MODIA_ADMIN = "0000-GA-Modia_Admin"
-        private fun exceptionHandler(throwable: Throwable): ResponseStatusException {
-            return if (throwable is ResponseStatusException) {
+
+        private fun exceptionHandler(throwable: Throwable): ResponseStatusException =
+            if (throwable is ResponseStatusException) {
                 throwable
             } else {
                 ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Kunne ikke hente data", throwable)
             }
-        }
     }
 
     @GetMapping
-    fun hentSaksbehandlerInfoOgEnheter(): DecoratorConfig {
-        return hentSaksbehandlerInfoOgEnheterFraAxsys()
-    }
+    fun hentSaksbehandlerInfoOgEnheter(): DecoratorConfig = hentSaksbehandlerInfoOgEnheterFraAxsys()
 
     @GetMapping("/v2")
     fun hentSaksbehandlerInfoOgEnheterFraAxsys(): DecoratorConfig {
@@ -44,8 +42,11 @@ class DecoratorRessursV2(
     }
 
     @PostMapping("/aktor/hent-fnr")
-    fun hentAktorId(@RequestBody fnr: String): FnrAktorId {
-        return pdlService.hentIdent(fnr)
+    fun hentAktorId(
+        @RequestBody fnr: String,
+    ): FnrAktorId =
+        pdlService
+            .hentIdent(fnr)
             .map { aktorId -> FnrAktorId(fnr, aktorId) }
             .getOrElseThrow { exception ->
                 if (exception is ResponseStatusException) {
@@ -54,13 +55,14 @@ class DecoratorRessursV2(
                     throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error", exception)
                 }
             }
-    }
 
-    private fun lagDecoratorConfig(ident: String, tryEnheter: Try<List<DecoratorDomain.Enhet>>): DecoratorConfig {
-        return tryEnheter
+    private fun lagDecoratorConfig(
+        ident: String,
+        tryEnheter: Try<List<DecoratorDomain.Enhet>>,
+    ): DecoratorConfig =
+        tryEnheter
             .map { enheter -> DecoratorConfig(veilederService.hentVeilederNavn(ident), enheter) }
             .getOrElseThrow(DecoratorRessursV2::exceptionHandler)
-    }
 
     private fun hentEnheter(ident: String): Try<List<DecoratorDomain.Enhet>> {
         val userToken = authContextUtils.requireIdToken()
@@ -72,9 +74,8 @@ class DecoratorRessursV2(
         }
     }
 
-    private fun getIdent(): String {
-        return authContextUtils.ident.getOrElse {
+    private fun getIdent(): String =
+        authContextUtils.ident.getOrElse {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fant ingen subjecthandler")
         }
-    }
 }
