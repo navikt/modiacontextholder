@@ -17,60 +17,63 @@ import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
 @RestController
-@RequestMapping("/redirect")
-class RedirectRessurs @Autowired constructor(
-    private val authContextUtils: AuthContextService,
-    private val contextService: ContextService,
-) {
-    private val aaRegisteretBaseUrl = EnvironmentUtils.getRequiredProperty("AAREG_URL")
-    private val salesforceBaseUrl = EnvironmentUtils.getRequiredProperty("SALESFORCE_URL")
-    private val client: OkHttpClient = RestClient.baseClient()
-    private val log = LoggerFactory.getLogger(RedirectRessurs::class.java)
+@RequestMapping("(/modiacontextholder)?/redirect")
+class RedirectRessurs
+    @Autowired
+    constructor(
+        private val authContextUtils: AuthContextService,
+        private val contextService: ContextService,
+    ) {
+        private val aaRegisteretBaseUrl = EnvironmentUtils.getRequiredProperty("AAREG_URL")
+        private val salesforceBaseUrl = EnvironmentUtils.getRequiredProperty("SALESFORCE_URL")
+        private val client: OkHttpClient = RestClient.baseClient()
+        private val log = LoggerFactory.getLogger(RedirectRessurs::class.java)
 
-    @GetMapping("/aaregisteret")
-    fun aaRegisteret(): ResponseEntity<Unit> {
-        return temporaryRedirect(aaRegisteretUrl(aktivContext()))
+        @GetMapping("/aaregisteret")
+        fun aaRegisteret(): ResponseEntity<Unit> = temporaryRedirect(aaRegisteretUrl(aktivContext()))
+
+        @GetMapping("/salesforce")
+        fun salesforce(): ResponseEntity<Unit> = temporaryRedirect(salesforceBaseUrl)
+
+        private fun aaRegisteretUrl(context: RSContext?): String {
+            val aktivBruker: String = context?.aktivBruker ?: return aaRegisteretBaseUrl
+            return runCatching {
+                val request =
+                    Request
+                        .Builder()
+                        .url("$aaRegisteretBaseUrl/api/v2/redirect/sok/arbeidstaker")
+                        .addHeader("Nav-Personident", aktivBruker)
+                        .build()
+                val response =
+                    client
+                        .newCall(request)
+                        .execute()
+
+                check(response.isSuccessful) {
+                    "ResponseCode: ${response.code}"
+                }
+                val body =
+                    checkNotNull(response.body) {
+                        "Body: <null>"
+                    }
+                body.string()
+            }.fold(
+                onSuccess = { it },
+                onFailure = { exception ->
+                    log.error("[AAREG] feil ved henting av aareg url. Returnerer baseurl", exception)
+                    aaRegisteretBaseUrl
+                },
+            )
+        }
+
+        private fun aktivContext(): RSContext? =
+            authContextUtils.ident
+                .map(contextService::hentVeiledersContext)
+                .orElse(null)
+
+        private fun temporaryRedirect(url: String) =
+            ResponseEntity
+                .status(HttpStatus.FOUND)
+                .location(URI.create(url))
+                .build<Unit>()
     }
-
-    @GetMapping("/salesforce")
-    fun salesforce(): ResponseEntity<Unit> {
-        return temporaryRedirect(salesforceBaseUrl)
-    }
-
-    private fun aaRegisteretUrl(context: RSContext?): String {
-        val aktivBruker: String = context?.aktivBruker ?: return aaRegisteretBaseUrl
-        return runCatching {
-            val request = Request.Builder()
-                .url("$aaRegisteretBaseUrl/api/v2/redirect/sok/arbeidstaker")
-                .addHeader("Nav-Personident", aktivBruker)
-                .build()
-            val response = client
-                .newCall(request)
-                .execute()
-
-            check(response.isSuccessful) {
-                "ResponseCode: ${response.code}"
-            }
-            val body = checkNotNull(response.body) {
-                "Body: <null>"
-            }
-            body.string()
-        }.fold(
-            onSuccess = { it },
-            onFailure = { exception ->
-                log.error("[AAREG] feil ved henting av aareg url. Returnerer baseurl", exception)
-                aaRegisteretBaseUrl
-            },
-        )
-    }
-
-    private fun aktivContext(): RSContext? {
-        return authContextUtils.ident
-            .map(contextService::hentVeiledersContext)
-            .orElse(null)
-    }
-
-    private fun temporaryRedirect(url: String) = ResponseEntity.status(HttpStatus.FOUND)
-        .location(URI.create(url))
-        .build<Unit>()
-}
