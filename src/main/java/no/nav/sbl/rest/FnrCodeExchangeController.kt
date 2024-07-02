@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
-@RequestMapping("/api/fnr-code")
+@RequestMapping(value = ["/api/fnr-code", "/modiacontextholder/fnr-code"])
 class FnrCodeExchangeController(
     @Autowired private val fnrCodeExchangeService: FnrCodeExchangeService,
 ) {
     @PostMapping("/generate")
-    suspend fun generateCodeForFnr(@RequestBody fnrRequest: FnrRequest): CodeResponse {
+    suspend fun generateCodeForFnr(
+        @RequestBody fnrRequest: FnrRequest,
+    ): CodeResponse {
         val result = fnrCodeExchangeService.generateAndStoreTempCodeForFnr(fnrRequest.fnr)
         if (result.result.isFailure) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error", result.result.exceptionOrNull())
@@ -24,7 +26,9 @@ class FnrCodeExchangeController(
     }
 
     @PostMapping("/retrieve")
-    suspend fun fetchFnrWithCode(@RequestBody codeRequest: CodeRequest): CodeResponse {
+    suspend fun fetchFnrWithCode(
+        @RequestBody codeRequest: CodeRequest,
+    ): CodeResponse {
         val result = fnrCodeExchangeService.getFnr(codeRequest.code)
         if (result.isFailure) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error", result.exceptionOrNull())

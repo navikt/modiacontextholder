@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/events")
+@RequestMapping(value = ["/api/events", "/modiacontextholder/api/events"])
 class EventRessurs {
     @Autowired
     lateinit var eventService: EventService
