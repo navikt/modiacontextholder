@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
     classes = [ContextPathRedirectTestConfiguration::class],
 )
 @AutoConfigureMockMvc
-class ContextPathRedirectTest{
+class ContextPathRedirectTest {
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -33,21 +33,23 @@ class ContextPathRedirectTest{
 
     @Test
     fun `Works with context path`() {
-       mockMvc.get("/modiacontextholder/modiacontextholder/test") { contextPath = "/modiacontextholder" }.andExpect {
-           status { isOk() }
-           forwardedUrl("/modiacontextholder/test")
-       }
+        mockMvc.get("/modiacontextholder/modiacontextholder/test") { contextPath = "/modiacontextholder" }.andExpect {
+            status { isOk() }
+            forwardedUrl("/modiacontextholder/test")
+        }
     }
 
     @Test
     fun `Does not redirect requests on the context path`() {
-       val res = mockMvc.get("/modiacontextholder/test") { contextPath = "/modiacontextholder" }.andExpect {
-            status { isOk() }
-        }.andReturn().response.contentAsString
+        val res =
+            mockMvc
+                .get("/modiacontextholder/test") { contextPath = "/modiacontextholder" }
+                .andExpect {
+                    status { isOk() }
+                }.andReturn()
+                .response.contentAsString
         assert(res.equals("test"))
     }
-
-
 }
 
 @Configuration
@@ -56,10 +58,9 @@ open class ContextPathRedirectTestConfiguration {
     open fun authContextService(): AuthContextService = AuthContextService(mockk())
 
     @Bean
-    open fun redirectContextPathFilter(
-    ): FilterRegistrationBean<RewriteContextPathFilter> =
+    open fun redirectContextPathFilter(): FilterRegistrationBean<RewriteContextPathFilter> =
         FilterRegistrationBean(
-            RewriteContextPathFilter()
+            RewriteContextPathFilter(),
         ).apply {
             urlPatterns = listOf("*")
             order = -1
@@ -68,8 +69,6 @@ open class ContextPathRedirectTestConfiguration {
     @RestController
     open class TestController {
         @GetMapping("/test", produces = ["text/plain"])
-        fun test(): String {
-            return "test"
-        }
+        fun test(): String = "test"
     }
 }

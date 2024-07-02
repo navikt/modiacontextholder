@@ -30,10 +30,8 @@ import org.springframework.web.filter.ServerHttpObservationFilter
 @EnableScheduling
 @Import(CorsConfig::class, DatabaseConfig::class, ServiceContext::class)
 open class ApplicationConfig {
-
     @Bean
-    open fun contextRedirectFilter(): FilterRegistrationBean<RewriteContextPathFilter>
-    {
+    open fun contextRedirectFilter(): FilterRegistrationBean<RewriteContextPathFilter> {
         val rewriteFilter = RewriteContextPathFilter()
         return FilterRegistrationBean<RewriteContextPathFilter>().apply {
             filter = rewriteFilter
@@ -68,7 +66,6 @@ open class ApplicationConfig {
                 .withUserRole(UserRole.INTERN)
 
         val authenticators = OidcAuthenticator.fromConfigs(azureAdOBO)
-
 
         return FilterRegistrationBean<OidcAuthenticationFilter>().apply {
             filter = OidcAuthenticationFilter(authenticators)
