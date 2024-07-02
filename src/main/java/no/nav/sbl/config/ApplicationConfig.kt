@@ -12,6 +12,7 @@ import no.nav.sbl.db.DatabaseCleanerService
 import no.nav.sbl.rest.CleanupServlet
 import no.nav.sbl.service.AuthContextService
 import no.nav.sbl.util.AccesstokenServletFilter
+import no.nav.sbl.util.RewriteContextPathFilter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.boot.web.servlet.ServletRegistrationBean
@@ -29,6 +30,16 @@ import org.springframework.web.filter.ServerHttpObservationFilter
 @EnableScheduling
 @Import(CorsConfig::class, DatabaseConfig::class, ServiceContext::class)
 open class ApplicationConfig {
+    @Bean
+    open fun contextRedirectFilter(): FilterRegistrationBean<RewriteContextPathFilter> {
+        val rewriteFilter = RewriteContextPathFilter()
+        return FilterRegistrationBean<RewriteContextPathFilter>().apply {
+            filter = rewriteFilter
+            order = -1
+            addUrlPatterns("/modiacontextholder/*")
+        }
+    }
+
     @Bean
     open fun corsFilterRegistration(): FilterRegistrationBean<CorsFilter> {
         val corsFilter = CorsFilter(CorsConfig.allowAllCorsConfig())

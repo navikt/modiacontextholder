@@ -14,20 +14,22 @@ import org.springframework.web.server.ResponseStatusException
 import kotlin.jvm.optionals.getOrElse
 
 @RestController
-@RequestMapping("(/modiacontextholder)?/api/decorator")
+@RequestMapping("/api/decorator")
 class DecoratorRessurs(
     val azureADService: AzureADService,
     val enheterService: EnheterService,
     val veilederService: VeilederService,
     val pdlService: PdlService,
-    val authContextUtils: AuthContextService,
+    val authContextUtils: AuthContextService
 ) {
     companion object {
         private const val ROLLE_MODIA_ADMIN = "0000-GA-Modia_Admin"
     }
 
     @GetMapping
-    fun hentSaksbehandlerInfoOgEnheter(): DecoratorConfig = hentSaksbehandlerInfoOgEnheterFraAxsys()
+    fun hentSaksbehandlerInfoOgEnheter(): DecoratorConfig {
+        return hentSaksbehandlerInfoOgEnheterFraAxsys()
+    }
 
     @GetMapping("/v2")
     fun hentSaksbehandlerInfoOgEnheterFraAxsys(): DecoratorConfig {
@@ -37,11 +39,8 @@ class DecoratorRessurs(
 
     @GetMapping("/aktor/{fnr}")
     @Deprecated("forRemoval = true")
-    fun hentAktorId(
-        @PathVariable("fnr") fnr: String,
-    ): FnrAktorId =
-        pdlService
-            .hentIdent(fnr)
+    fun hentAktorId(@PathVariable("fnr") fnr: String): FnrAktorId {
+        return pdlService.hentIdent(fnr)
             .map { aktorId -> FnrAktorId(fnr, aktorId) }
             .getOrElseThrow { exception ->
                 if (exception is ResponseStatusException) {
@@ -50,36 +49,31 @@ class DecoratorRessurs(
                     throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error", exception)
                 }
             }
+    }
 
-    private fun lagDecoratorConfig(
-        ident: String,
-        tryEnheter: Try<List<DecoratorDomain.Enhet>>,
-    ): DecoratorConfig =
-        tryEnheter
+    private fun lagDecoratorConfig(ident: String, tryEnheter: Try<List<DecoratorDomain.Enhet>>): DecoratorConfig {
+        return tryEnheter
             .map { enheter -> DecoratorConfig(veilederService.hentVeilederNavn(ident), enheter) }
             .getOrElseThrow(::exceptionHandler)
+    }
 
     private fun hentEnheter(ident: String): Try<List<DecoratorDomain.Enhet>> {
         val userToken = authContextUtils.requireIdToken()
-        val roles =
-            azureADService
-                .fetchRoller(userToken, NavIdent.of(ident))
-                .map(AnsattRolle::gruppeNavn)
+        val roles = azureADService.fetchRoller(userToken, NavIdent.of(ident))
+            .map(AnsattRolle::gruppeNavn)
         return if (roles.contains(ROLLE_MODIA_ADMIN)) {
             Try.success(enheterService.hentAlleEnheter())
-        } else {
-            enheterService.hentEnheter(ident)
-        }
+        } else enheterService.hentEnheter(ident)
     }
 
-    private fun getIdent(): String =
-        authContextUtils.ident
+    private fun getIdent(): String {
+        return authContextUtils.ident
             .getOrElse { throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fant ingen subjecthandler") }
+    }
 
-    private fun exceptionHandler(throwable: Throwable): ResponseStatusException =
-        if (throwable is ResponseStatusException) {
+    private fun exceptionHandler(throwable: Throwable): ResponseStatusException {
+        return if (throwable is ResponseStatusException) {
             throwable
-        } else {
-            ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Kunne ikke hente data", throwable)
-        }
+        } else ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Kunne ikke hente data", throwable)
+    }
 }
