@@ -1,21 +1,21 @@
 package no.nav.sbl.util
 
-import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
-import jakarta.servlet.ServletRequest
-import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.web.filter.OncePerRequestFilter
 
-
-class RewriteContextPathFilter: Filter {
-    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-        val httpRequest = request as HttpServletRequest
-        if (httpRequest.pathInfo.startsWith("/modiacontextholder") ) {
-            val newUri = httpRequest.requestURI.replaceFirst("/modiacontextholder", "")
+class RewriteContextPathFilter : OncePerRequestFilter() {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain,
+    ) {
+        if (request.pathInfo != null && request.pathInfo.startsWith("/modiacontextholder")) {
+            val newUri = request.requestURI.replaceFirst("/modiacontextholder", "")
             request.getRequestDispatcher(newUri).forward(request, response)
         } else {
-            chain.doFilter(request, response)
+            filterChain.doFilter(request, response)
         }
-
     }
 }
