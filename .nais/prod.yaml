@@ -88,13 +88,13 @@ spec:
         - application: syk-dig
           namespace: teamsykmelding
           cluster: prod-gcp
-        - application: modiaflatefs-{{ namespace }}
+        - application: modiaflatefs
           namespace: personoversikt
           cluster: prod-fss
         - application: modiapersonoversikt
           namespace: personoversikt
           cluster: prod-gcp
-        - application: modiapersonoversikt-{{ namespace }}
+        - application: modiapersonoversikt
           namespace: personoversikt
           cluster: prod-fss
         - application: rekrutteringsbistand-kandidatsok-api
