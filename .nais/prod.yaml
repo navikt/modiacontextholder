@@ -88,13 +88,13 @@ spec:
         - application: syk-dig
           namespace: teamsykmelding
           cluster: prod-gcp
-        - application: modiaflatefs-{{ namespace }}
+        - application: modiaflatefs
           namespace: personoversikt
           cluster: prod-fss
         - application: modiapersonoversikt
           namespace: personoversikt
           cluster: prod-gcp
-        - application: modiapersonoversikt-{{ namespace }}
+        - application: modiapersonoversikt
           namespace: personoversikt
           cluster: prod-fss
         - application: rekrutteringsbistand-kandidatsok-api
@@ -156,7 +156,7 @@ spec:
     - name: APP_ENVIRONMENT_NAME
       value: "p"
     - name: AAREG_URL
-      value: "https://arbeid-og-inntekt-q2.prod-fss-pub.nais.io"
+      value: "https://arbeid-og-inntekt.prod-fss-pub.nais.io"
     - name: REDIS_PORT
       value: "6379"
     - name: REDIS_HOST
