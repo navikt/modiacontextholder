@@ -162,7 +162,7 @@ spec:
     - name: REDIS_HOST
       value: "modiacontextholder-redis-med-passord.personoversikt.svc.cluster.local"
     - name: SALESFORCE_URL
-      value: "https://navdialog--sit2.lightning.force.com"
+      value: "https://navdialog.lightning.force.com"
     - name: DB_NAME
       value: "modiacontextholder-db"
     - name: UNLEASH_ENVIRONMENT
