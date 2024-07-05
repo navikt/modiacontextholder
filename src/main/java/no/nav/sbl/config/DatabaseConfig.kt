@@ -65,7 +65,7 @@ open class DatabaseConfig {
     open fun namedParameterJdbcTemplate(dataSource: DataSource): NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
 
     @Bean
-    open fun eventDAO(
+    open fun veilederContextDatabase(
         jdbcTemplate: JdbcTemplate,
         namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
     ): EventDAO = EventDAO(jdbcTemplate, namedParameterJdbcTemplate)

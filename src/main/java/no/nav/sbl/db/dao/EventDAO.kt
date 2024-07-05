@@ -1,6 +1,7 @@
 package no.nav.sbl.db.dao
 
 import no.nav.sbl.config.ApplicationCluster
+import no.nav.sbl.db.VeilederContextDatabase
 import no.nav.sbl.db.domain.PEvent
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataAccessException
@@ -17,10 +18,10 @@ import java.time.LocalDateTime
 open class EventDAO(
     private val jdbcTemplate: JdbcTemplate,
     private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
-) {
+) : VeilederContextDatabase {
     private val log = LoggerFactory.getLogger(EventDAO::class.java)
 
-    open fun save(pEvent: PEvent): Long =
+    override fun save(pEvent: PEvent): Long =
         if (ApplicationCluster.isGcp()) {
             val jdbcInsert =
                 SimpleJdbcInsert(jdbcTemplate)
@@ -57,7 +58,7 @@ open class EventDAO(
             nesteSekvensverdi!!
         }
 
-    open fun sistAktiveBrukerEvent(veilederIdent: String): PEvent? =
+    override fun sistAktiveBrukerEvent(veilederIdent: String): PEvent? =
         try {
             if (ApplicationCluster.isGcp()) {
                 jdbcTemplate.queryForObject(
@@ -77,7 +78,7 @@ open class EventDAO(
             null
         }
 
-    open fun sistAktiveEnhetEvent(veilederIdent: String): PEvent? =
+    override fun sistAktiveEnhetEvent(veilederIdent: String): PEvent? =
         try {
             if (ApplicationCluster.isGcp()) {
                 jdbcTemplate.queryForObject(
@@ -97,13 +98,14 @@ open class EventDAO(
             null
         }
 
-    open fun finnAlleEventerEtterId(id: Long): List<PEvent> = jdbcTemplate.query("select * from event where event_id > ?", EventMapper, id)
+    override fun finnAlleEventerEtterId(id: Long): List<PEvent> =
+        jdbcTemplate.query("select * from event where event_id > ?", EventMapper, id)
 
     open fun slettAlleAvEventType(eventType: String) {
         jdbcTemplate.update("delete from event where event_type = ?", eventType)
     }
 
-    open fun slettAlleAvEventTypeForVeileder(
+    override fun slettAlleAvEventTypeForVeileder(
         eventType: String,
         veilederIdent: String,
     ) {
@@ -135,7 +137,7 @@ open class EventDAO(
     open fun hentUnikeVeilederIdenter(): List<String> =
         jdbcTemplate.query("select distinct veileder_ident from event") { rs, _ -> rs.getString("veileder_ident") }
 
-    open fun slettAllEventer(veilederIdent: String) {
+    override fun slettAllEventer(veilederIdent: String) {
         jdbcTemplate.update("delete from event where veileder_ident = ?", veilederIdent)
     }
 
