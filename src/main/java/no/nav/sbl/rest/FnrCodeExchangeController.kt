@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
-@RequestMapping(value = ["/api/fnr-code", "/modiacontextholder/fnr-code"])
+@RequestMapping(value = ["/api/fnr-code", "/modiacontextholder/api/fnr-code"])
 class FnrCodeExchangeController(
     @Autowired private val fnrCodeExchangeService: FnrCodeExchangeService,
 ) {
