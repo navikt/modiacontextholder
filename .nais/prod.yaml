@@ -18,6 +18,10 @@ spec:
   prometheus:
     enabled: true
     path: internal/prometheus
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   readiness:
     path: internal/isReady
     initialDelay: 50
