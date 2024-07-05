@@ -12,15 +12,16 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.Cacheable
 
 interface AzureADService {
     fun fetchRoller(
         userToken: String,
-        veilederIdent: NavIdent
+        veilederIdent: NavIdent,
     ): List<AnsattRolle>
 }
 
-class AzureADServiceImpl(
+open class AzureADServiceImpl(
     private val httpClient: OkHttpClient = OkHttpClient(),
     private val tokenClient: BoundedOnBehalfOfTokenClient,
     private val graphUrl: Url,
@@ -28,6 +29,7 @@ class AzureADServiceImpl(
     private val json = Json { ignoreUnknownKeys = true }
     private val log = LoggerFactory.getLogger(AzureADServiceImpl::class.java)
 
+    @Cacheable("azureAdCache")
     override fun fetchRoller(
         userToken: String,
         veilederIdent: NavIdent,
@@ -38,6 +40,7 @@ class AzureADServiceImpl(
                     path("v1.0/me/memberOf/microsoft.graph.group")
                     parameters.append("\$count", "true")
                     parameters.append("\$top", "500")
+                    parameters.append("\$select", "displayName,id")
                 }.buildString()
 
         return try {
@@ -50,7 +53,6 @@ class AzureADServiceImpl(
                     )
                 }
             }
-
         } catch (e: Exception) {
             log.error("Kall til azureAD feilet", veilederIdent, e)
             return listOf()
@@ -61,17 +63,18 @@ class AzureADServiceImpl(
         url: String,
         userToken: String,
         veilederIdent: NavIdent,
-    ): AzureAdResponse  {
+    ): AzureAdResponse {
         val token = tokenClient.exchangeOnBehalfOfToken(userToken)
-        val response: Response = httpClient
-            .newCall(
-                Request.Builder()
-                    .url(url)
-                    .addHeader("Authorization", "Bearer $token")
-                    .addHeader("ConsistencyLevel", "eventual")
-                    .build()
-            )
-            .execute()
+        val response: Response =
+            httpClient
+                .newCall(
+                    Request
+                        .Builder()
+                        .url(url)
+                        .addHeader("Authorization", "Bearer $token")
+                        .addHeader("ConsistencyLevel", "eventual")
+                        .build(),
+                ).execute()
 
         val body =
             response.body
