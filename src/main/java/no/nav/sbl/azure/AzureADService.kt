@@ -37,6 +37,7 @@ class AzureADServiceImpl(
                 .apply {
                     path("v1.0/me/memberOf/microsoft.graph.group")
                     parameters.append("\$count", "true")
+                    parameters.append("\$top", "500")
                 }.buildString()
 
         return try {
