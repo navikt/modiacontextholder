@@ -3,7 +3,7 @@ package no.nav.sbl.service
 import no.nav.common.json.JsonUtils
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.db.dao.EventDAO
+import no.nav.sbl.db.VeilederContextDatabase
 import no.nav.sbl.db.domain.EventType
 import no.nav.sbl.db.domain.PEvent
 import no.nav.sbl.redis.RedisPublisher
@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 @Service
 class ContextService(
-    private val eventDAO: EventDAO,
+    private val veilederContextDatabase: VeilederContextDatabase,
     private val redisPublisher: RedisPublisher,
     private val contextHolderClient: ModiaContextHolderClient,
     private val toggleableFeatureService: ToggleableFeatureService,
@@ -79,7 +79,7 @@ class ContextService(
                 .hentAktivBruker(veilederIdent)
                 .getOrThrow()
         } else {
-            eventDAO
+            veilederContextDatabase
                 .sistAktiveBrukerEvent(veilederIdent)
                 ?.takeIf(::erFortsattAktuell)
                 ?.let(RSContext::from)
@@ -92,7 +92,7 @@ class ContextService(
                 .hentAktivBrukerV2(veilederIdent)
                 .getOrThrow()
         } else {
-            eventDAO
+            veilederContextDatabase
                 .sistAktiveBrukerEvent(veilederIdent)
                 ?.takeIf(::erFortsattAktuell)
                 ?.let(RSAktivBruker::from)
@@ -105,7 +105,7 @@ class ContextService(
                 .hentAktivEnhet(veilederIdent)
                 .getOrThrow()
         } else {
-            eventDAO
+            veilederContextDatabase
                 .sistAktiveEnhetEvent(veilederIdent)
                 ?.let(RSContext::from)
                 ?: RSContext()
@@ -117,7 +117,7 @@ class ContextService(
                 .hentAktivEnhetV2(veilederIdent)
                 .getOrThrow()
         } else {
-            eventDAO
+            veilederContextDatabase
                 .sistAktiveEnhetEvent(veilederIdent)
                 ?.let(RSAktivEnhet::from)
                 ?: RSAktivEnhet(null)
@@ -127,7 +127,7 @@ class ContextService(
         if (burdeSynceContextMedGcp()) {
             contextHolderClient.nullstillBrukerContext(veilederIdent)
         } else {
-            eventDAO.slettAllEventer(veilederIdent)
+            veilederContextDatabase.slettAlleEventer(veilederIdent)
         }
     }
 
@@ -135,11 +135,11 @@ class ContextService(
         if (burdeSynceContextMedGcp()) {
             contextHolderClient.nullstillAktivBruker(veilederIdent)
         } else {
-            eventDAO.slettAlleAvEventTypeForVeileder(EventType.NY_AKTIV_BRUKER.name, veilederIdent)
+            veilederContextDatabase.slettAlleAvEventTypeForVeileder(EventType.NY_AKTIV_BRUKER.name, veilederIdent)
         }
     }
 
-    private fun saveToDb(event: PEvent): Long = eventDAO.save(event)
+    private fun saveToDb(event: PEvent) = veilederContextDatabase.save(event)
 
     private fun burdeSynceContextMedGcp(): Boolean =
         ApplicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SYNC_CONTEXT_MED_GCP)

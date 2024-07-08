@@ -7,7 +7,7 @@ import io.mockk.mockkObject
 import io.mockk.verify
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.db.dao.EventDAO
+import no.nav.sbl.db.VeilederContextDatabase
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet
@@ -30,11 +30,11 @@ class ContextServiceFssTest {
         }
     private val contextHolderClient = mockk<ModiaContextHolderClient>()
     private val redisPublisher = mockk<RedisPublisher>(relaxed = true)
-    private val eventDAO = mockk<EventDAO>()
+    private val veilederContextDatabase = mockk<VeilederContextDatabase>()
 
     private val contextService =
         ContextService(
-            eventDAO,
+            veilederContextDatabase,
             redisPublisher,
             contextHolderClient,
             toggleableFeatureService,
@@ -73,7 +73,7 @@ class ContextServiceFssTest {
         contextService.oppdaterVeiledersContext(nyContext, veilederIdent)
 
         verify { contextHolderClient.oppdaterVeiledersContext(any(), any()) }
-        verify { eventDAO wasNot Called }
+        verify { veilederContextDatabase wasNot Called }
         verify { redisPublisher.publishMessage(any()) }
     }
 
@@ -124,7 +124,7 @@ class ContextServiceFssTest {
         contextService.nullstillContext(veilederIdent)
 
         verify { contextHolderClient.nullstillBrukerContext(any()) }
-        verify { eventDAO wasNot Called }
+        verify { veilederContextDatabase wasNot Called }
     }
 
     @Test
@@ -134,6 +134,6 @@ class ContextServiceFssTest {
         contextService.nullstillAktivBruker(veilederIdent)
 
         verify { contextHolderClient.nullstillAktivBruker(any()) }
-        verify { eventDAO wasNot Called }
+        verify { veilederContextDatabase wasNot Called }
     }
 }

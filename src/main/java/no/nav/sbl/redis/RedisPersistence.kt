@@ -16,8 +16,8 @@ class RedisPersistence(
     private val codeGenerator: CodeGenerator = UUIDGenerator(),
     private val expiration: Duration = 10.minutes,
     private val scope: String = "fnr-code",
-) : HealthCheck, Pingable {
-
+) : HealthCheck,
+    Pingable {
     init {
         fixedRateTimer("Redis check", daemon = true, initialDelay = 0, period = 10.seconds.inWholeMilliseconds) {
             runBlocking(Dispatchers.IO) { ping() }
@@ -34,19 +34,16 @@ class RedisPersistence(
     suspend fun generateAndStoreTempCodeForFnr(fnr: String): TempCodeResult {
         val code = codeGenerator.generateCode(fnr)
         val key = getKey(code)
-        val result = redisPool.useResource {
-            it.setex(key, expiration.inWholeSeconds, fnr)
-        }
+        val result =
+            redisPool.useResource {
+                it.setex(key, expiration.inWholeSeconds, fnr)
+            }
         return TempCodeResult(result, code)
     }
 
-    private fun getKey(code: String): String {
-        return "$scope-$code"
-    }
+    private fun getKey(code: String): String = "$scope-$code"
 
-    private suspend fun pingRedis(): Result<String?> {
-        return redisPool.useResource { it.ping() }
-    }
+    private suspend fun pingRedis(): Result<String?> = redisPool.useResource { it.ping() }
 
     override fun checkHealth(): HealthCheckResult {
         val result = runBlocking { pingRedis() }
@@ -57,13 +54,12 @@ class RedisPersistence(
         }
     }
 
-    override fun ping(): SelfTestCheck {
-        return SelfTestCheck(
+    override fun ping(): SelfTestCheck =
+        SelfTestCheck(
             "Redis check",
             false,
             this,
         )
-    }
 }
 
 data class TempCodeResult(
@@ -76,7 +72,5 @@ interface CodeGenerator {
 }
 
 class UUIDGenerator : CodeGenerator {
-    override fun generateCode(fnr: String): String {
-        return UUID.randomUUID().toString()
-    }
+    override fun generateCode(fnr: String): String = UUID.randomUUID().toString()
 }

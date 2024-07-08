@@ -20,6 +20,7 @@ import no.nav.sbl.consumers.modiacontextholder.HttpModiaContextHolderClient
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.consumers.norg2.Norg2Client
 import no.nav.sbl.db.DatabaseCleanerService
+import no.nav.sbl.db.VeilederContextDatabase
 import no.nav.sbl.db.dao.EventDAO
 import no.nav.sbl.redis.RedisConfig
 import no.nav.sbl.redis.RedisPublisher
@@ -27,7 +28,6 @@ import no.nav.sbl.service.AuthContextService
 import no.nav.sbl.service.ContextService
 import no.nav.sbl.service.EnheterCache
 import no.nav.sbl.service.EnheterService
-import no.nav.sbl.service.EventService
 import no.nav.sbl.service.PdlService
 import no.nav.sbl.service.VeilederService
 import no.nav.sbl.service.unleash.ToggleableFeatureService
@@ -38,7 +38,6 @@ import no.nav.sbl.util.bindTo
 import no.nav.sbl.util.createMachineToMachineToken
 import no.nav.sbl.util.getCallId
 import okhttp3.OkHttpClient
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -79,16 +78,11 @@ open class ServiceContext {
 
     @Bean
     open fun contextService(
-        eventDAO: EventDAO,
+        veilederContextDatabase: VeilederContextDatabase,
         redisPublisher: RedisPublisher,
         contextHolderClient: ModiaContextHolderClient,
         toggleableFeatureService: ToggleableFeatureService,
-    ) = ContextService(eventDAO, redisPublisher, contextHolderClient, toggleableFeatureService)
-
-    @Bean
-    open fun eventService(
-        @Autowired eventDAO: EventDAO,
-    ) = EventService(eventDAO)
+    ) = ContextService(veilederContextDatabase, redisPublisher, contextHolderClient, toggleableFeatureService)
 
     @Bean
     open fun databaseCleanerService(eventDAO: EventDAO) = DatabaseCleanerService(eventDAO)

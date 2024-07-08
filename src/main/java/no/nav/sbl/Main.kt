@@ -3,7 +3,7 @@ package no.nav.sbl
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.common.utils.NaisUtils
 import no.nav.common.utils.SslUtils
-import no.nav.sbl.config.DatabaseConfig.Companion.GCP_CLUSTERS
+import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_PASSWORD
 import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_URL_PROPERTY
 import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_USERNAME
@@ -15,8 +15,7 @@ open class Main {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val clusterName = EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME")
-            if (!GCP_CLUSTERS.contains(clusterName)) {
+            if (ApplicationCluster.isFss()) {
                 setupVault()
             }
             SslUtils.setupTruststore()

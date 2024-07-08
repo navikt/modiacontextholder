@@ -5,7 +5,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.db.dao.EventDAO
+import no.nav.sbl.db.VeilederContextDatabase
 import no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER
 import no.nav.sbl.db.domain.PEvent
 import no.nav.sbl.redis.RedisPublisher
@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 class ContextServiceTest {
     private val brukerId = "bruker"
 
-    private val eventDAO: EventDAO = mockk()
+    private val veilederContextDatabase: VeilederContextDatabase = mockk()
     private val redisPublisher: RedisPublisher = mockk()
     private val contextHolderClient: ModiaContextHolderClient = mockk(relaxed = true)
     private val toggleableFeatureService: ToggleableFeatureService =
@@ -30,7 +30,7 @@ class ContextServiceTest {
         }
     private val contextService: ContextService =
         ContextService(
-            eventDAO,
+            veilederContextDatabase,
             redisPublisher,
             contextHolderClient,
             toggleableFeatureService,
@@ -49,7 +49,7 @@ class ContextServiceTest {
     @Test
     fun ingen_aktiv_bruker_event() {
         every { contextService.hentAktivBruker(any()) } returns RSContext()
-        every { eventDAO.sistAktiveBrukerEvent(any()) } returns null
+        every { veilederContextDatabase.sistAktiveBrukerEvent(any()) } returns null
         har_ikke_aktiv_bruker()
     }
 
@@ -95,6 +95,6 @@ class ContextServiceTest {
                 verdi = brukerId
                 this.created = created
             }
-        every { eventDAO.sistAktiveBrukerEvent(any<String>()) } returns pEvent
+        every { veilederContextDatabase.sistAktiveBrukerEvent(any<String>()) } returns pEvent
     }
 }
