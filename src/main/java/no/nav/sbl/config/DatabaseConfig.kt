@@ -4,10 +4,15 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.sbl.db.DbHelsesjekk
+import no.nav.sbl.db.SwitchingVeilederContextDatabase
+import no.nav.sbl.db.VeilederContextDatabase
 import no.nav.sbl.db.dao.EventDAO
+import no.nav.sbl.redis.RedisVeilederContextDatabase
+import no.nav.sbl.service.unleash.ToggleableFeatureService
 import org.flywaydb.core.Flyway
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
@@ -69,6 +74,14 @@ open class DatabaseConfig {
         jdbcTemplate: JdbcTemplate,
         namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
     ): EventDAO = EventDAO(jdbcTemplate, namedParameterJdbcTemplate)
+
+    @Bean("switchingVeilederContextDatabase")
+    @Primary
+    open fun switchingVeilederContextDatabase(
+        eventDao: EventDAO,
+        redisVeilederContextDatabase: RedisVeilederContextDatabase,
+        unleashService: ToggleableFeatureService,
+    ): VeilederContextDatabase = SwitchingVeilederContextDatabase(unleashService, eventDao, redisVeilederContextDatabase)
 
     @Bean
     open fun dbHelsesjekk(jdbcTemplate: JdbcTemplate): DbHelsesjekk = DbHelsesjekk(jdbcTemplate)

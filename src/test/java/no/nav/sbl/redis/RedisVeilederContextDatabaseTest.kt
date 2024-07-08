@@ -108,7 +108,7 @@ class RedisVeilederContextDatabaseTest {
         redisVeilederContextDatabase.save(brukerEvent)
         redisVeilederContextDatabase.save(enhetEvent)
 
-        redisVeilederContextDatabase.slettAllEventer("veileder")
+        redisVeilederContextDatabase.slettAlleEventer("veileder")
 
         val aktivBrukerEvent = redisVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
         val aktivEnhetEvent = redisVeilederContextDatabase.sistAktiveEnhetEvent("veileder")

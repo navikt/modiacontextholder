@@ -49,7 +49,7 @@ class RedisVeilederContextDatabase(
                 }.getOrThrow()
         }
 
-    override fun slettAllEventer(veilederIdent: String): Unit =
+    override fun slettAlleEventer(veilederIdent: String): Unit =
         runBlocking {
             val keys =
                 RedisEventType.entries

@@ -134,7 +134,7 @@ open class EventDAO(
     open fun hentUnikeVeilederIdenter(): List<String> =
         jdbcTemplate.query("select distinct veileder_ident from event") { rs, _ -> rs.getString("veileder_ident") }
 
-    override fun slettAllEventer(veilederIdent: String) {
+    override fun slettAlleEventer(veilederIdent: String) {
         jdbcTemplate.update("delete from event where veileder_ident = ?", veilederIdent)
     }
 

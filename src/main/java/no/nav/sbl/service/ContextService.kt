@@ -127,7 +127,7 @@ class ContextService(
         if (burdeSynceContextMedGcp()) {
             contextHolderClient.nullstillBrukerContext(veilederIdent)
         } else {
-            veilederContextDatabase.slettAllEventer(veilederIdent)
+            veilederContextDatabase.slettAlleEventer(veilederIdent)
         }
     }
 

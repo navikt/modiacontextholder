@@ -122,12 +122,12 @@ class ContextServiceGcpTest {
 
     @Test
     fun `nullstill context burde slette fra egen database`() {
-        every { veilederContextDatabase.slettAllEventer(any()) } returns Unit
+        every { veilederContextDatabase.slettAlleEventer(any()) } returns Unit
 
         contextService.nullstillContext(veilederIdent)
 
         verify { contextHolderClient wasNot Called }
-        verify { veilederContextDatabase.slettAllEventer(any()) }
+        verify { veilederContextDatabase.slettAlleEventer(any()) }
     }
 
     @Test
