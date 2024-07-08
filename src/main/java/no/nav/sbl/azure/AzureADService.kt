@@ -29,7 +29,7 @@ open class AzureADServiceImpl(
     private val json = Json { ignoreUnknownKeys = true }
     private val log = LoggerFactory.getLogger(AzureADServiceImpl::class.java)
 
-    @Cacheable("azureAdCache")
+    @Cacheable("azureAdCache", key = "#veilederIdent")
     override fun fetchRoller(
         userToken: String,
         veilederIdent: NavIdent,
