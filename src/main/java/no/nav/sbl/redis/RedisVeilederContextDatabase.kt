@@ -7,9 +7,7 @@ import no.nav.sbl.db.domain.PEvent
 import no.nav.sbl.redis.model.RedisEventType
 import no.nav.sbl.redis.model.RedisPEvent
 import no.nav.sbl.redis.model.RedisPEventKey
-import org.springframework.stereotype.Repository
 
-@Repository
 class RedisVeilederContextDatabase(
     private val authJedisPool: AuthJedisPool,
     private val objectMapper: ObjectMapper,

@@ -1,5 +1,7 @@
 package no.nav.sbl.redis
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.common.utils.EnvironmentUtils
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,4 +23,10 @@ open class RedisConfig {
 
     @Bean
     open fun redisPersistence(authJedisPool: AuthJedisPool): RedisPersistence = RedisPersistence(authJedisPool)
+
+    @Bean
+    open fun redisVeilederContextDatabase(
+        authJedisPool: AuthJedisPool,
+        objectMapper: ObjectMapper = jacksonObjectMapper(),
+    ): RedisVeilederContextDatabase = RedisVeilederContextDatabase(authJedisPool, objectMapper)
 }

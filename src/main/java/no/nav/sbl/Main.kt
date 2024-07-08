@@ -3,10 +3,7 @@ package no.nav.sbl
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.common.utils.NaisUtils
 import no.nav.common.utils.SslUtils
-import no.nav.sbl.config.DatabaseConfig.Companion.GCP_CLUSTERS
-import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_PASSWORD
-import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_URL_PROPERTY
-import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_USERNAME
+import no.nav.sbl.config.ApplicationCluster
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
@@ -15,8 +12,7 @@ open class Main {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val clusterName = EnvironmentUtils.getRequiredProperty("NAIS_CLUSTER_NAME")
-            if (!GCP_CLUSTERS.contains(clusterName)) {
+            if (ApplicationCluster.isFss()) {
                 setupVault()
             }
             SslUtils.setupTruststore()
@@ -35,21 +31,6 @@ open class Main {
                 serviceUser.password,
                 EnvironmentUtils.Type.SECRET,
             )
-
-            val dbCredentials = NaisUtils.getCredentials("modiacontextholderDB")
-            EnvironmentUtils.setProperty(
-                MODIACONTEXTHOLDERDB_USERNAME,
-                dbCredentials.username,
-                EnvironmentUtils.Type.PUBLIC,
-            )
-            EnvironmentUtils.setProperty(
-                MODIACONTEXTHOLDERDB_PASSWORD,
-                dbCredentials.password,
-                EnvironmentUtils.Type.SECRET,
-            )
-
-            val dbUrl = NaisUtils.getFileContent("/var/run/secrets/nais.io/db_config/jdbc_url")
-            EnvironmentUtils.setProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY, dbUrl, EnvironmentUtils.Type.PUBLIC)
         }
     }
 }

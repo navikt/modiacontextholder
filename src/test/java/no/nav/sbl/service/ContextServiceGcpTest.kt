@@ -6,10 +6,8 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
 import no.nav.sbl.config.ApplicationCluster
-
-
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.db.dao.EventDAO
+import no.nav.sbl.db.VeilederContextDatabase
 import no.nav.sbl.db.domain.PEvent
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.rest.domain.RSAktivBruker
@@ -33,11 +31,11 @@ class ContextServiceGcpTest {
         }
     private val contextHolderClient = mockk<ModiaContextHolderClient>()
     private val redisPublisher = mockk<RedisPublisher>(relaxed = true)
-    private val eventDAO = mockk<EventDAO>()
+    private val veilederContextDatabase = mockk<VeilederContextDatabase>()
 
     private val contextService =
         ContextService(
-            eventDAO,
+            veilederContextDatabase,
             redisPublisher,
             contextHolderClient,
             toggleableFeatureService,
@@ -62,8 +60,8 @@ class ContextServiceGcpTest {
 
     @Test
     fun `hent veileders context burde hente context`() {
-        every { eventDAO.sistAktiveBrukerEvent(any()) } returns nyAktivBrukerEvent
-        every { eventDAO.sistAktiveEnhetEvent(any()) } returns nyAktivEnhetEvent
+        every { veilederContextDatabase.sistAktiveBrukerEvent(any()) } returns nyAktivBrukerEvent
+        every { veilederContextDatabase.sistAktiveEnhetEvent(any()) } returns nyAktivEnhetEvent
 
         val result = contextService.hentVeiledersContext(veilederIdent)
 
@@ -73,18 +71,18 @@ class ContextServiceGcpTest {
 
     @Test
     fun `oppdater veileders context burde lagre til egen database og publisere til redis`() {
-        every { eventDAO.save(any()) } returns Unit
+        every { veilederContextDatabase.save(any()) } returns Unit
 
         contextService.oppdaterVeiledersContext(RSNyContext("verdi", "NY_AKTIV_ENHET"), veilederIdent)
 
         verify { contextHolderClient wasNot Called }
-        verify { eventDAO.save(any()) }
+        verify { veilederContextDatabase.save(any()) }
         verify { redisPublisher.publishMessage(any()) }
     }
 
     @Test
     fun `hent aktiv bruker burde hente aktiv bruker`() {
-        every { eventDAO.sistAktiveBrukerEvent(any()) } returns nyAktivEnhetEvent
+        every { veilederContextDatabase.sistAktiveBrukerEvent(any()) } returns nyAktivEnhetEvent
 
         val result = contextService.hentAktivBruker(veilederIdent)
 
@@ -94,7 +92,7 @@ class ContextServiceGcpTest {
 
     @Test
     fun `hent aktiv bruker v2 burde hente aktiv bruker v2`() {
-        every { eventDAO.sistAktiveBrukerEvent(any()) } returns nyAktivBrukerEvent
+        every { veilederContextDatabase.sistAktiveBrukerEvent(any()) } returns nyAktivBrukerEvent
 
         val result = contextService.hentAktivBrukerV2(veilederIdent)
 
@@ -104,7 +102,7 @@ class ContextServiceGcpTest {
 
     @Test
     fun `hent aktiv enhet burde hente aktiv enhet`() {
-        every { eventDAO.sistAktiveEnhetEvent(any()) } returns nyAktivEnhetEvent
+        every { veilederContextDatabase.sistAktiveEnhetEvent(any()) } returns nyAktivEnhetEvent
 
         val result = contextService.hentAktivEnhet(veilederIdent)
 
@@ -114,7 +112,7 @@ class ContextServiceGcpTest {
 
     @Test
     fun `hent aktiv enhet v2 burde hente aktiv enhet v2`() {
-        every { eventDAO.sistAktiveEnhetEvent(any()) } returns nyAktivEnhetEvent
+        every { veilederContextDatabase.sistAktiveEnhetEvent(any()) } returns nyAktivEnhetEvent
 
         val result = contextService.hentAktivEnhetV2(veilederIdent)
 
@@ -124,21 +122,21 @@ class ContextServiceGcpTest {
 
     @Test
     fun `nullstill context burde slette fra egen database`() {
-        every { eventDAO.slettAllEventer(any()) } returns Unit
+        every { veilederContextDatabase.slettAllEventer(any()) } returns Unit
 
         contextService.nullstillContext(veilederIdent)
 
         verify { contextHolderClient wasNot Called }
-        verify { eventDAO.slettAllEventer(any()) }
+        verify { veilederContextDatabase.slettAllEventer(any()) }
     }
 
     @Test
     fun `nullstill aktiv bruker burde slette fra egen database`() {
-        every { eventDAO.slettAlleAvEventTypeForVeileder(any(), any()) } returns Unit
+        every { veilederContextDatabase.slettAlleAvEventTypeForVeileder(any(), any()) } returns Unit
 
         contextService.nullstillAktivBruker(veilederIdent)
 
         verify { contextHolderClient wasNot Called }
-        verify { eventDAO.slettAlleAvEventTypeForVeileder(any(), any()) }
+        verify { veilederContextDatabase.slettAlleAvEventTypeForVeileder(any(), any()) }
     }
 }
