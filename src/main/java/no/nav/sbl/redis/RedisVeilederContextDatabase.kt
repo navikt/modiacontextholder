@@ -7,11 +7,14 @@ import no.nav.sbl.db.domain.PEvent
 import no.nav.sbl.redis.model.RedisEventType
 import no.nav.sbl.redis.model.RedisPEvent
 import no.nav.sbl.redis.model.RedisPEventKey
+import java.time.Duration
 
 class RedisVeilederContextDatabase(
     private val authJedisPool: AuthJedisPool,
     private val objectMapper: ObjectMapper,
 ) : VeilederContextDatabase {
+    private val timeToLive = Duration.ofHours(12L)
+
     override fun save(pEvent: PEvent): Unit =
         runBlocking {
             val redisPEvent = RedisPEvent.from(pEvent)
@@ -19,7 +22,7 @@ class RedisVeilederContextDatabase(
 
             authJedisPool
                 .useResource {
-                    it.set(redisPEvent.key.toString(), json)
+                    it.setex(redisPEvent.key.toString(), timeToLive.seconds, json)
                 }.getOrThrow()
         }
 
