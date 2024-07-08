@@ -25,5 +25,5 @@ open class EnheterService(
             }.onFailure { exception -> log.error("Kunne ikke hente enheter for $ident fra AXSYS", exception) }
     }
 
-    fun hentAlleEnheter(): List<DecoratorDomain.Enhet> = enheterCache.getAll()
+    open fun hentAlleEnheter(): List<DecoratorDomain.Enhet> = enheterCache.getAll()
 }
