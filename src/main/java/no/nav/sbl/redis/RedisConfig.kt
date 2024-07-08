@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.common.utils.EnvironmentUtils
+import no.nav.sbl.db.VeilederContextDatabase
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -26,8 +27,8 @@ open class RedisConfig {
     open fun redisPersistence(authJedisPool: AuthJedisPool): RedisPersistence = RedisPersistence(authJedisPool)
 
     @Bean
-    open fun redisVeilederContextDatabase(
+    open fun veilederContextDatabase(
         authJedisPool: AuthJedisPool,
         objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule()),
-    ): RedisVeilederContextDatabase = RedisVeilederContextDatabase(authJedisPool, objectMapper)
+    ): VeilederContextDatabase = RedisVeilederContextDatabase(authJedisPool, objectMapper)
 }

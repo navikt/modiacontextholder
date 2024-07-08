@@ -39,12 +39,6 @@ spec:
     min: 2
     max: 4
     cpuThresholdPercentage: 50
-  gcp:
-    sqlInstances:
-      - type: POSTGRES_15
-        databases:
-          - name: modiacontextholder-db
-        tier: db-custom-4-6400
   azure:
     application:
       enabled: true
@@ -167,8 +161,6 @@ spec:
       value: "modiacontextholder-redis-med-passord.personoversikt.svc.cluster.local"
     - name: SALESFORCE_URL
       value: "https://navdialog.lightning.force.com"
-    - name: DB_NAME
-      value: "modiacontextholder-db"
     - name: UNLEASH_ENVIRONMENT
       value: "production"
     # MODIACONTEXTHOLDER_PROXY_* er ikke brukt i GCP

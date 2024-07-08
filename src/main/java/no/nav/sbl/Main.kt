@@ -4,9 +4,6 @@ import no.nav.common.utils.EnvironmentUtils
 import no.nav.common.utils.NaisUtils
 import no.nav.common.utils.SslUtils
 import no.nav.sbl.config.ApplicationCluster
-import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_PASSWORD
-import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_URL_PROPERTY
-import no.nav.sbl.config.DatabaseConfig.Companion.MODIACONTEXTHOLDERDB_USERNAME
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
@@ -34,21 +31,6 @@ open class Main {
                 serviceUser.password,
                 EnvironmentUtils.Type.SECRET,
             )
-
-            val dbCredentials = NaisUtils.getCredentials("modiacontextholderDB")
-            EnvironmentUtils.setProperty(
-                MODIACONTEXTHOLDERDB_USERNAME,
-                dbCredentials.username,
-                EnvironmentUtils.Type.PUBLIC,
-            )
-            EnvironmentUtils.setProperty(
-                MODIACONTEXTHOLDERDB_PASSWORD,
-                dbCredentials.password,
-                EnvironmentUtils.Type.SECRET,
-            )
-
-            val dbUrl = NaisUtils.getFileContent("/var/run/secrets/nais.io/db_config/jdbc_url")
-            EnvironmentUtils.setProperty(MODIACONTEXTHOLDERDB_URL_PROPERTY, dbUrl, EnvironmentUtils.Type.PUBLIC)
         }
     }
 }
