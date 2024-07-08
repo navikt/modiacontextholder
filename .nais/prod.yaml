@@ -160,7 +160,7 @@ spec:
     - name: APP_ENVIRONMENT_NAME
       value: "p"
     - name: AAREG_URL
-      value: "https://arbeid-og-inntekt.nais.adeo.no"
+      value: "https://arbeid-og-inntekt.prod-fss-pub.nais.io"
     - name: REDIS_PORT
       value: "6379"
     - name: REDIS_HOST
