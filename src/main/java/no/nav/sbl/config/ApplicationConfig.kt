@@ -8,9 +8,13 @@ import no.nav.common.auth.oidc.filter.OidcAuthenticatorConfig
 import no.nav.common.rest.filter.LogRequestFilter
 import no.nav.common.rest.filter.SetStandardHttpHeadersFilter
 import no.nav.common.utils.EnvironmentUtils
+import no.nav.sbl.db.DatabaseCleanerService
+import no.nav.sbl.rest.CleanupServlet
+import no.nav.sbl.service.AuthContextService
 import no.nav.sbl.util.AccesstokenServletFilter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.FilterRegistrationBean
+import org.springframework.boot.web.servlet.ServletRegistrationBean
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -25,7 +29,7 @@ import org.springframework.web.filter.ServerHttpObservationFilter
 @EnableAspectJAutoProxy
 @EnableScheduling
 @EnableCaching
-@Import(CorsConfig::class, ServiceContext::class)
+@Import(CorsConfig::class, DatabaseConfig::class, ServiceContext::class)
 open class ApplicationConfig {
     @Bean
     open fun corsFilterRegistration(): FilterRegistrationBean<CorsFilter> {
@@ -95,4 +99,13 @@ open class ApplicationConfig {
             order = 5
             addUrlPatterns("/api/*", "/redirect/*", "/modiacontextholder/*")
         }
+
+    @Bean
+    open fun cleanupServletServletRegistrationBean(
+        databaseCleanerService: DatabaseCleanerService,
+        authContextService: AuthContextService,
+    ): ServletRegistrationBean<CleanupServlet> {
+        val cleanupServlet = CleanupServlet(databaseCleanerService, authContextService)
+        return ServletRegistrationBean(cleanupServlet, "/internal/cleanup")
+    }
 }

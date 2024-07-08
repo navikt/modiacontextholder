@@ -19,7 +19,9 @@ import no.nav.sbl.azure.AzureADServiceImpl
 import no.nav.sbl.consumers.modiacontextholder.HttpModiaContextHolderClient
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.consumers.norg2.Norg2Client
+import no.nav.sbl.db.DatabaseCleanerService
 import no.nav.sbl.db.VeilederContextDatabase
+import no.nav.sbl.db.dao.EventDAO
 import no.nav.sbl.redis.RedisConfig
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.service.AuthContextService
@@ -81,6 +83,9 @@ open class ServiceContext {
         contextHolderClient: ModiaContextHolderClient,
         toggleableFeatureService: ToggleableFeatureService,
     ) = ContextService(veilederContextDatabase, redisPublisher, contextHolderClient, toggleableFeatureService)
+
+    @Bean
+    open fun databaseCleanerService(eventDAO: EventDAO) = DatabaseCleanerService(eventDAO)
 
     @Bean
     open fun enheterCache(norg2Client: Norg2Client) = EnheterCache(norg2Client)
