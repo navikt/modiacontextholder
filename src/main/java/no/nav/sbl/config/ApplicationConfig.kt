@@ -15,6 +15,7 @@ import no.nav.sbl.util.AccesstokenServletFilter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.boot.web.servlet.ServletRegistrationBean
+import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.EnableAspectJAutoProxy
@@ -27,6 +28,7 @@ import org.springframework.web.filter.ServerHttpObservationFilter
 @Configuration
 @EnableAspectJAutoProxy
 @EnableScheduling
+@EnableCaching
 @Import(CorsConfig::class, DatabaseConfig::class, ServiceContext::class)
 open class ApplicationConfig {
     @Bean
