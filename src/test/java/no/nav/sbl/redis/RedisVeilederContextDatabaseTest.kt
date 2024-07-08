@@ -26,11 +26,11 @@ class RedisVeilederContextDatabaseTest {
 
     private val authJedisPool by lazy {
         AuthJedisPool(
-            redisHostPortAndPassword =
-                RedisHostPortAndPassword(
-                    host = redisContainer.host,
-                    port = redisContainer.getMappedPort(6379),
+            uriWithAuth =
+                RedisUriWithAuth(
+                    uri = "redis://${redisContainer.host}:${redisContainer.getMappedPort(6379)}",
                     password = "password",
+                    user = "default",
                 ),
         )
     }

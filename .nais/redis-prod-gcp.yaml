@@ -1,0 +1,12 @@
+---
+apiVersion: aiven.io/v1alpha1
+kind: Redis
+metadata:
+  labels:
+    app: contextholder-redis
+    team: personoversikt
+  name: redis-personoversikt-contextholder
+  namespace: personoversikt
+spec:
+  plan: business-4
+  project: nav-prod
