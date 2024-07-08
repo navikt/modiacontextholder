@@ -13,17 +13,17 @@ open class EnheterService(
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    @Cacheable("enheterCache")
+    @Cacheable("enheter")
     open fun hentEnheter(ident: String): Try<List<DecoratorDomain.Enhet>> {
         val aktiveEnheter = enheterCache.get()
-        return Try.of {
-            client.hentTilganger(NavIdent.of(ident))
-                .mapNotNull { enhet -> aktiveEnheter[enhet.enhetId.get()] }
-                .sortedBy { it.enhetId }
-        }.onFailure { exception -> log.error("Kunne ikke hente enheter for $ident fra AXSYS", exception) }
+        return Try
+            .of {
+                client
+                    .hentTilganger(NavIdent.of(ident))
+                    .mapNotNull { enhet -> aktiveEnheter[enhet.enhetId.get()] }
+                    .sortedBy { it.enhetId }
+            }.onFailure { exception -> log.error("Kunne ikke hente enheter for $ident fra AXSYS", exception) }
     }
 
-    fun hentAlleEnheter(): List<DecoratorDomain.Enhet> {
-        return enheterCache.getAll()
-    }
+    fun hentAlleEnheter(): List<DecoratorDomain.Enhet> = enheterCache.getAll()
 }
