@@ -24,6 +24,7 @@
         <coroutines.version>1.3.9</coroutines.version>
         <modia-common-utils.version>1.2024.06.26-10.11-d6295491fb9f</modia-common-utils.version>
         <caffeine.version>3.1.8</caffeine.version>
+        <testcontainers.version>1.19.8</testcontainers.version>
     </properties>
 
     <repositories>
@@ -231,12 +232,6 @@
 
         <!-- redis -->
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <version>1.19.8</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>5.1.3</version>
@@ -263,6 +258,18 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -359,17 +366,23 @@
                                 <customScalar>
                                     <scalar>Long</scalar>
                                     <type>kotlin.Long</type>
-                                    <converter>no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.LongScalarConverter</converter>
+                                    <converter>
+                                        no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.LongScalarConverter
+                                    </converter>
                                 </customScalar>
                                 <customScalar>
                                     <scalar>DateTime</scalar>
                                     <type>java.time.LocalDateTime</type>
-                                    <converter>no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.DateTimeScalarConverter</converter>
+                                    <converter>
+                                        no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.DateTimeScalarConverter
+                                    </converter>
                                 </customScalar>
                                 <customScalar>
                                     <scalar>Date</scalar>
                                     <type>java.time.LocalDate</type>
-                                    <converter>no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.DateScalarConverter</converter>
+                                    <converter>
+                                        no.nav.sbl.dialogarena.modiabrukerdialog.api.utils.graphqlscalars.DateScalarConverter
+                                    </converter>
                                 </customScalar>
                             </customScalars>
                         </configuration>

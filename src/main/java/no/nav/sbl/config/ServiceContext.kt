@@ -28,7 +28,6 @@ import no.nav.sbl.service.AuthContextService
 import no.nav.sbl.service.ContextService
 import no.nav.sbl.service.EnheterCache
 import no.nav.sbl.service.EnheterService
-import no.nav.sbl.service.EventService
 import no.nav.sbl.service.PdlService
 import no.nav.sbl.service.VeilederService
 import no.nav.sbl.service.unleash.ToggleableFeatureService
@@ -84,9 +83,6 @@ open class ServiceContext {
         contextHolderClient: ModiaContextHolderClient,
         toggleableFeatureService: ToggleableFeatureService,
     ) = ContextService(veilederContextDatabase, redisPublisher, contextHolderClient, toggleableFeatureService)
-
-    @Bean
-    open fun eventService(veilederContextDatabase: VeilederContextDatabase) = EventService(veilederContextDatabase)
 
     @Bean
     open fun databaseCleanerService(eventDAO: EventDAO) = DatabaseCleanerService(eventDAO)

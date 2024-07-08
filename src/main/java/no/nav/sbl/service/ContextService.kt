@@ -139,7 +139,7 @@ class ContextService(
         }
     }
 
-    private fun saveToDb(event: PEvent): Long = veilederContextDatabase.save(event)
+    private fun saveToDb(event: PEvent) = veilederContextDatabase.save(event)
 
     private fun burdeSynceContextMedGcp(): Boolean =
         ApplicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SYNC_CONTEXT_MED_GCP)

@@ -73,7 +73,7 @@ class ContextServiceGcpTest {
 
     @Test
     fun `oppdater veileders context burde lagre til egen database og publisere til redis`() {
-        every { eventDAO.save(any()) } returns 1L
+        every { eventDAO.save(any()) } returns Unit
 
         contextService.oppdaterVeiledersContext(RSNyContext("verdi", "NY_AKTIV_ENHET"), veilederIdent)
 

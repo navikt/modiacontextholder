@@ -21,21 +21,21 @@ open class EventDAO(
 ) : VeilederContextDatabase {
     private val log = LoggerFactory.getLogger(EventDAO::class.java)
 
-    override fun save(pEvent: PEvent): Long =
+    override fun save(pEvent: PEvent) {
         if (ApplicationCluster.isGcp()) {
             val jdbcInsert =
                 SimpleJdbcInsert(jdbcTemplate)
                     .withTableName("EVENT")
                     .usingGeneratedKeyColumns("event_id")
             jdbcInsert
-                .executeAndReturnKey(
+                .execute(
                     mapOf(
                         "veileder_ident" to pEvent.veilederIdent,
                         "event_type" to pEvent.eventType,
                         "verdi" to pEvent.verdi,
                         "created" to Timestamp.valueOf(LocalDateTime.now()),
                     ),
-                ).toLong()
+                )
         } else {
             val nesteSekvensverdi =
                 jdbcTemplate.queryForObject("select ${"EVENT_ID_SEQ"}.nextval from dual") { rs: ResultSet, _: Int ->
@@ -55,8 +55,8 @@ open class EventDAO(
                 "insert into event (event_id, veileder_ident, event_type, verdi, created) VALUES (:event_id, :veileder_ident, :event_type, :verdi, :created)",
                 namedParameters,
             )
-            nesteSekvensverdi!!
         }
+    }
 
     override fun sistAktiveBrukerEvent(veilederIdent: String): PEvent? =
         try {
@@ -97,9 +97,6 @@ open class EventDAO(
             log.warn("Feilet ved henting av aktiv enhet", e)
             null
         }
-
-    override fun finnAlleEventerEtterId(id: Long): List<PEvent> =
-        jdbcTemplate.query("select * from event where event_id > ?", EventMapper, id)
 
     open fun slettAlleAvEventType(eventType: String) {
         jdbcTemplate.update("delete from event where event_type = ?", eventType)
