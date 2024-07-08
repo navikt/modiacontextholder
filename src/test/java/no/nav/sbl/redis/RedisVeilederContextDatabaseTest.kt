@@ -1,5 +1,6 @@
 package no.nav.sbl.redis
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.runBlocking
 import no.nav.sbl.db.domain.PEvent
@@ -35,7 +36,7 @@ class RedisVeilederContextDatabaseTest {
     private val redisVeilederContextDatabase by lazy {
         RedisVeilederContextDatabase(
             authJedisPool,
-            jacksonObjectMapper(),
+            jacksonObjectMapper().registerModule(JavaTimeModule()),
         )
     }
 
