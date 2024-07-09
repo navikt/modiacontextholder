@@ -49,10 +49,6 @@ spec:
         mountPath: /var/run/secrets/nais.io/service_user
       - kvPath: /serviceuser/data/prod/srvssolinux
         mountPath: /var/run/secrets/nais.io/srvssolinux
-      - kvPath: /oracle/data/prod/creds/modiacontextholder-user
-        mountPath: /var/run/secrets/nais.io/modiacontextholderDB
-      - kvPath: /oracle/data/prod/config/modiacontextholder
-        mountPath: /var/run/secrets/nais.io/db_config
       - kvPath: /apikey/appdynamics/prod
         mountPath: /var/run/secrets/nais.io/vault
   azure:

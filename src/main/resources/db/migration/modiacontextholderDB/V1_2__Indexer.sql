@@ -1,1 +1,0 @@
-CREATE INDEX events_veilederindent_index ON EVENT (VEILEDER_IDENT);

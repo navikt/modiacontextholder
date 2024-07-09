@@ -1,11 +1,9 @@
 package no.nav.sbl.service
 
-import lombok.extern.slf4j.Slf4j
 import no.nav.sbl.redis.RedisPersistence
 import no.nav.sbl.redis.TempCodeResult
 import org.springframework.beans.factory.annotation.Autowired
 
-@Slf4j
 class FnrCodeExchangeService(
     @Autowired private val redisPersistence: RedisPersistence,
 ) {
