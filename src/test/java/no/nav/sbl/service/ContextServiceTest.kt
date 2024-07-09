@@ -5,8 +5,8 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.domain.ContextEvent
-import no.nav.sbl.domain.ContextEventType.NY_AKTIV_BRUKER
+import no.nav.sbl.domain.VeilederContext
+import no.nav.sbl.domain.VeilederContextType.NY_AKTIV_BRUKER
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.rest.model.RSContext
@@ -53,23 +53,23 @@ class ContextServiceTest {
         har_ikke_aktiv_bruker()
     }
 
-    private val contextEvent =
-        ContextEvent(
+    private val veilederContext =
+        VeilederContext(
             veilederIdent = "veilederIdent",
-            eventType = NY_AKTIV_BRUKER,
+            contextType = NY_AKTIV_BRUKER,
             verdi = "bruker",
         )
 
     @Test
     fun eventer_fra_forrige_dag_regnes_ikke_som_aktuelle() {
-        val event = contextEvent.copy(created = LocalDateTime.now().minusDays(1))
+        val event = veilederContext.copy(created = LocalDateTime.now().minusDays(1))
         val result = erFortsattAktuell(event)
         assertThat(result).isFalse()
     }
 
     @Test
     fun eventer_fra_i_dag_regnes_som_aktuelle() {
-        val event = contextEvent.copy(created = LocalDateTime.now())
+        val event = veilederContext.copy(created = LocalDateTime.now())
         val result = erFortsattAktuell(event)
         assertThat(result).isTrue()
     }
@@ -97,8 +97,8 @@ class ContextServiceTest {
 
     private fun gitt_sist_aktive_bruker_event(created: LocalDateTime) {
         val pEvent =
-            contextEvent.copy(
-                eventType = NY_AKTIV_BRUKER,
+            veilederContext.copy(
+                contextType = NY_AKTIV_BRUKER,
                 verdi = brukerId,
                 created = created,
             )

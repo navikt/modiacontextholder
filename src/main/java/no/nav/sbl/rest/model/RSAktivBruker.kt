@@ -1,15 +1,15 @@
 package no.nav.sbl.rest.model
 
-import no.nav.sbl.domain.ContextEvent
-import no.nav.sbl.domain.ContextEventType
+import no.nav.sbl.domain.VeilederContext
+import no.nav.sbl.domain.VeilederContextType
 
 data class RSAktivBruker(
     val aktivBruker: String?,
 ) {
     companion object {
-        fun from(contextEvent: ContextEvent): RSAktivBruker =
+        fun from(veilederContext: VeilederContext): RSAktivBruker =
             RSAktivBruker(
-                if (ContextEventType.NY_AKTIV_BRUKER == contextEvent.eventType) contextEvent.verdi else null,
+                if (VeilederContextType.NY_AKTIV_BRUKER == veilederContext.contextType) veilederContext.verdi else null,
             )
     }
 }

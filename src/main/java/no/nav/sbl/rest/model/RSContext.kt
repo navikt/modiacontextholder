@@ -1,17 +1,17 @@
 package no.nav.sbl.rest.model
 
-import no.nav.sbl.domain.ContextEvent
-import no.nav.sbl.domain.ContextEventType
+import no.nav.sbl.domain.VeilederContext
+import no.nav.sbl.domain.VeilederContextType
 
 data class RSContext(
     var aktivBruker: String? = null,
     var aktivEnhet: String? = null,
 ) {
     companion object {
-        fun from(contextEvent: ContextEvent): RSContext =
+        fun from(veilederContext: VeilederContext): RSContext =
             RSContext(
-                aktivBruker = if (ContextEventType.NY_AKTIV_BRUKER == contextEvent.eventType) contextEvent.verdi else null,
-                aktivEnhet = if (ContextEventType.NY_AKTIV_ENHET == contextEvent.eventType) contextEvent.verdi else null,
+                aktivBruker = if (VeilederContextType.NY_AKTIV_BRUKER == veilederContext.contextType) veilederContext.verdi else null,
+                aktivEnhet = if (VeilederContextType.NY_AKTIV_ENHET == veilederContext.contextType) veilederContext.verdi else null,
             )
     }
 }

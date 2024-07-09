@@ -1,19 +1,19 @@
 package no.nav.sbl.redis
 
-import no.nav.sbl.domain.ContextEvent
-import no.nav.sbl.domain.ContextEventType
+import no.nav.sbl.domain.VeilederContext
+import no.nav.sbl.domain.VeilederContextType
 
 interface VeilederContextDatabase {
-    fun save(contextEvent: ContextEvent)
+    fun save(veilederContext: VeilederContext)
 
-    fun sistAktiveBrukerEvent(veilederIdent: String): ContextEvent?
+    fun sistAktiveBrukerEvent(veilederIdent: String): VeilederContext?
 
-    fun sistAktiveEnhetEvent(veilederIdent: String): ContextEvent?
+    fun sistAktiveEnhetEvent(veilederIdent: String): VeilederContext?
 
     fun slettAlleEventer(veilederIdent: String)
 
     fun slettAlleAvEventTypeForVeileder(
-        eventType: ContextEventType,
+        eventType: VeilederContextType,
         veilederIdent: String,
     )
 }

@@ -1,6 +1,6 @@
 package no.nav.sbl.domain
 
-enum class ContextEventType {
+enum class VeilederContextType {
     NY_AKTIV_BRUKER,
     NY_AKTIV_ENHET,
 }

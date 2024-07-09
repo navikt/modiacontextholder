@@ -1,16 +1,16 @@
 package no.nav.sbl.rest.model
 
-import no.nav.sbl.domain.ContextEvent
-import no.nav.sbl.domain.ContextEventType
+import no.nav.sbl.domain.VeilederContext
+import no.nav.sbl.domain.VeilederContextType
 
 data class RSAktivEnhet(
     val aktivEnhet: String?,
 ) {
     companion object {
-        fun from(contextEvent: ContextEvent): RSAktivEnhet {
+        fun from(veilederContext: VeilederContext): RSAktivEnhet {
             val aktivEnhet =
-                if (contextEvent.eventType == ContextEventType.NY_AKTIV_ENHET) {
-                    contextEvent.verdi
+                if (veilederContext.contextType == VeilederContextType.NY_AKTIV_ENHET) {
+                    veilederContext.verdi
                 } else {
                     null
                 }
