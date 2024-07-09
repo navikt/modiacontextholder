@@ -19,7 +19,7 @@ import no.nav.sbl.azure.AzureADServiceImpl
 import no.nav.sbl.consumers.modiacontextholder.HttpModiaContextHolderClient
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.consumers.norg2.Norg2Client
-import no.nav.sbl.db.VeilederContextDatabase
+import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.redis.RedisConfig
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.service.AuthContextService

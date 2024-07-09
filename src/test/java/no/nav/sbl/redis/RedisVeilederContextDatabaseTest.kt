@@ -3,7 +3,7 @@ package no.nav.sbl.redis
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.runBlocking
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.domain.ContextEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -40,15 +40,15 @@ class RedisVeilederContextDatabaseTest {
         )
     }
 
-    private val enhetEvent: PEvent =
-        PEvent(
+    private val enhetEvent: ContextEvent =
+        ContextEvent(
             eventType = "NY_AKTIV_ENHET",
             verdi = "enhet",
             veilederIdent = "veileder",
         )
 
     private val brukerEvent =
-        PEvent(
+        ContextEvent(
             eventType = "NY_AKTIV_BRUKER",
             verdi = "bruker",
             veilederIdent = "veileder",

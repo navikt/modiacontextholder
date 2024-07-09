@@ -1,15 +1,15 @@
 package no.nav.sbl.rest.domain
 
-import no.nav.sbl.db.domain.EventType
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.domain.ContextEventType
+import no.nav.sbl.domain.ContextEvent
 
 data class RSAktivEnhet(
     val aktivEnhet: String?
 ) {
     companion object {
-        fun from(pEvent: PEvent): RSAktivEnhet {
-            val aktivEnhet = if (pEvent.eventType == EventType.NY_AKTIV_ENHET.name) {
-                pEvent.verdi
+        fun from(contextEvent: ContextEvent): RSAktivEnhet {
+            val aktivEnhet = if (contextEvent.eventType == ContextEventType.NY_AKTIV_ENHET.name) {
+                contextEvent.verdi
             } else {
                 null
             }

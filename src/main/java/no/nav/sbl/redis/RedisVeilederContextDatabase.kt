@@ -2,8 +2,7 @@ package no.nav.sbl.redis
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
-import no.nav.sbl.db.VeilederContextDatabase
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.domain.ContextEvent
 import no.nav.sbl.redis.model.RedisEventType
 import no.nav.sbl.redis.model.RedisPEvent
 import no.nav.sbl.redis.model.RedisPEventKey
@@ -15,9 +14,9 @@ class RedisVeilederContextDatabase(
 ) : VeilederContextDatabase {
     private val timeToLive = Duration.ofHours(12L)
 
-    override fun save(pEvent: PEvent): Unit =
+    override fun save(contextEvent: ContextEvent): Unit =
         runBlocking {
-            val redisPEvent = RedisPEvent.from(pEvent)
+            val redisPEvent = RedisPEvent.from(contextEvent)
             val json = objectMapper.writeValueAsString(redisPEvent)
 
             authJedisPool
@@ -26,7 +25,7 @@ class RedisVeilederContextDatabase(
                 }.getOrThrow()
         }
 
-    override fun sistAktiveBrukerEvent(veilederIdent: String): PEvent? =
+    override fun sistAktiveBrukerEvent(veilederIdent: String): ContextEvent? =
         runBlocking {
             val key = RedisPEventKey(RedisEventType.AKTIV_BRUKER, veilederIdent)
 
@@ -39,7 +38,7 @@ class RedisVeilederContextDatabase(
                 }.getOrThrow()
         }
 
-    override fun sistAktiveEnhetEvent(veilederIdent: String): PEvent? =
+    override fun sistAktiveEnhetEvent(veilederIdent: String): ContextEvent? =
         runBlocking {
             val key = RedisPEventKey(RedisEventType.AKTIV_ENHET, veilederIdent)
 

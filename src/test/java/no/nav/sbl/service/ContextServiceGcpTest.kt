@@ -7,8 +7,8 @@ import io.mockk.mockkObject
 import io.mockk.verify
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.db.VeilederContextDatabase
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.redis.VeilederContextDatabase
+import no.nav.sbl.domain.ContextEvent
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet
@@ -43,8 +43,9 @@ class ContextServiceGcpTest {
 
     private val veilederIdent = "veilederIdent"
     private val enhetContext = RSContext(aktivEnhet = "enhet")
-    private val nyAktivEnhetEvent = PEvent(eventType = "NY_AKTIV_ENHET", verdi = "enhet")
-    private val nyAktivBrukerEvent = PEvent(eventType = "NY_AKTIV_BRUKER", verdi = "bruker")
+    private val nyAktivEnhetEvent = ContextEvent(eventType = "NY_AKTIV_ENHET", verdi = "enhet", veilederIdent = veilederIdent)
+    private val nyAktivBrukerEvent =
+        ContextEvent(eventType = "NY_AKTIV_BRUKER", verdi = "bruker", veilederIdent = veilederIdent)
 
     companion object {
         @JvmStatic

@@ -7,7 +7,7 @@ import io.mockk.mockkObject
 import io.mockk.verify
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.db.VeilederContextDatabase
+import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet

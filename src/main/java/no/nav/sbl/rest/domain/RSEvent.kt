@@ -1,15 +1,15 @@
 package no.nav.sbl.rest.domain;
 
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.domain.ContextEvent
 
 data class RSEvent(
     val veilederIdent: String,
     val eventType: String,
 ) {
     companion object {
-        fun from(pEvent: PEvent) = RSEvent(
-            veilederIdent = pEvent.veilederIdent!!,
-            eventType = pEvent.eventType!!,
+        fun from(contextEvent: ContextEvent) = RSEvent(
+            veilederIdent = contextEvent.veilederIdent!!,
+            eventType = contextEvent.eventType!!,
         )
     }
 }

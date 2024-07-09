@@ -3,9 +3,9 @@ package no.nav.sbl.service
 import no.nav.common.json.JsonUtils
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.db.VeilederContextDatabase
-import no.nav.sbl.db.domain.EventType
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.redis.VeilederContextDatabase
+import no.nav.sbl.domain.ContextEventType
+import no.nav.sbl.domain.ContextEvent
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet
@@ -29,7 +29,7 @@ class ContextService(
 
     companion object {
         @JvmStatic
-        fun erFortsattAktuell(pEvent: PEvent): Boolean = LocalDate.now().isEqual(pEvent.created?.toLocalDate())
+        fun erFortsattAktuell(contextEvent: ContextEvent): Boolean = LocalDate.now().isEqual(contextEvent.created?.toLocalDate())
     }
 
     fun hentVeiledersContext(veilederIdent: String): RSContext =
@@ -49,7 +49,7 @@ class ContextService(
         veilederIdent: String,
     ) {
         val event =
-            PEvent(
+            ContextEvent(
                 verdi = nyContext.verdi,
                 eventType = nyContext.eventType,
                 veilederIdent = veilederIdent,
@@ -59,7 +59,7 @@ class ContextService(
                 .oppdaterVeiledersContext(nyContext, veilederIdent)
                 .getOrThrow()
         } else {
-            if (EventType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isEmpty()) {
+            if (ContextEventType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isEmpty()) {
                 nullstillAktivBruker(veilederIdent)
                 return
             } else if (nyContext.verdi.isEmpty()) {
@@ -135,11 +135,11 @@ class ContextService(
         if (burdeSynceContextMedGcp()) {
             contextHolderClient.nullstillAktivBruker(veilederIdent)
         } else {
-            veilederContextDatabase.slettAlleAvEventTypeForVeileder(EventType.NY_AKTIV_BRUKER.name, veilederIdent)
+            veilederContextDatabase.slettAlleAvEventTypeForVeileder(ContextEventType.NY_AKTIV_BRUKER.name, veilederIdent)
         }
     }
 
-    private fun saveToDb(event: PEvent) = veilederContextDatabase.save(event)
+    private fun saveToDb(event: ContextEvent) = veilederContextDatabase.save(event)
 
     private fun burdeSynceContextMedGcp(): Boolean =
         ApplicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SYNC_CONTEXT_MED_GCP)
