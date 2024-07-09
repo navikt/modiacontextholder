@@ -1,4 +1,4 @@
-package no.nav.sbl.rest.domain
+package no.nav.sbl.rest.model
 
 class DecoratorDomain {
     data class DecoratorConfig(

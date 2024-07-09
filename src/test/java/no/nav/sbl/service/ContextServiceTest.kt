@@ -9,7 +9,7 @@ import no.nav.sbl.domain.ContextEvent
 import no.nav.sbl.domain.ContextEventType.NY_AKTIV_BRUKER
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.redis.VeilederContextDatabase
-import no.nav.sbl.rest.domain.RSContext
+import no.nav.sbl.rest.model.RSContext
 import no.nav.sbl.service.ContextService.Companion.erFortsattAktuell
 import no.nav.sbl.service.unleash.ToggleableFeature
 import no.nav.sbl.service.unleash.ToggleableFeatureService

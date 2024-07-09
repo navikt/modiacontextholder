@@ -1,4 +1,4 @@
-package no.nav.sbl.rest.domain
+package no.nav.sbl.rest.model
 
 import no.nav.sbl.domain.ContextEvent
 import no.nav.sbl.domain.ContextEventType

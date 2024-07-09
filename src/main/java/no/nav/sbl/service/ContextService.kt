@@ -7,11 +7,11 @@ import no.nav.sbl.domain.ContextEvent
 import no.nav.sbl.domain.ContextEventType
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.redis.VeilederContextDatabase
-import no.nav.sbl.rest.domain.RSAktivBruker
-import no.nav.sbl.rest.domain.RSAktivEnhet
-import no.nav.sbl.rest.domain.RSContext
-import no.nav.sbl.rest.domain.RSEvent
-import no.nav.sbl.rest.domain.RSNyContext
+import no.nav.sbl.rest.model.RSAktivBruker
+import no.nav.sbl.rest.model.RSAktivEnhet
+import no.nav.sbl.rest.model.RSContext
+import no.nav.sbl.rest.model.RSEvent
+import no.nav.sbl.rest.model.RSNyContext
 import no.nav.sbl.service.unleash.ToggleableFeatureService
 import no.nav.sbl.service.unleash.ToggleableFeatures
 import org.slf4j.LoggerFactory

@@ -2,7 +2,7 @@ package no.nav.sbl.rest
 
 import no.nav.common.rest.client.RestClient
 import no.nav.common.utils.EnvironmentUtils
-import no.nav.sbl.rest.domain.RSContext
+import no.nav.sbl.rest.model.RSContext
 import no.nav.sbl.service.AuthContextService
 import no.nav.sbl.service.ContextService
 import okhttp3.OkHttpClient

@@ -3,8 +3,7 @@ package no.nav.sbl.service
 import no.nav.common.client.nom.NomClient
 import no.nav.common.client.nom.VeilederNavn
 import no.nav.common.types.identer.NavIdent
-import no.nav.sbl.rest.domain.DecoratorDomain
-import org.springframework.beans.factory.annotation.Autowired
+import no.nav.sbl.rest.model.DecoratorDomain
 import org.springframework.cache.annotation.Cacheable
 
 open class VeilederService(private val nomClient: NomClient) {

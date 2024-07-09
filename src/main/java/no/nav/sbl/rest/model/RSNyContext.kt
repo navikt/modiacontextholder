@@ -1,4 +1,4 @@
-package no.nav.sbl.rest.domain
+package no.nav.sbl.rest.model
 
 data class RSNyContext(
     val verdi: String,

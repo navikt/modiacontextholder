@@ -2,7 +2,7 @@ package no.nav.sbl.service
 
 import no.nav.sbl.consumers.norg2.Norg2Client
 import no.nav.sbl.consumers.norg2.domain.Enhet
-import no.nav.sbl.rest.domain.DecoratorDomain
+import no.nav.sbl.rest.model.DecoratorDomain
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.util.*
