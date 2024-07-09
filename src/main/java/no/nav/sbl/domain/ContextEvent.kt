@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 data class ContextEvent(
     val veilederIdent: String,
-    val eventType: String,
+    val eventType: ContextEventType,
     val created: LocalDateTime? = null,
     val verdi: String,
 )

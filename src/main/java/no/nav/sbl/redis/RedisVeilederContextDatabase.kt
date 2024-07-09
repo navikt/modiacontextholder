@@ -3,6 +3,7 @@ package no.nav.sbl.redis
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
 import no.nav.sbl.domain.ContextEvent
+import no.nav.sbl.domain.ContextEventType
 import no.nav.sbl.redis.model.RedisEventType
 import no.nav.sbl.redis.model.RedisPEvent
 import no.nav.sbl.redis.model.RedisPEventKey
@@ -65,7 +66,7 @@ class RedisVeilederContextDatabase(
         }
 
     override fun slettAlleAvEventTypeForVeileder(
-        eventType: String,
+        eventType: ContextEventType,
         veilederIdent: String,
     ): Unit =
         runBlocking {

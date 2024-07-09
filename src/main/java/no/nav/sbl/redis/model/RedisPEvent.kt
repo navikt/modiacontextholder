@@ -22,9 +22,9 @@ data class RedisPEvent(
     companion object {
         fun from(contextEvent: ContextEvent): RedisPEvent =
             RedisPEvent(
-                veilederIdent = contextEvent.veilederIdent!!,
-                eventType = RedisEventType.from(contextEvent.eventType!!),
-                verdi = contextEvent.verdi!!,
+                veilederIdent = contextEvent.veilederIdent,
+                eventType = RedisEventType.from(contextEvent.eventType),
+                verdi = contextEvent.verdi,
                 created = contextEvent.created ?: LocalDateTime.now(),
             )
     }

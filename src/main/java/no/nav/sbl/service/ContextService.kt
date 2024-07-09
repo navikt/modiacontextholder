@@ -3,10 +3,10 @@ package no.nav.sbl.service
 import no.nav.common.json.JsonUtils
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.redis.VeilederContextDatabase
-import no.nav.sbl.domain.ContextEventType
 import no.nav.sbl.domain.ContextEvent
+import no.nav.sbl.domain.ContextEventType
 import no.nav.sbl.redis.RedisPublisher
+import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.rest.domain.RSAktivBruker
 import no.nav.sbl.rest.domain.RSAktivEnhet
 import no.nav.sbl.rest.domain.RSContext
@@ -51,7 +51,7 @@ class ContextService(
         val event =
             ContextEvent(
                 verdi = nyContext.verdi,
-                eventType = nyContext.eventType,
+                eventType = ContextEventType.valueOf(nyContext.eventType),
                 veilederIdent = veilederIdent,
             )
         if (burdeSynceContextMedGcp()) {
@@ -135,7 +135,10 @@ class ContextService(
         if (burdeSynceContextMedGcp()) {
             contextHolderClient.nullstillAktivBruker(veilederIdent)
         } else {
-            veilederContextDatabase.slettAlleAvEventTypeForVeileder(ContextEventType.NY_AKTIV_BRUKER.name, veilederIdent)
+            veilederContextDatabase.slettAlleAvEventTypeForVeileder(
+                ContextEventType.NY_AKTIV_BRUKER,
+                veilederIdent,
+            )
         }
     }
 

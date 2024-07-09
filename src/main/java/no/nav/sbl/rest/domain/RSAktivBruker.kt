@@ -1,7 +1,7 @@
 package no.nav.sbl.rest.domain
 
-import no.nav.sbl.domain.ContextEventType
 import no.nav.sbl.domain.ContextEvent
+import no.nav.sbl.domain.ContextEventType
 
 data class RSAktivBruker(
     val aktivBruker: String?,
@@ -9,7 +9,7 @@ data class RSAktivBruker(
     companion object {
         fun from(contextEvent: ContextEvent): RSAktivBruker =
             RSAktivBruker(
-                if (ContextEventType.NY_AKTIV_BRUKER.name == contextEvent.eventType) contextEvent.verdi else null,
+                if (ContextEventType.NY_AKTIV_BRUKER == contextEvent.eventType) contextEvent.verdi else null,
             )
     }
 }

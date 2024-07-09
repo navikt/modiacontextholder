@@ -4,6 +4,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.runBlocking
 import no.nav.sbl.domain.ContextEvent
+import no.nav.sbl.domain.ContextEventType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -42,14 +43,14 @@ class RedisVeilederContextDatabaseTest {
 
     private val enhetEvent: ContextEvent =
         ContextEvent(
-            eventType = "NY_AKTIV_ENHET",
+            eventType = ContextEventType.NY_AKTIV_ENHET,
             verdi = "enhet",
             veilederIdent = "veileder",
         )
 
     private val brukerEvent =
         ContextEvent(
-            eventType = "NY_AKTIV_BRUKER",
+            eventType = ContextEventType.NY_AKTIV_BRUKER,
             verdi = "bruker",
             veilederIdent = "veileder",
         )
@@ -79,7 +80,7 @@ class RedisVeilederContextDatabaseTest {
         redisVeilederContextDatabase.save(enhetEvent)
         redisVeilederContextDatabase.save(brukerEvent)
 
-        redisVeilederContextDatabase.slettAlleAvEventTypeForVeileder("NY_AKTIV_ENHET", "veileder")
+        redisVeilederContextDatabase.slettAlleAvEventTypeForVeileder(ContextEventType.NY_AKTIV_ENHET, "veileder")
 
         val aktivEnhetEvent = redisVeilederContextDatabase.sistAktiveEnhetEvent("veileder")
         val aktivBrukerEvent = redisVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
@@ -94,7 +95,7 @@ class RedisVeilederContextDatabaseTest {
         redisVeilederContextDatabase.save(brukerEvent)
         redisVeilederContextDatabase.save(enhetEvent)
 
-        redisVeilederContextDatabase.slettAlleAvEventTypeForVeileder("NY_AKTIV_BRUKER", "veileder")
+        redisVeilederContextDatabase.slettAlleAvEventTypeForVeileder(ContextEventType.NY_AKTIV_BRUKER, "veileder")
 
         val aktivBrukerEvent = redisVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
         val aktivEnhetEvent = redisVeilederContextDatabase.sistAktiveEnhetEvent("veileder")

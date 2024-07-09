@@ -1,6 +1,7 @@
 package no.nav.sbl.redis
 
 import no.nav.sbl.domain.ContextEvent
+import no.nav.sbl.domain.ContextEventType
 
 interface VeilederContextDatabase {
     fun save(contextEvent: ContextEvent)
@@ -12,7 +13,7 @@ interface VeilederContextDatabase {
     fun slettAlleEventer(veilederIdent: String)
 
     fun slettAlleAvEventTypeForVeileder(
-        eventType: String,
+        eventType: ContextEventType,
         veilederIdent: String,
     )
 }

@@ -5,10 +5,10 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.redis.VeilederContextDatabase
-import no.nav.sbl.domain.ContextEventType.NY_AKTIV_BRUKER
 import no.nav.sbl.domain.ContextEvent
+import no.nav.sbl.domain.ContextEventType.NY_AKTIV_BRUKER
 import no.nav.sbl.redis.RedisPublisher
+import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.rest.domain.RSContext
 import no.nav.sbl.service.ContextService.Companion.erFortsattAktuell
 import no.nav.sbl.service.unleash.ToggleableFeature
@@ -56,7 +56,7 @@ class ContextServiceTest {
     private val contextEvent =
         ContextEvent(
             veilederIdent = "veilederIdent",
-            eventType = "NY_AKTIV_BRUKER",
+            eventType = NY_AKTIV_BRUKER,
             verdi = "bruker",
         )
 
@@ -98,7 +98,7 @@ class ContextServiceTest {
     private fun gitt_sist_aktive_bruker_event(created: LocalDateTime) {
         val pEvent =
             contextEvent.copy(
-                eventType = NY_AKTIV_BRUKER.name,
+                eventType = NY_AKTIV_BRUKER,
                 verdi = brukerId,
                 created = created,
             )
