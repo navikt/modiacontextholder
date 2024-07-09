@@ -8,6 +8,8 @@ ADD / /source
 WORKDIR /source
 RUN mvn package -DskipTests
 
-FROM ghcr.io/navikt/baseimages/temurin:17-appdynamics
+FROM gcr.io/distroless/java17-debian12:nonroot
 
 COPY --from=builder /source/target/modiacontextholder.jar app.jar
+
+CMD ["app.jar"]
