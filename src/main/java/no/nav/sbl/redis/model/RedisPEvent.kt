@@ -5,16 +5,16 @@ import java.time.LocalDateTime
 
 data class RedisPEvent(
     val veilederIdent: String,
-    val eventType: RedisEventType,
+    val contextType: RedisVeilederContextType,
     val verdi: String,
     val created: LocalDateTime,
 ) {
-    val key: RedisPEventKey = RedisPEventKey(eventType, veilederIdent)
+    val key: RedisPEventKey = RedisPEventKey(contextType, veilederIdent)
 
     fun toPEvent(): VeilederContext =
         VeilederContext(
             veilederIdent = veilederIdent,
-            contextType = eventType.toDomainEventType(),
+            contextType = contextType.toDomain(),
             verdi = verdi,
             created = created,
         )
@@ -23,7 +23,7 @@ data class RedisPEvent(
         fun from(veilederContext: VeilederContext): RedisPEvent =
             RedisPEvent(
                 veilederIdent = veilederContext.veilederIdent,
-                eventType = RedisEventType.from(veilederContext.contextType),
+                contextType = RedisVeilederContextType.from(veilederContext.contextType),
                 verdi = veilederContext.verdi,
                 created = veilederContext.created ?: LocalDateTime.now(),
             )

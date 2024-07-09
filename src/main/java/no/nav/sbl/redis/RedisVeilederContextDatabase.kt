@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
 import no.nav.sbl.domain.VeilederContext
 import no.nav.sbl.domain.VeilederContextType
-import no.nav.sbl.redis.model.RedisEventType
+import no.nav.sbl.redis.model.RedisVeilederContextType
 import no.nav.sbl.redis.model.RedisPEvent
 import no.nav.sbl.redis.model.RedisPEventKey
 import java.time.Duration
@@ -28,7 +28,7 @@ class RedisVeilederContextDatabase(
 
     override fun sistAktiveBrukerEvent(veilederIdent: String): VeilederContext? =
         runBlocking {
-            val key = RedisPEventKey(RedisEventType.AKTIV_BRUKER, veilederIdent)
+            val key = RedisPEventKey(RedisVeilederContextType.AKTIV_BRUKER, veilederIdent)
 
             authJedisPool
                 .useResource {
@@ -41,7 +41,7 @@ class RedisVeilederContextDatabase(
 
     override fun sistAktiveEnhetEvent(veilederIdent: String): VeilederContext? =
         runBlocking {
-            val key = RedisPEventKey(RedisEventType.AKTIV_ENHET, veilederIdent)
+            val key = RedisPEventKey(RedisVeilederContextType.AKTIV_ENHET, veilederIdent)
 
             authJedisPool
                 .useResource {
@@ -55,7 +55,7 @@ class RedisVeilederContextDatabase(
     override fun slettAlleEventer(veilederIdent: String): Unit =
         runBlocking {
             val keys =
-                RedisEventType.entries
+                RedisVeilederContextType.entries
                     .map { RedisPEventKey(it, veilederIdent).toString() }
                     .toTypedArray()
 
@@ -66,11 +66,11 @@ class RedisVeilederContextDatabase(
         }
 
     override fun slettAlleAvEventTypeForVeileder(
-        eventType: VeilederContextType,
+        contextType: VeilederContextType,
         veilederIdent: String,
     ): Unit =
         runBlocking {
-            val key = RedisPEventKey(RedisEventType.from(eventType), veilederIdent)
+            val key = RedisPEventKey(RedisVeilederContextType.from(contextType), veilederIdent)
 
             authJedisPool
                 .useResource { jedis ->

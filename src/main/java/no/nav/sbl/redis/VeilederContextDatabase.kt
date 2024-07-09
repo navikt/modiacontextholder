@@ -13,7 +13,7 @@ interface VeilederContextDatabase {
     fun slettAlleEventer(veilederIdent: String)
 
     fun slettAlleAvEventTypeForVeileder(
-        eventType: VeilederContextType,
+        contextType: VeilederContextType,
         veilederIdent: String,
     )
 }

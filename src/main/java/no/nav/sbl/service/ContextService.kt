@@ -48,7 +48,7 @@ class ContextService(
         nyContext: RSNyContext,
         veilederIdent: String,
     ) {
-        val event =
+        val veilederContext =
             VeilederContext(
                 verdi = nyContext.verdi,
                 contextType = VeilederContextType.valueOf(nyContext.eventType),
@@ -66,10 +66,10 @@ class ContextService(
                 log.warn("Forsøk på å sette aktivEnhet til null, vil generere feil.")
             }
 
-            saveToDb(event)
+            saveToDb(veilederContext)
         }
 
-        val message = JsonUtils.toJson(RSEvent.from(event))
+        val message = JsonUtils.toJson(RSEvent.from(veilederContext))
         redisPublisher.publishMessage(message)
     }
 
