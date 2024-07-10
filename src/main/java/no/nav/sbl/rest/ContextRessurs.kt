@@ -129,4 +129,33 @@ class ContextRessurs(
             contextService.hentVeiledersContext(veilederIdent)
         }
     }
+
+    @PostMapping
+    @Timed("oppdaterVeiledersContextWithCode")
+    suspend fun oppdaterVeiledersContextWithCode(
+        @RequestHeader(value = "referer", required = false) referer: String?,
+        @RequestBody rsNyContext: RSNyContext,
+    ): RSContext {
+        val ident = authContextUtils.ident
+        val eventType = rsNyContext.eventType
+        if (ident.isEmpty) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident")
+        }
+
+        val result = fnrCodeExchangeService.getFnr(rsNyContext.verdi)
+        if (result.isFailure) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error", result.exceptionOrNull())
+        }
+        val fnr = result.getOrNull() ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Fant ikke fnr for koden")
+
+        val type = Pair(AuditIdentifier.TYPE, eventType)
+        val verdi = Pair(AuditIdentifier.VALUE, fnr)
+        val url = Pair(AuditIdentifier.REFERER, referer)
+
+        return withAudit(describe(ident, Action.UPDATE, AuditResources.OppdaterKontekst, type, verdi, url)) {
+            val veilederIdent = ident.get()
+            contextService.oppdaterVeiledersContext(RSNyContext(eventType = eventType, verdi = fnr), veilederIdent)
+            contextService.hentVeiledersContext(veilederIdent)
+        }
+    }
 }
