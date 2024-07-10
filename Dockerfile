@@ -8,8 +8,10 @@ ADD / /source
 WORKDIR /source
 RUN mvn package -DskipTests
 
-FROM gcr.io/distroless/java17-debian12:nonroot
+FROM gcr.io/distroless/java17-debian12
 
 COPY --from=builder /source/target/modiacontextholder.jar app.jar
+
+USER nonroot
 
 CMD ["app.jar"]
