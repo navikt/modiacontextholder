@@ -6,10 +6,10 @@ import no.nav.sbl.naudit.Audit.Companion.describe
 import no.nav.sbl.naudit.Audit.Companion.withAudit
 import no.nav.sbl.naudit.AuditIdentifier
 import no.nav.sbl.naudit.AuditResources
-import no.nav.sbl.rest.domain.RSAktivBruker
-import no.nav.sbl.rest.domain.RSAktivEnhet
-import no.nav.sbl.rest.domain.RSContext
-import no.nav.sbl.rest.domain.RSNyContext
+import no.nav.sbl.rest.model.RSAktivBruker
+import no.nav.sbl.rest.model.RSAktivEnhet
+import no.nav.sbl.rest.model.RSContext
+import no.nav.sbl.rest.model.RSNyContext
 import no.nav.sbl.service.AuthContextService
 import no.nav.sbl.service.ContextService
 import org.springframework.http.HttpStatus

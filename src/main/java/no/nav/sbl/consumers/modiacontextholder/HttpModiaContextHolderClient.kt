@@ -1,10 +1,10 @@
 package no.nav.sbl.consumers.modiacontextholder
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.sbl.rest.domain.RSAktivBruker
-import no.nav.sbl.rest.domain.RSAktivEnhet
-import no.nav.sbl.rest.domain.RSContext
-import no.nav.sbl.rest.domain.RSNyContext
+import no.nav.sbl.rest.model.RSAktivBruker
+import no.nav.sbl.rest.model.RSAktivEnhet
+import no.nav.sbl.rest.model.RSContext
+import no.nav.sbl.rest.model.RSNyContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request

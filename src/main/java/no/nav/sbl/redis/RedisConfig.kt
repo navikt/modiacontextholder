@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.common.utils.EnvironmentUtils
-import no.nav.sbl.db.VeilederContextDatabase
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

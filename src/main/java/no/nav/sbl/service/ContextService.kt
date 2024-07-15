@@ -3,15 +3,15 @@ package no.nav.sbl.service
 import no.nav.common.json.JsonUtils
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.db.VeilederContextDatabase
-import no.nav.sbl.db.domain.EventType
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.domain.VeilederContext
+import no.nav.sbl.domain.VeilederContextType
 import no.nav.sbl.redis.RedisPublisher
-import no.nav.sbl.rest.domain.RSAktivBruker
-import no.nav.sbl.rest.domain.RSAktivEnhet
-import no.nav.sbl.rest.domain.RSContext
-import no.nav.sbl.rest.domain.RSEvent
-import no.nav.sbl.rest.domain.RSNyContext
+import no.nav.sbl.redis.VeilederContextDatabase
+import no.nav.sbl.rest.model.RSAktivBruker
+import no.nav.sbl.rest.model.RSAktivEnhet
+import no.nav.sbl.rest.model.RSContext
+import no.nav.sbl.rest.model.RSEvent
+import no.nav.sbl.rest.model.RSNyContext
 import no.nav.sbl.service.unleash.ToggleableFeatureService
 import no.nav.sbl.service.unleash.ToggleableFeatures
 import org.slf4j.LoggerFactory
@@ -29,7 +29,7 @@ class ContextService(
 
     companion object {
         @JvmStatic
-        fun erFortsattAktuell(pEvent: PEvent): Boolean = LocalDate.now().isEqual(pEvent.created?.toLocalDate())
+        fun erFortsattAktuell(veilederContext: VeilederContext): Boolean = LocalDate.now().isEqual(veilederContext.created?.toLocalDate())
     }
 
     fun hentVeiledersContext(veilederIdent: String): RSContext =
@@ -48,10 +48,10 @@ class ContextService(
         nyContext: RSNyContext,
         veilederIdent: String,
     ) {
-        val event =
-            PEvent(
+        val veilederContext =
+            VeilederContext(
                 verdi = nyContext.verdi,
-                eventType = nyContext.eventType,
+                contextType = VeilederContextType.valueOf(nyContext.eventType),
                 veilederIdent = veilederIdent,
             )
         if (burdeSynceContextMedGcp()) {
@@ -59,17 +59,17 @@ class ContextService(
                 .oppdaterVeiledersContext(nyContext, veilederIdent)
                 .getOrThrow()
         } else {
-            if (EventType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isEmpty()) {
+            if (VeilederContextType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isEmpty()) {
                 nullstillAktivBruker(veilederIdent)
                 return
             } else if (nyContext.verdi.isEmpty()) {
                 log.warn("Forsøk på å sette aktivEnhet til null, vil generere feil.")
             }
 
-            saveToDb(event)
+            saveToDb(veilederContext)
         }
 
-        val message = JsonUtils.toJson(RSEvent.from(event))
+        val message = JsonUtils.toJson(RSEvent.from(veilederContext))
         redisPublisher.publishMessage(message)
     }
 
@@ -135,11 +135,14 @@ class ContextService(
         if (burdeSynceContextMedGcp()) {
             contextHolderClient.nullstillAktivBruker(veilederIdent)
         } else {
-            veilederContextDatabase.slettAlleAvEventTypeForVeileder(EventType.NY_AKTIV_BRUKER.name, veilederIdent)
+            veilederContextDatabase.slettAlleAvEventTypeForVeileder(
+                VeilederContextType.NY_AKTIV_BRUKER,
+                veilederIdent,
+            )
         }
     }
 
-    private fun saveToDb(event: PEvent) = veilederContextDatabase.save(event)
+    private fun saveToDb(event: VeilederContext) = veilederContextDatabase.save(event)
 
     private fun burdeSynceContextMedGcp(): Boolean =
         ApplicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SYNC_CONTEXT_MED_GCP)

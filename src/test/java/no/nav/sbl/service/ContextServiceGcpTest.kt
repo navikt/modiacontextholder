@@ -7,13 +7,14 @@ import io.mockk.mockkObject
 import io.mockk.verify
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.db.VeilederContextDatabase
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.domain.VeilederContext
+import no.nav.sbl.domain.VeilederContextType
 import no.nav.sbl.redis.RedisPublisher
-import no.nav.sbl.rest.domain.RSAktivBruker
-import no.nav.sbl.rest.domain.RSAktivEnhet
-import no.nav.sbl.rest.domain.RSContext
-import no.nav.sbl.rest.domain.RSNyContext
+import no.nav.sbl.redis.VeilederContextDatabase
+import no.nav.sbl.rest.model.RSAktivBruker
+import no.nav.sbl.rest.model.RSAktivEnhet
+import no.nav.sbl.rest.model.RSContext
+import no.nav.sbl.rest.model.RSNyContext
 import no.nav.sbl.service.unleash.ToggleableFeature
 import no.nav.sbl.service.unleash.ToggleableFeatureService
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -43,8 +44,10 @@ class ContextServiceGcpTest {
 
     private val veilederIdent = "veilederIdent"
     private val enhetContext = RSContext(aktivEnhet = "enhet")
-    private val nyAktivEnhetEvent = PEvent(eventType = "NY_AKTIV_ENHET", verdi = "enhet")
-    private val nyAktivBrukerEvent = PEvent(eventType = "NY_AKTIV_BRUKER", verdi = "bruker")
+    private val nyAktivEnhetEvent =
+        VeilederContext(contextType = VeilederContextType.NY_AKTIV_ENHET, verdi = "enhet", veilederIdent = veilederIdent)
+    private val nyAktivBrukerEvent =
+        VeilederContext(contextType = VeilederContextType.NY_AKTIV_BRUKER, verdi = "bruker", veilederIdent = veilederIdent)
 
     companion object {
         @JvmStatic
