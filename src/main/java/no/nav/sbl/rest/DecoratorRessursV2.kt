@@ -3,9 +3,9 @@ package no.nav.sbl.rest
 import io.vavr.control.Try
 import no.nav.common.types.identer.NavIdent
 import no.nav.sbl.azure.AzureADService
-import no.nav.sbl.rest.domain.DecoratorDomain
-import no.nav.sbl.rest.domain.DecoratorDomain.DecoratorConfig
-import no.nav.sbl.rest.domain.DecoratorDomain.FnrAktorId
+import no.nav.sbl.rest.model.DecoratorDomain
+import no.nav.sbl.rest.model.DecoratorDomain.DecoratorConfig
+import no.nav.sbl.rest.model.DecoratorDomain.FnrAktorId
 import no.nav.sbl.service.*
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*

@@ -3,7 +3,8 @@ package no.nav.sbl.redis
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.runBlocking
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.domain.VeilederContext
+import no.nav.sbl.domain.VeilederContextType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -40,16 +41,16 @@ class RedisVeilederContextDatabaseTest {
         )
     }
 
-    private val enhetEvent: PEvent =
-        PEvent(
-            eventType = "NY_AKTIV_ENHET",
+    private val enhetEvent: VeilederContext =
+        VeilederContext(
+            contextType = VeilederContextType.NY_AKTIV_ENHET,
             verdi = "enhet",
             veilederIdent = "veileder",
         )
 
     private val brukerEvent =
-        PEvent(
-            eventType = "NY_AKTIV_BRUKER",
+        VeilederContext(
+            contextType = VeilederContextType.NY_AKTIV_BRUKER,
             verdi = "bruker",
             veilederIdent = "veileder",
         )
@@ -79,7 +80,7 @@ class RedisVeilederContextDatabaseTest {
         redisVeilederContextDatabase.save(enhetEvent)
         redisVeilederContextDatabase.save(brukerEvent)
 
-        redisVeilederContextDatabase.slettAlleAvEventTypeForVeileder("NY_AKTIV_ENHET", "veileder")
+        redisVeilederContextDatabase.slettAlleAvEventTypeForVeileder(VeilederContextType.NY_AKTIV_ENHET, "veileder")
 
         val aktivEnhetEvent = redisVeilederContextDatabase.sistAktiveEnhetEvent("veileder")
         val aktivBrukerEvent = redisVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
@@ -94,7 +95,7 @@ class RedisVeilederContextDatabaseTest {
         redisVeilederContextDatabase.save(brukerEvent)
         redisVeilederContextDatabase.save(enhetEvent)
 
-        redisVeilederContextDatabase.slettAlleAvEventTypeForVeileder("NY_AKTIV_BRUKER", "veileder")
+        redisVeilederContextDatabase.slettAlleAvEventTypeForVeileder(VeilederContextType.NY_AKTIV_BRUKER, "veileder")
 
         val aktivBrukerEvent = redisVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
         val aktivEnhetEvent = redisVeilederContextDatabase.sistAktiveEnhetEvent("veileder")

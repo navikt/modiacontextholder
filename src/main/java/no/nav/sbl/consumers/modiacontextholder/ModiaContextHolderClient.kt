@@ -1,9 +1,9 @@
 package no.nav.sbl.consumers.modiacontextholder
 
-import no.nav.sbl.rest.domain.RSAktivBruker
-import no.nav.sbl.rest.domain.RSAktivEnhet
-import no.nav.sbl.rest.domain.RSContext
-import no.nav.sbl.rest.domain.RSNyContext
+import no.nav.sbl.rest.model.RSAktivBruker
+import no.nav.sbl.rest.model.RSAktivEnhet
+import no.nav.sbl.rest.model.RSContext
+import no.nav.sbl.rest.model.RSNyContext
 
 interface ModiaContextHolderClient {
     fun hentVeiledersContext(veilederIdent: String): Result<RSContext>

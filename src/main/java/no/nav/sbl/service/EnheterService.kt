@@ -3,7 +3,7 @@ package no.nav.sbl.service
 import io.vavr.control.Try
 import no.nav.common.client.axsys.AxsysClient
 import no.nav.common.types.identer.NavIdent
-import no.nav.sbl.rest.domain.DecoratorDomain
+import no.nav.sbl.rest.model.DecoratorDomain
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
 

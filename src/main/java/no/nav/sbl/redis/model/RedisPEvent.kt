@@ -1,31 +1,31 @@
 package no.nav.sbl.redis.model
 
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.domain.VeilederContext
 import java.time.LocalDateTime
 
 data class RedisPEvent(
     val veilederIdent: String,
-    val eventType: RedisEventType,
+    val contextType: RedisVeilederContextType,
     val verdi: String,
     val created: LocalDateTime,
 ) {
-    val key: RedisPEventKey = RedisPEventKey(eventType, veilederIdent)
+    val key: RedisPEventKey = RedisPEventKey(contextType, veilederIdent)
 
-    fun toPEvent(): PEvent =
-        PEvent(
+    fun toPEvent(): VeilederContext =
+        VeilederContext(
             veilederIdent = veilederIdent,
-            eventType = eventType.toDomainEventType(),
+            contextType = contextType.toDomain(),
             verdi = verdi,
             created = created,
         )
 
     companion object {
-        fun from(pEvent: PEvent): RedisPEvent =
+        fun from(veilederContext: VeilederContext): RedisPEvent =
             RedisPEvent(
-                veilederIdent = pEvent.veilederIdent!!,
-                eventType = RedisEventType.from(pEvent.eventType!!),
-                verdi = pEvent.verdi!!,
-                created = pEvent.created ?: LocalDateTime.now(),
+                veilederIdent = veilederContext.veilederIdent,
+                contextType = RedisVeilederContextType.from(veilederContext.contextType),
+                verdi = veilederContext.verdi,
+                created = veilederContext.created ?: LocalDateTime.now(),
             )
     }
 }

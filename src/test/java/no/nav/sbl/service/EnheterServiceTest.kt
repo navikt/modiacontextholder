@@ -5,7 +5,7 @@ import io.mockk.mockk
 import no.nav.common.client.axsys.AxsysClient
 import no.nav.common.client.axsys.AxsysEnhet
 import no.nav.common.types.identer.EnhetId
-import no.nav.sbl.rest.domain.DecoratorDomain
+import no.nav.sbl.rest.model.DecoratorDomain
 import org.assertj.core.api.Assertions
 import org.junit.Test
 

@@ -7,7 +7,7 @@ import io.vavr.control.Try
 import no.nav.common.types.identer.AzureObjectId
 import no.nav.sbl.azure.AnsattRolle
 import no.nav.sbl.azure.AzureADService
-import no.nav.sbl.rest.domain.DecoratorDomain
+import no.nav.sbl.rest.model.DecoratorDomain
 import no.nav.sbl.service.AuthContextService
 import no.nav.sbl.service.EnheterService
 import no.nav.sbl.service.VeilederService

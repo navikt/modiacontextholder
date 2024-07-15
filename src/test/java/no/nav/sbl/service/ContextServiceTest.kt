@@ -5,11 +5,11 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.db.VeilederContextDatabase
-import no.nav.sbl.db.domain.EventType.NY_AKTIV_BRUKER
-import no.nav.sbl.db.domain.PEvent
+import no.nav.sbl.domain.VeilederContext
+import no.nav.sbl.domain.VeilederContextType.NY_AKTIV_BRUKER
 import no.nav.sbl.redis.RedisPublisher
-import no.nav.sbl.rest.domain.RSContext
+import no.nav.sbl.redis.VeilederContextDatabase
+import no.nav.sbl.rest.model.RSContext
 import no.nav.sbl.service.ContextService.Companion.erFortsattAktuell
 import no.nav.sbl.service.unleash.ToggleableFeature
 import no.nav.sbl.service.unleash.ToggleableFeatureService
@@ -53,16 +53,23 @@ class ContextServiceTest {
         har_ikke_aktiv_bruker()
     }
 
+    private val veilederContext =
+        VeilederContext(
+            veilederIdent = "veilederIdent",
+            contextType = NY_AKTIV_BRUKER,
+            verdi = "bruker",
+        )
+
     @Test
     fun eventer_fra_forrige_dag_regnes_ikke_som_aktuelle() {
-        val event = PEvent().apply { created = LocalDateTime.now().minusDays(1) }
+        val event = veilederContext.copy(created = LocalDateTime.now().minusDays(1))
         val result = erFortsattAktuell(event)
         assertThat(result).isFalse()
     }
 
     @Test
     fun eventer_fra_i_dag_regnes_som_aktuelle() {
-        val event = PEvent().apply { created = LocalDateTime.now() }
+        val event = veilederContext.copy(created = LocalDateTime.now())
         val result = erFortsattAktuell(event)
         assertThat(result).isTrue()
     }
@@ -90,11 +97,11 @@ class ContextServiceTest {
 
     private fun gitt_sist_aktive_bruker_event(created: LocalDateTime) {
         val pEvent =
-            PEvent().apply {
-                eventType = NY_AKTIV_BRUKER.name
-                verdi = brukerId
-                this.created = created
-            }
+            veilederContext.copy(
+                contextType = NY_AKTIV_BRUKER,
+                verdi = brukerId,
+                created = created,
+            )
         every { veilederContextDatabase.sistAktiveBrukerEvent(any<String>()) } returns pEvent
     }
 }
