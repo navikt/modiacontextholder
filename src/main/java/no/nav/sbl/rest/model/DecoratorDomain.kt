@@ -6,6 +6,7 @@ class DecoratorDomain {
         val enheter: List<Enhet>,
     ) {
         val ident: String = saksbehandler.ident
+        val navn: String = saksbehandler.navn
         val fornavn: String = saksbehandler.fornavn
         val etternavn: String = saksbehandler.etternavn
     }
@@ -19,7 +20,9 @@ class DecoratorDomain {
         val ident: String,
         val fornavn: String,
         val etternavn: String,
-    )
+    ) {
+        val navn: String = "$fornavn $etternavn"
+    }
 
     data class FnrAktorId(
         val fnr: String,
