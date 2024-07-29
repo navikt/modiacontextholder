@@ -13,6 +13,7 @@ open class EnheterService(
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    @Cacheable("enheter")
     open fun hentEnheter(ident: String): Try<List<DecoratorDomain.Enhet>> {
         val aktiveEnheter = enheterCache.get()
         return Try
