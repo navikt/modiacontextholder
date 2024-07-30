@@ -17,7 +17,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <common.version>3.2024.02.21_11.18-8f9b43befae1</common.version>
+        <common.version>3.2024.05.23_05.46-2b29fa343e8e</common.version>
         <graphql-kotlin.version>7.1.4</graphql-kotlin.version>
         <kotlin.version>2.0.0</kotlin.version>
         <serialization.version>1.7.1</serialization.version>
