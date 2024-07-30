@@ -1,0 +1,35 @@
+name: Setup Redis instance
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/redis.yaml'
+      - '.nais/redis-*.yaml'
+
+env:
+  CI: true
+  TZ: Europe/Oslo
+
+jobs:
+  deploy:
+    name: Setup Redis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      matrix:
+        env: [ dev-gcp, prod-gcp ]
+    environment: ${{ matrix.env }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup ${{ matrix.env }}
+        if: github.ref == 'refs/heads/master'
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          PRINT_PAYLOAD: true
+          CLUSTER: ${{ matrix.env }}
+          RESOURCE: .nais/redis-${{matrix.env}}.yaml

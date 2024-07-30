@@ -7,10 +7,10 @@ import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 
 class AuthJedisPool(
-    private val redisHostPortAndPassword: RedisHostPortAndPassword,
+    private val uriWithAuth: RedisUriWithAuth,
 ) {
     private val log = LoggerFactory.getLogger(AuthJedisPool::class.java)
-    private val pool = JedisPool(redisHostPortAndPassword.host, redisHostPortAndPassword.port)
+    private val pool = JedisPool(uriWithAuth.uri)
 
     suspend fun <T> useResource(block: (Jedis) -> T): Result<T?> =
         withContext(Dispatchers.IO) {
@@ -20,7 +20,7 @@ class AuthJedisPool(
             } else {
                 runCatching {
                     pool.resource.use {
-                        it.auth(redisHostPortAndPassword.password)
+                        it.auth(uriWithAuth.user, uriWithAuth.password)
                         block(it)
                     }
                 }
@@ -30,8 +30,8 @@ class AuthJedisPool(
         }
 }
 
-data class RedisHostPortAndPassword(
-    val host: String,
-    val port: Int,
+data class RedisUriWithAuth(
+    val user: String,
+    val uri: String,
     val password: String,
 )
