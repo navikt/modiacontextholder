@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.http.Url
 import no.nav.common.client.axsys.AxsysClient
 import no.nav.common.client.axsys.AxsysV2ClientImpl
-import no.nav.common.client.axsys.CachedAxsysClient
 import no.nav.common.client.msgraph.CachedMsGraphClient
 import no.nav.common.client.msgraph.MsGraphClient
 import no.nav.common.client.msgraph.MsGraphHttpClient
@@ -141,12 +140,10 @@ open class ServiceContext {
             machineToMachineTokenProvider.createMachineToMachineToken(downstreamApi)
         }
 
-        return CachedAxsysClient(
-            AxsysV2ClientImpl(
-                EnvironmentUtils.getRequiredProperty("AXSYS_URL"),
-                tokenSupplier,
-                httpClient,
-            ),
+        return AxsysV2ClientImpl(
+            EnvironmentUtils.getRequiredProperty("AXSYS_URL"),
+            tokenSupplier,
+            httpClient,
         )
     }
 
