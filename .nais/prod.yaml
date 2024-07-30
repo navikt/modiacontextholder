@@ -39,6 +39,9 @@ spec:
     min: 2
     max: 4
     cpuThresholdPercentage: 50
+  redis:
+    - instance: contextholder
+      access: readwrite
   azure:
     application:
       enabled: true
@@ -56,7 +59,6 @@ spec:
         - host: norg2.prod-fss-pub.nais.io
         - host: graph.microsoft.com
       rules:
-        - application: modiacontextholder-redis-med-passord
         - application: nom-api
           namespace: nom
           cluster: prod-gcp
@@ -129,7 +131,6 @@ spec:
     enabled: true
   envFrom:
     - secret: modiacontextholder-unleash-api-token
-    - secret: modiacontextholder-redis-passord
   env:
     - name: AXSYS_URL
       value: "https://axsys.prod-fss-pub.nais.io"
@@ -158,7 +159,11 @@ spec:
     - name: AAREG_PUBLIC_URL
       value: "https://arbeid-og-inntekt.nais.adeo.no"
     - name: REDIS_URI
-      value: "redis://modiacontextholder-redis-med-passord:6379"
+      value: "$(REDIS_URI_CONTEXTHOLDER)"
+    - name: REDIS_USER
+      value: "$(REDIS_USERNAME_CONTEXTHOLDER)"
+    - name: REDIS_PASSWORD
+      value: "$(REDIS_PASSWORD_CONTEXTHOLDER)"
     - name: SALESFORCE_URL
       value: "https://navdialog.lightning.force.com"
     - name: UNLEASH_ENVIRONMENT
