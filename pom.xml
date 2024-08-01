@@ -24,7 +24,7 @@
         <coroutines.version>1.3.9</coroutines.version>
         <modia-common-utils.version>1.2024.07.29-11.54-9ab053425c41</modia-common-utils.version>
         <caffeine.version>3.1.8</caffeine.version>
-        <testcontainers.version>1.20.0</testcontainers.version>
+        <testcontainers.version>1.20.1</testcontainers.version>
     </properties>
 
     <repositories>
