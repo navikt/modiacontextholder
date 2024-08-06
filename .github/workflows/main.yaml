@@ -59,6 +59,7 @@ jobs:
       security-events: write # push sarif to github security
       id-token: write # for nais/login
       actions: read # for private repositories
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: nais/login@v0
