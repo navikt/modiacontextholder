@@ -31,7 +31,7 @@ class ContextServiceTest {
     private val contextService: ContextService =
         ContextService(
             veilederContextDatabase,
-            redisPublisher,
+            listOf(redisPublisher),
             contextHolderClient,
             toggleableFeatureService,
         )

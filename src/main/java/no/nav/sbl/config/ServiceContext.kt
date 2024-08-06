@@ -18,10 +18,10 @@ import no.nav.sbl.azure.AzureADServiceImpl
 import no.nav.sbl.consumers.modiacontextholder.HttpModiaContextHolderClient
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.consumers.norg2.Norg2Client
-import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.redis.RedisConfig
-import no.nav.sbl.redis.RedisPublisher
+import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.service.AuthContextService
+import no.nav.sbl.service.ContextEventPublisher
 import no.nav.sbl.service.ContextService
 import no.nav.sbl.service.EnheterCache
 import no.nav.sbl.service.EnheterService
@@ -76,10 +76,10 @@ open class ServiceContext {
     @Bean
     open fun contextService(
         veilederContextDatabase: VeilederContextDatabase,
-        redisPublisher: RedisPublisher,
+        contextEventPublishers: List<ContextEventPublisher>,
         contextHolderClient: ModiaContextHolderClient,
         toggleableFeatureService: ToggleableFeatureService,
-    ) = ContextService(veilederContextDatabase, redisPublisher, contextHolderClient, toggleableFeatureService)
+    ) = ContextService(veilederContextDatabase, contextEventPublishers, contextHolderClient, toggleableFeatureService)
 
     @Bean
     open fun enheterCache(norg2Client: Norg2Client) = EnheterCache(norg2Client)

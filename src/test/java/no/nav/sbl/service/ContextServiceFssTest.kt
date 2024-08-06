@@ -7,8 +7,8 @@ import io.mockk.mockkObject
 import io.mockk.verify
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
-import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.redis.RedisPublisher
+import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.rest.model.RSAktivBruker
 import no.nav.sbl.rest.model.RSAktivEnhet
 import no.nav.sbl.rest.model.RSContext
@@ -35,7 +35,7 @@ class ContextServiceFssTest {
     private val contextService =
         ContextService(
             veilederContextDatabase,
-            redisPublisher,
+            listOf(redisPublisher),
             contextHolderClient,
             toggleableFeatureService,
         )
@@ -74,7 +74,7 @@ class ContextServiceFssTest {
 
         verify { contextHolderClient.oppdaterVeiledersContext(any(), any()) }
         verify { veilederContextDatabase wasNot Called }
-        verify { redisPublisher.publishMessage(any()) }
+        verify { redisPublisher.publishMessage(any(), any()) }
     }
 
     @Test

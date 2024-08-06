@@ -1,16 +1,13 @@
 package no.nav.sbl.service
 
-import no.nav.common.json.JsonUtils
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.domain.VeilederContext
 import no.nav.sbl.domain.VeilederContextType
-import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.rest.model.RSAktivBruker
 import no.nav.sbl.rest.model.RSAktivEnhet
 import no.nav.sbl.rest.model.RSContext
-import no.nav.sbl.rest.model.RSEvent
 import no.nav.sbl.rest.model.RSNyContext
 import no.nav.sbl.service.unleash.ToggleableFeatureService
 import no.nav.sbl.service.unleash.ToggleableFeatures
@@ -21,7 +18,7 @@ import java.time.LocalDate
 @Service
 class ContextService(
     private val veilederContextDatabase: VeilederContextDatabase,
-    private val redisPublisher: RedisPublisher,
+    private val contextEventPublishers: List<ContextEventPublisher>,
     private val contextHolderClient: ModiaContextHolderClient,
     private val toggleableFeatureService: ToggleableFeatureService,
 ) {
@@ -69,8 +66,13 @@ class ContextService(
             saveToDb(veilederContext)
         }
 
-        val message = JsonUtils.toJson(RSEvent.from(veilederContext))
-        redisPublisher.publishMessage(message)
+        // Sender både til redis og direkte på websocket frem til frontend har byttet bort fra websocket i modiaeventdistribution
+        contextEventPublishers.forEach {
+            it.publishMessage(
+                veilederContext.veilederIdent,
+                veilederContext.contextType.name,
+            )
+        }
     }
 
     fun hentAktivBruker(veilederIdent: String): RSContext =

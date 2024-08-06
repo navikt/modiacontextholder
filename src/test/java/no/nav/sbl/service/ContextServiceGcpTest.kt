@@ -37,7 +37,7 @@ class ContextServiceGcpTest {
     private val contextService =
         ContextService(
             veilederContextDatabase,
-            redisPublisher,
+            listOf(redisPublisher),
             contextHolderClient,
             toggleableFeatureService,
         )
@@ -45,9 +45,17 @@ class ContextServiceGcpTest {
     private val veilederIdent = "veilederIdent"
     private val enhetContext = RSContext(aktivEnhet = "enhet")
     private val nyAktivEnhetEvent =
-        VeilederContext(contextType = VeilederContextType.NY_AKTIV_ENHET, verdi = "enhet", veilederIdent = veilederIdent)
+        VeilederContext(
+            contextType = VeilederContextType.NY_AKTIV_ENHET,
+            verdi = "enhet",
+            veilederIdent = veilederIdent,
+        )
     private val nyAktivBrukerEvent =
-        VeilederContext(contextType = VeilederContextType.NY_AKTIV_BRUKER, verdi = "bruker", veilederIdent = veilederIdent)
+        VeilederContext(
+            contextType = VeilederContextType.NY_AKTIV_BRUKER,
+            verdi = "bruker",
+            veilederIdent = veilederIdent,
+        )
 
     companion object {
         @JvmStatic
@@ -80,7 +88,7 @@ class ContextServiceGcpTest {
 
         verify { contextHolderClient wasNot Called }
         verify { veilederContextDatabase.save(any()) }
-        verify { redisPublisher.publishMessage(any()) }
+        verify { redisPublisher.publishMessage(any(), any()) }
     }
 
     @Test
