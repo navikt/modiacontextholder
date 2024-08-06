@@ -25,6 +25,7 @@ class RedirectRessurs
         private val contextService: ContextService,
     ) {
         private val aaRegisteretBaseUrl = EnvironmentUtils.getRequiredProperty("AAREG_URL")
+        private val aaRegisteretPublicUrl = EnvironmentUtils.getRequiredProperty("AAREG_PUBLIC_URL")
         private val salesforceBaseUrl = EnvironmentUtils.getRequiredProperty("SALESFORCE_URL")
         private val client: OkHttpClient = RestClient.baseClient()
         private val log = LoggerFactory.getLogger(RedirectRessurs::class.java)
@@ -36,7 +37,7 @@ class RedirectRessurs
         fun salesforce(): ResponseEntity<Unit> = temporaryRedirect(salesforceBaseUrl)
 
         private fun aaRegisteretUrl(context: RSContext?): String {
-            val aktivBruker: String = context?.aktivBruker ?: return aaRegisteretBaseUrl
+            val aktivBruker: String = context?.aktivBruker ?: return aaRegisteretPublicUrl
             return runCatching {
                 val request =
                     Request
