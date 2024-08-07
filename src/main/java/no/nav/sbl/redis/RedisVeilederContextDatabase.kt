@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
 import no.nav.sbl.domain.VeilederContext
 import no.nav.sbl.domain.VeilederContextType
-import no.nav.sbl.redis.model.RedisVeilederContextType
 import no.nav.sbl.redis.model.RedisPEvent
 import no.nav.sbl.redis.model.RedisPEventKey
+import no.nav.sbl.redis.model.RedisVeilederContextType
 import java.time.Duration
 
 class RedisVeilederContextDatabase(
@@ -22,7 +22,11 @@ class RedisVeilederContextDatabase(
 
             authJedisPool
                 .useResource {
-                    it.setex(redisPEvent.key.toString(), timeToLive.seconds, json)
+                    val redisKey = redisPEvent.key.toString()
+                    when (redisPEvent.contextType) {
+                        RedisVeilederContextType.AKTIV_BRUKER -> it.setex(redisKey, timeToLive.seconds, json)
+                        RedisVeilederContextType.AKTIV_ENHET -> it.set(redisKey, json)
+                    }
                 }.getOrThrow()
         }
 
