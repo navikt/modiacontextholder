@@ -13,7 +13,6 @@ import no.nav.sbl.service.unleash.ToggleableFeatureService
 import no.nav.sbl.service.unleash.ToggleableFeatures
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 
 @Service
 class ContextService(
@@ -23,11 +22,6 @@ class ContextService(
     private val toggleableFeatureService: ToggleableFeatureService,
 ) {
     private val log = LoggerFactory.getLogger(ContextService::class.java)
-
-    companion object {
-        @JvmStatic
-        fun erFortsattAktuell(veilederContext: VeilederContext): Boolean = LocalDate.now().isEqual(veilederContext.created?.toLocalDate())
-    }
 
     fun hentVeiledersContext(veilederIdent: String): RSContext =
         if (burdeSynceContextMedGcp()) {
@@ -84,7 +78,6 @@ class ContextService(
         } else {
             veilederContextDatabase
                 .sistAktiveBrukerEvent(veilederIdent)
-                ?.takeIf(::erFortsattAktuell)
                 ?.let(RSContext::from)
                 ?: RSContext()
         }
@@ -97,7 +90,6 @@ class ContextService(
         } else {
             veilederContextDatabase
                 .sistAktiveBrukerEvent(veilederIdent)
-                ?.takeIf(::erFortsattAktuell)
                 ?.let(RSAktivBruker::from)
                 ?: RSAktivBruker(null)
         }

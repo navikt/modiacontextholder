@@ -64,8 +64,6 @@ class ContextServiceGcpTest {
             mockkObject(ApplicationCluster)
             every { ApplicationCluster.isFss() } returns false
             every { ApplicationCluster.isGcp() } returns true
-            mockkObject(ContextService.Companion)
-            every { ContextService.erFortsattAktuell(any()) } returns true
         }
     }
 
