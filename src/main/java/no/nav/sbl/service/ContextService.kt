@@ -66,7 +66,8 @@ class ContextService(
             saveToDb(veilederContext)
         }
 
-        // Sender både til redis og direkte på websocket frem til frontend har byttet bort fra websocket i modiaeventdistribution
+        // Sender både til redis og direkte på websocket frem til frontend har byttet bort fra websocket i modiaeventdistribution.
+        // Det skal ikke ha noe å si om dette kjører i GCP eller FSS, da det ikke vil være noen som er tilkoblet websocket i FSS.
         contextEventPublishers.forEach {
             it.publishMessage(
                 veilederContext.veilederIdent,
