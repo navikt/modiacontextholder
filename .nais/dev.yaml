@@ -129,6 +129,9 @@ spec:
         - application: modiacontextholder-q2
           namespace: personoversikt
           cluster: dev-fss
+        - application: tiltaksgjennomforing-intern
+          namespace: arbeidsgiver
+          cluster: dev-gcp
   secureLogs:
     enabled: true
   envFrom:

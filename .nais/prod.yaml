@@ -127,6 +127,9 @@ spec:
         - application: modiacontextholder
           namespace: personoversikt
           cluster: prod-fss
+        - application: tiltaksgjennomforing-intern
+          namespace: arbeidsgiver
+          cluster: prod-gcp
   secureLogs:
     enabled: true
   envFrom:
