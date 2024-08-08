@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup preprod
-        if: github.ref == 'refs/heads/dev'
+        if: github.ref == 'refs/heads/master'
         uses: nais/deploy/actions/deploy@v2
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
