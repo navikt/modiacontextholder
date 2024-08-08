@@ -10,8 +10,10 @@ import no.nav.sbl.rest.model.RSAktivBruker
 import no.nav.sbl.rest.model.RSAktivEnhet
 import no.nav.sbl.rest.model.RSContext
 import no.nav.sbl.rest.model.RSNyContext
+import no.nav.sbl.rest.model.VerdiType
 import no.nav.sbl.service.AuthContextService
 import no.nav.sbl.service.ContextService
+import no.nav.sbl.service.FnrCodeExchangeService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -22,6 +24,7 @@ import kotlin.Pair
 class ContextRessurs(
     private val contextService: ContextService,
     private val authContextUtils: AuthContextService,
+    private val fnrCodeExchangeService: FnrCodeExchangeService,
 ) {
     @GetMapping
     @Timed
@@ -92,13 +95,30 @@ class ContextRessurs(
 
     @PostMapping
     @Timed("oppdaterVeiledersContext")
-    fun oppdaterVeiledersContext(
+    suspend fun oppdaterVeiledersContext(
         @RequestHeader(value = "referer", required = false) referer: String?,
         @RequestBody rsNyContext: RSNyContext,
     ): RSContext {
         val ident = authContextUtils.ident
-        val type = Pair(AuditIdentifier.TYPE, rsNyContext.eventType)
-        val verdi = Pair(AuditIdentifier.VALUE, rsNyContext.verdi)
+        if (ident.isEmpty) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Fant ikke saksbehandlers ident")
+        }
+
+        val context = if (rsNyContext.verdiType == VerdiType.FNR_KODE) {
+            val result = fnrCodeExchangeService.getFnr(rsNyContext.verdi)
+            if (result.isFailure) {
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error", result.exceptionOrNull())
+            }
+            val fnr =
+                result.getOrNull() ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Fant ikke fnr for koden")
+
+            rsNyContext.copy(verdi = fnr)
+        } else {
+            rsNyContext
+        }
+
+        val type = Pair(AuditIdentifier.TYPE, context.eventType)
+        val verdi = Pair(AuditIdentifier.VALUE, context.verdi)
         val url = Pair(AuditIdentifier.REFERER, referer)
 
         if (ident.isEmpty) {
@@ -107,7 +127,7 @@ class ContextRessurs(
 
         return withAudit(describe(ident, Action.UPDATE, AuditResources.OppdaterKontekst, type, verdi, url)) {
             val veilederIdent = ident.get()
-            contextService.oppdaterVeiledersContext(rsNyContext, veilederIdent)
+            contextService.oppdaterVeiledersContext(context, veilederIdent)
             contextService.hentVeiledersContext(veilederIdent)
         }
     }
