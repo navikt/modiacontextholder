@@ -31,7 +31,7 @@ class ContextServiceTest {
     private val contextService: ContextService =
         ContextService(
             veilederContextDatabase,
-            redisPublisher,
+            listOf(redisPublisher),
             contextHolderClient,
             toggleableFeatureService,
         )
@@ -64,32 +64,11 @@ class ContextServiceTest {
         )
 
     @Test
-    fun eventer_fra_forrige_dag_regnes_ikke_som_aktuelle() {
-        val event = veilederContext.copy(created = LocalDateTime.now().minusDays(1))
-        val result = erFortsattAktuell(event)
-        assertThat(result).isFalse()
-    }
-
-    @Test
-    fun eventer_fra_i_dag_regnes_som_aktuelle() {
-        val event = veilederContext.copy(created = LocalDateTime.now())
-        val result = erFortsattAktuell(event)
-        assertThat(result).isTrue()
-    }
-
-    @Test
     fun aktiv_bruker_event() {
         val now = LocalDateTime.now()
         gitt_sist_aktive_bruker_event(now)
         val rsContext = RSContext().apply { aktivBruker = brukerId }
         assertThat(contextService.hentAktivBruker("ident")).isEqualTo(rsContext)
-    }
-
-    @Test
-    fun foreldet_aktiv_bruker_event() {
-        gitt_sist_aktive_bruker_event(LocalDateTime.now().minusDays(2))
-        // FIXME denne testen sluttet å fungere med mvn test men funker i intellij
-        // har_ikke_aktiv_bruker()
     }
 
     private fun har_ikke_aktiv_bruker() {
