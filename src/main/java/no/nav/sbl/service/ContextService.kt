@@ -1,36 +1,27 @@
 package no.nav.sbl.service
 
-import no.nav.common.json.JsonUtils
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.domain.VeilederContext
 import no.nav.sbl.domain.VeilederContextType
-import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.rest.model.RSAktivBruker
 import no.nav.sbl.rest.model.RSAktivEnhet
 import no.nav.sbl.rest.model.RSContext
-import no.nav.sbl.rest.model.RSEvent
 import no.nav.sbl.rest.model.RSNyContext
 import no.nav.sbl.service.unleash.ToggleableFeatureService
 import no.nav.sbl.service.unleash.ToggleableFeatures
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 
 @Service
 class ContextService(
     private val veilederContextDatabase: VeilederContextDatabase,
-    private val redisPublisher: RedisPublisher,
+    private val contextEventPublishers: List<ContextEventPublisher>,
     private val contextHolderClient: ModiaContextHolderClient,
     private val toggleableFeatureService: ToggleableFeatureService,
 ) {
     private val log = LoggerFactory.getLogger(ContextService::class.java)
-
-    companion object {
-        @JvmStatic
-        fun erFortsattAktuell(veilederContext: VeilederContext): Boolean = LocalDate.now().isEqual(veilederContext.created?.toLocalDate())
-    }
 
     fun hentVeiledersContext(veilederIdent: String): RSContext =
         if (burdeSynceContextMedGcp()) {
@@ -69,8 +60,14 @@ class ContextService(
             saveToDb(veilederContext)
         }
 
-        val message = JsonUtils.toJson(RSEvent.from(veilederContext))
-        redisPublisher.publishMessage(message)
+        // Sender både til redis og direkte på websocket frem til frontend har byttet bort fra websocket i modiaeventdistribution.
+        // Det skal ikke ha noe å si om dette kjører i GCP eller FSS, da det ikke vil være noen som er tilkoblet websocket i FSS.
+        contextEventPublishers.forEach {
+            it.publishMessage(
+                veilederContext.veilederIdent,
+                veilederContext.contextType.name,
+            )
+        }
     }
 
     fun hentAktivBruker(veilederIdent: String): RSContext =
@@ -81,7 +78,6 @@ class ContextService(
         } else {
             veilederContextDatabase
                 .sistAktiveBrukerEvent(veilederIdent)
-                ?.takeIf(::erFortsattAktuell)
                 ?.let(RSContext::from)
                 ?: RSContext()
         }
@@ -94,7 +90,6 @@ class ContextService(
         } else {
             veilederContextDatabase
                 .sistAktiveBrukerEvent(veilederIdent)
-                ?.takeIf(::erFortsattAktuell)
                 ?.let(RSAktivBruker::from)
                 ?: RSAktivBruker(null)
         }
