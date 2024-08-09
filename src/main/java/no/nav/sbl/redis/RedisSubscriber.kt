@@ -15,9 +15,9 @@ class RedisSubscriber(
     private lateinit var job: Job
 
     private suspend fun subscribe() {
-        authJedisPool.useResource {
+        authJedisPool.useResource { jedis ->
             redisSubscriptions.forEach {
-                it.jedisPubSub.subscribe(it.channel)
+                jedis.subscribe(it.jedisPubSub, it.channel)
             }
         }
     }
@@ -29,6 +29,10 @@ class RedisSubscriber(
     }
 
     override fun start() {
+        if (::job.isInitialized) {
+            log.warn("RedisSubscriber er allerede startet")
+            return
+        }
         log.info("Starter RedisSubscriber")
         job =
             CoroutineScope(Dispatchers.IO).launch {

@@ -12,7 +12,7 @@ data class RedisSubscription(
                 channel: String,
                 message: String,
             ) {
-                onMessage(channel, message)
+                this@RedisSubscription.onMessage(channel, message)
             }
         }
 }
