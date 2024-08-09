@@ -15,7 +15,6 @@ import no.nav.sbl.service.unleash.ToggleableFeatureService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class ContextServiceTest {
@@ -31,7 +30,7 @@ class ContextServiceTest {
     private val contextService: ContextService =
         ContextService(
             veilederContextDatabase,
-            listOf(redisPublisher),
+            redisPublisher,
             contextHolderClient,
             toggleableFeatureService,
         )
@@ -44,9 +43,6 @@ class ContextServiceTest {
             every { ApplicationCluster.isFss() } returns true
             every { ApplicationCluster.isGcp() } returns false
         }
-
-        @JvmStatic
-        fun erFortsattAktuell(veilederContext: VeilederContext): Boolean = LocalDate.now().isEqual(veilederContext.created?.toLocalDate())
     }
 
     @Test

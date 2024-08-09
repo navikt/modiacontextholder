@@ -12,7 +12,7 @@ class AuthJedisPool(
     private val log = LoggerFactory.getLogger(AuthJedisPool::class.java)
     private val pool = JedisPool(uriWithAuth.uri)
 
-    suspend fun <T> useResource(block: (Jedis) -> T): Result<T?> =
+    suspend fun <T> useResource(block: suspend (Jedis) -> T): Result<T?> =
         withContext(Dispatchers.IO) {
             if (pool.isClosed) {
                 log.error("JedisPool is closed while trying to access it")
