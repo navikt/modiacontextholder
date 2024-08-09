@@ -5,18 +5,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
-import org.springframework.context.Lifecycle
+import org.springframework.context.SmartLifecycle
 
 class RedisSubscriber(
     private val authJedisPool: AuthJedisPool,
     private val redisSubscriptions: List<RedisSubscription>,
-) : Lifecycle {
+) : SmartLifecycle {
     private val log = LoggerFactory.getLogger(RedisSubscriber::class.java)
     private lateinit var job: Job
 
     private suspend fun subscribe() {
         authJedisPool.useResource { jedis ->
             redisSubscriptions.forEach {
+                log.info("Abonnerer på kanal ${it.channel}")
                 jedis.subscribe(it.jedisPubSub, it.channel)
             }
         }
@@ -49,4 +50,8 @@ class RedisSubscriber(
     }
 
     override fun isRunning(): Boolean = ::job.isInitialized && job.isActive
+
+    override fun isAutoStartup(): Boolean = true
+
+    override fun getPhase(): Int = 0
 }
