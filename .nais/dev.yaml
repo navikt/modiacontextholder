@@ -103,6 +103,8 @@ spec:
         - application: rekrutteringsbistand
           namespace: toi
           cluster: dev-gcp
+        - application: rekrutteringsbistand-next
+          namespace: toi
         - application: spinnsyn-frontend-interne
           namespace: flex
           cluster: dev-gcp
