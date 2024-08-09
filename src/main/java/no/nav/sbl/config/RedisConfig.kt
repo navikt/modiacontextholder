@@ -61,7 +61,11 @@ open class RedisConfig {
             runCatching {
                 objectMapper.readValue(message, RSEvent::class.java)
             }.fold(
-                onSuccess = { contextEventPublisher.publishMessage(it.veilederIdent, it.eventType) },
+                onSuccess = {
+                    // Debug
+                    log.info("Redis-melding mottatt på kanal $channel med eventType ${it.eventType}")
+                    contextEventPublisher.publishMessage(it.veilederIdent, it.eventType)
+                },
                 onFailure = { log.error("Feil ved deserialisering av Redis-melding på kanal $channel", it) },
             )
         }
