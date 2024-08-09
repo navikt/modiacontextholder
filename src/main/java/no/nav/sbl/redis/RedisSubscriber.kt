@@ -4,12 +4,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import org.springframework.context.Lifecycle
 
 class RedisSubscriber(
     private val authJedisPool: AuthJedisPool,
     private val redisSubscriptions: List<RedisSubscription>,
 ) : Lifecycle {
+    private val log = LoggerFactory.getLogger(RedisSubscriber::class.java)
     private lateinit var job: Job
 
     private suspend fun subscribe() {
@@ -27,6 +29,7 @@ class RedisSubscriber(
     }
 
     override fun start() {
+        log.info("Starter RedisSubscriber")
         job =
             CoroutineScope(Dispatchers.IO).launch {
                 subscribe()
@@ -34,6 +37,7 @@ class RedisSubscriber(
     }
 
     override fun stop() {
+        log.info("Stopper RedisSubscriber")
         unsubscribe()
         if (::job.isInitialized) {
             job.cancel()
