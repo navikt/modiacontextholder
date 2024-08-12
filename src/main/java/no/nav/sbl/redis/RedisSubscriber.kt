@@ -34,9 +34,11 @@ class RedisSubscriber(
                 launch {
                     try {
                         jedisPool.resource.use { jedis ->
+                            log.info("Starter å lytte på kanal ${subscription.channel}")
                             jedis.subscribe(subscription.jedisPubSub, subscription.channel)
                         }
                     } finally {
+                        log.info("Avslutter å lytte på kanal ${subscription.channel}")
                         subscription.jedisPubSub.unsubscribe()
                     }
                 }
