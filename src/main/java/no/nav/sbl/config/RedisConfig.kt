@@ -22,7 +22,7 @@ import kotlin.jvm.optionals.getOrDefault
 
 @Configuration
 open class RedisConfig {
-    private val redisUri = EnvironmentUtils.getRequiredProperty("REDIS_URI")
+    private val redisUri = EnvironmentUtils.getRequiredProperty("REDIS_URI").removePrefix("rediss://")
     private val redisUser = EnvironmentUtils.getOptionalProperty("REDIS_USER").getOrDefault("default")
     private val redisPassword = EnvironmentUtils.getRequiredProperty("REDIS_PASSWORD")
     private val environment = EnvironmentUtils.getRequiredProperty("APP_ENVIRONMENT_NAME")
