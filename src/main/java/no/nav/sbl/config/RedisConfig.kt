@@ -45,6 +45,7 @@ open class RedisConfig {
                 .builder()
                 .user(redisUser)
                 .password(redisPassword)
+                .timeoutMillis(0)
                 .build()
         return JedisPool(hostAndPort, jedisClientConfig)
     }
