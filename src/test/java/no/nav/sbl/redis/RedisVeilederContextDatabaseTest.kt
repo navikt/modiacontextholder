@@ -10,6 +10,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import redis.clients.jedis.DefaultJedisClientConfig
+import redis.clients.jedis.HostAndPort
+import redis.clients.jedis.JedisPooled
 
 @Testcontainers
 class RedisVeilederContextDatabaseTest {
@@ -21,22 +24,22 @@ class RedisVeilederContextDatabaseTest {
     @AfterEach
     fun afterEach(): Unit =
         runBlocking {
-            authJedisPool.useResource { it.flushAll() }
+            jedisPooled.flushAll()
         }
 
-    private val authJedisPool by lazy {
-        AuthJedisPool(
-            uriWithAuth =
-                RedisUriWithAuth(
-                    uri = "redis://${redisContainer.host}:${redisContainer.getMappedPort(6379)}",
-                    password = "password",
-                    user = "default",
-                ),
+    private val jedisPooled by lazy {
+        JedisPooled(
+            HostAndPort.from("${redisContainer.host}:${redisContainer.getMappedPort(6379)}"),
+            DefaultJedisClientConfig
+                .builder()
+                .user("default")
+                .password("password")
+                .build(),
         )
     }
     private val redisVeilederContextDatabase by lazy {
         RedisVeilederContextDatabase(
-            authJedisPool,
+            jedisPooled,
             jacksonObjectMapper().registerModule(JavaTimeModule()),
         )
     }

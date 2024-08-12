@@ -2,26 +2,34 @@ package no.nav.sbl.redis
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.context.SmartLifecycle
+import redis.clients.jedis.JedisPooled
 
 class RedisSubscriber(
-    private val authJedisPool: AuthJedisPool,
+    private val jedisPooled: JedisPooled,
     private val redisSubscriptions: List<RedisSubscription>,
 ) : SmartLifecycle {
     private val log = LoggerFactory.getLogger(RedisSubscriber::class.java)
-    private lateinit var job: Job
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    private suspend fun subscribe() {
-        authJedisPool.useResource { jedis ->
+    private suspend fun subscribe() =
+        coroutineScope {
             redisSubscriptions.forEach {
-                log.info("Abonnerer på kanal ${it.channel}")
-                jedis.subscribe(it.jedisPubSub, it.channel)
+                launch {
+                    try {
+                        jedisPooled.subscribe(it.jedisPubSub, it.channel)
+                    } finally {
+                        it.jedisPubSub.unsubscribe()
+                    }
+                }
             }
         }
-    }
 
     private fun unsubscribe() {
         redisSubscriptions.forEach {
@@ -30,26 +38,18 @@ class RedisSubscriber(
     }
 
     override fun start() {
-        if (::job.isInitialized) {
-            log.warn("RedisSubscriber er allerede startet")
-            return
+        scope.launch {
+            subscribe()
         }
-        log.info("Starter RedisSubscriber")
-        job =
-            CoroutineScope(Dispatchers.IO).launch {
-                subscribe()
-            }
     }
 
     override fun stop() {
         log.info("Stopper RedisSubscriber")
         unsubscribe()
-        if (::job.isInitialized) {
-            job.cancel()
-        }
+        scope.cancel()
     }
 
-    override fun isRunning(): Boolean = ::job.isInitialized && job.isActive
+    override fun isRunning(): Boolean = scope.isActive
 
     override fun isAutoStartup(): Boolean = true
 
