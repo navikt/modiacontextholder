@@ -40,13 +40,13 @@ open class RedisConfig {
     @Bean
     open fun jedisPooled(): JedisPool {
         val hostAndPort = HostAndPort.from(redisUri)
-        val jedisPoolConfig =
+        val jedisClientConfig =
             DefaultJedisClientConfig
                 .builder()
                 .user(redisUser)
                 .password(redisPassword)
                 .build()
-        return JedisPool(hostAndPort, jedisPoolConfig)
+        return JedisPool(hostAndPort, jedisClientConfig)
     }
 
     @Bean
