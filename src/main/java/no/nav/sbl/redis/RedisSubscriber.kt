@@ -43,12 +43,6 @@ class RedisSubscriber(
             }
         }
 
-    private fun unsubscribe() {
-        redisSubscriptions.forEach {
-            it.jedisPubSub.unsubscribe()
-        }
-    }
-
     override fun start() {
         scope.launch {
             subscribe()
@@ -57,7 +51,6 @@ class RedisSubscriber(
 
     override fun stop() {
         log.info("Stopper RedisSubscriber")
-        unsubscribe()
         scope.cancel()
     }
 
