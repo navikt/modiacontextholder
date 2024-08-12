@@ -41,10 +41,19 @@ class RedisPersistence(
 
     private fun getKey(code: String): String = "$scope-$code"
 
-    private fun pingRedis(): Result<String?> = jedisPool.resource.use { jedis -> Result.success(jedis.ping()) }
+    private fun pingRedis(): Result<String?> =
+        runCatching {
+            jedisPool.resource.use { jedis ->
+                val pong = jedis.ping()
+                if (pong != "PONG") {
+                    throw IllegalStateException("Redis ping feilet")
+                }
+                pong
+            }
+        }
 
     override fun checkHealth(): HealthCheckResult {
-        val result = runBlocking { pingRedis() }
+        val result = pingRedis()
         return if (result.isSuccess) {
             HealthCheckResult.healthy()
         } else {
