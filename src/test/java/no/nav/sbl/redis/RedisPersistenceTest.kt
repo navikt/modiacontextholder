@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import redis.clients.jedis.DefaultJedisClientConfig
-import redis.clients.jedis.JedisPooled
+import redis.clients.jedis.JedisPool
 import kotlin.time.Duration.Companion.seconds
 
 class RedisPersistenceTest : TestUtils.WithRedis() {
@@ -19,9 +19,9 @@ class RedisPersistenceTest : TestUtils.WithRedis() {
             .user("default")
             .password(PASSWORD)
             .build()
-    private val jedisPooled = JedisPooled(hostAndPort, jedisClientConfig)
+    private val jedisPool = JedisPool(hostAndPort, jedisClientConfig)
 
-    private val redisPersistence: RedisPersistence = RedisPersistence(jedisPooled)
+    private val redisPersistence: RedisPersistence = RedisPersistence(jedisPool)
 
     @Test
     fun `lager kode for fnr`() {
@@ -38,7 +38,7 @@ class RedisPersistenceTest : TestUtils.WithRedis() {
 
     @Test
     fun `sletter fnr etter gitt tid`() {
-        val localRedisPersitence = RedisPersistence(jedisPooled, expiration = 1.seconds)
+        val localRedisPersitence = RedisPersistence(jedisPool, expiration = 1.seconds)
         val fnr = "10108000398"
         val fnrCodeResult = runBlocking { localRedisPersitence.generateAndStoreTempCodeForFnr(fnr) }
         assertTrue(fnrCodeResult.result.isSuccess)

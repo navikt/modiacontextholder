@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import redis.clients.jedis.DefaultJedisClientConfig
 import redis.clients.jedis.HostAndPort
-import redis.clients.jedis.JedisPooled
+import redis.clients.jedis.JedisPool
 import kotlin.jvm.optionals.getOrDefault
 
 @Configuration
@@ -29,16 +29,16 @@ open class RedisConfig {
     private val channel = "ContextOppdatering-$environment"
 
     @Bean
-    open fun redisPublisher(jedisPooled: JedisPooled): RedisPublisher = RedisPublisher(jedisPooled, channel)
+    open fun redisPublisher(jedisPool: JedisPool): RedisPublisher = RedisPublisher(jedisPool, channel)
 
     @Bean
     open fun redisSubscriber(
-        jedisPooled: JedisPooled,
+        jedisPool: JedisPool,
         redisSubscriptions: List<RedisSubscription>,
-    ): RedisSubscriber = RedisSubscriber(jedisPooled, redisSubscriptions)
+    ): RedisSubscriber = RedisSubscriber(jedisPool, redisSubscriptions)
 
     @Bean
-    open fun jedisPooled(): JedisPooled {
+    open fun jedisPooled(): JedisPool {
         val hostAndPort = HostAndPort.from(redisUri)
         val jedisPoolConfig =
             DefaultJedisClientConfig
@@ -46,17 +46,17 @@ open class RedisConfig {
                 .user(redisUser)
                 .password(redisPassword)
                 .build()
-        return JedisPooled(hostAndPort, jedisPoolConfig)
+        return JedisPool(hostAndPort, jedisPoolConfig)
     }
 
     @Bean
-    open fun redisPersistence(jedisPooled: JedisPooled): RedisPersistence = RedisPersistence(jedisPooled)
+    open fun redisPersistence(jedisPool: JedisPool): RedisPersistence = RedisPersistence(jedisPool)
 
     @Bean
     open fun veilederContextDatabase(
-        jedisPooled: JedisPooled,
+        jedisPool: JedisPool,
         objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule()),
-    ): VeilederContextDatabase = RedisVeilederContextDatabase(jedisPooled, objectMapper)
+    ): VeilederContextDatabase = RedisVeilederContextDatabase(jedisPool, objectMapper)
 
     @Bean
     open fun contextEventRedisSubscription(
