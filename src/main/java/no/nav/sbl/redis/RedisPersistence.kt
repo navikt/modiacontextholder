@@ -1,18 +1,20 @@
 package no.nav.sbl.redis
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import no.nav.common.health.HealthCheck
 import no.nav.common.health.HealthCheckResult
 import no.nav.common.health.selftest.SelfTestCheck
 import no.nav.sbl.config.Pingable
-import java.util.UUID
+import redis.clients.jedis.JedisPooled
+import java.util.*
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class RedisPersistence(
-    private val redisPool: AuthJedisPool,
+    private val jedisPooled: JedisPooled,
     private val codeGenerator: CodeGenerator = UUIDGenerator(),
     private val expiration: Duration = 10.minutes,
     private val scope: String = "fnr-code",
@@ -24,26 +26,21 @@ class RedisPersistence(
         }
     }
 
-    suspend fun getFnr(code: String): Result<String?> {
+    fun getFnr(code: String): Result<String?> {
         val key = getKey(code)
-        return redisPool.useResource {
-            it.get(key)
-        }
+        return Result.success(jedisPooled.get(key))
     }
 
-    suspend fun generateAndStoreTempCodeForFnr(fnr: String): TempCodeResult {
+    fun generateAndStoreTempCodeForFnr(fnr: String): TempCodeResult {
         val code = codeGenerator.generateCode(fnr)
         val key = getKey(code)
-        val result =
-            redisPool.useResource {
-                it.setex(key, expiration.inWholeSeconds, fnr)
-            }
+        val result = Result.success(jedisPooled.setex(key, expiration.inWholeSeconds, fnr))
         return TempCodeResult(result, code)
     }
 
     private fun getKey(code: String): String = "$scope-$code"
 
-    private suspend fun pingRedis(): Result<String?> = redisPool.useResource { it.ping() }
+    private fun pingRedis(): Result<String?> = Result.success(jedisPooled.ping())
 
     override fun checkHealth(): HealthCheckResult {
         val result = runBlocking { pingRedis() }
