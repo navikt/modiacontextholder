@@ -12,10 +12,10 @@ import no.nav.common.health.HealthCheck
 import no.nav.common.health.HealthCheckResult
 import org.slf4j.LoggerFactory
 import org.springframework.context.SmartLifecycle
-import redis.clients.jedis.JedisPooled
+import redis.clients.jedis.JedisPool
 
 class RedisSubscriber(
-    private val jedisPooled: JedisPooled,
+    private val jedisPool: JedisPool,
     private val redisSubscriptions: List<RedisSubscription>,
 ) : SmartLifecycle,
     HealthCheck {
@@ -30,12 +30,14 @@ class RedisSubscriber(
 
     private suspend fun subscribe() =
         coroutineScope {
-            redisSubscriptions.forEach {
+            redisSubscriptions.forEach { subscription ->
                 launch {
                     try {
-                        jedisPooled.subscribe(it.jedisPubSub, it.channel)
+                        jedisPool.resource.use { jedis ->
+                            jedis.subscribe(subscription.jedisPubSub, subscription.channel)
+                        }
                     } finally {
-                        it.jedisPubSub.unsubscribe()
+                        subscription.jedisPubSub.unsubscribe()
                     }
                 }
             }
