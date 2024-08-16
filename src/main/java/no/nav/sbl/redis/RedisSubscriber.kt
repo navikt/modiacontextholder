@@ -46,6 +46,7 @@ class RedisSubscriber(
         }
 
     override fun start() {
+        log.info("Starter RedisSubscriber")
         scope.launch {
             subscribe()
         }
