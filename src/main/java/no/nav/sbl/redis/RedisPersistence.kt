@@ -4,13 +4,13 @@ import no.nav.common.health.HealthCheck
 import no.nav.common.health.HealthCheckResult
 import no.nav.common.health.selftest.SelfTestCheck
 import no.nav.sbl.config.Pingable
-import redis.clients.jedis.JedisPool
+import redis.clients.jedis.JedisPooled
 import java.util.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 class RedisPersistence(
-    private val jedisPool: JedisPool,
+    private val jedisPooled: JedisPooled,
     private val codeGenerator: CodeGenerator = UUIDGenerator(),
     private val expiration: Duration = 10.minutes,
     private val scope: String = "fnr-code",
@@ -19,7 +19,7 @@ class RedisPersistence(
     fun getFnr(code: String): Result<String?> =
         runCatching {
             val key = getKey(code)
-            jedisPool.resource.use { jedis -> jedis.get(key) }
+            jedisPooled.get(key)
         }
 
     fun generateAndStoreTempCodeForFnr(fnr: String): TempCodeResult {
@@ -27,7 +27,7 @@ class RedisPersistence(
         val key = getKey(code)
         val result =
             runCatching {
-                jedisPool.resource.use { jedis -> jedis.setex(key, expiration.inWholeSeconds, fnr) }
+                jedisPooled.setex(key, expiration.inWholeSeconds, fnr)
             }
         return TempCodeResult(result, code)
     }
@@ -36,13 +36,11 @@ class RedisPersistence(
 
     private fun pingRedis(): Result<String?> =
         runCatching {
-            jedisPool.resource.use { jedis ->
-                val pong = jedis.ping()
-                if (pong != "PONG") {
-                    throw IllegalStateException("Redis ping feilet")
-                }
-                pong
+            val pong = jedisPooled.ping()
+            if (pong != "PONG") {
+                throw IllegalStateException("Redis ping feilet")
             }
+            pong
         }
 
     override fun checkHealth(): HealthCheckResult {

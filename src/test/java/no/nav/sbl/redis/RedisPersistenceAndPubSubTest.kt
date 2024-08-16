@@ -5,9 +5,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
-import no.nav.common.utils.EnvironmentUtils
+import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.config.WebSocketConfiguration
 import no.nav.sbl.rest.ContextRessurs
 import no.nav.sbl.rest.model.RSContext
@@ -17,6 +18,7 @@ import no.nav.sbl.service.ContextService
 import no.nav.sbl.websocket.ClientWebSocketHandler
 import no.nav.sbl.websocket.ContextWebSocketHandler
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,7 +40,7 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import redis.clients.jedis.DefaultJedisClientConfig
 import redis.clients.jedis.HostAndPort
-import redis.clients.jedis.JedisPool
+import redis.clients.jedis.JedisPooled
 import java.util.*
 
 @ExtendWith(SpringExtension::class)
@@ -55,6 +57,14 @@ class RedisPersistenceAndPubSubTest {
         private val redisContainer = TestUtils.RedisContainer()
         const val IDENT = "ident1"
         const val REDIS_CHANNEL = "test-channel"
+
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll() {
+            mockkObject(ApplicationCluster)
+            every { ApplicationCluster.isFss() } returns false
+            every { ApplicationCluster.isGcp() } returns true
+        }
     }
 
     @LocalServerPort
@@ -73,7 +83,6 @@ class RedisPersistenceAndPubSubTest {
     fun `jedis pool håndterer både persistence og pubsub`(): Unit =
         runBlocking {
             every { authContextService.ident } returns Optional.of(IDENT)
-            EnvironmentUtils.setProperty("NAIS_CLUSTER_NAME", "dev-gcp", EnvironmentUtils.Type.PUBLIC)
 
             val websocketChannel = Channel<String>()
             val webSocketClient = StandardWebSocketClient()
@@ -112,9 +121,9 @@ class RedisPersistenceAndPubSubTest {
 
     @Configuration
     open class RedisPersistenceAndPubSubTestConfiguration {
-        @Bean("persistenceJedisPool")
-        open fun persistenceJedisPool(): JedisPool =
-            JedisPool(
+        @Bean("persistenceJedisPooled")
+        open fun persistenceJedisPooled(): JedisPooled =
+            JedisPooled(
                 HostAndPort.from("${redisContainer.host}:${redisContainer.getMappedPort(6379)}"),
                 DefaultJedisClientConfig
                     .builder()
@@ -123,9 +132,9 @@ class RedisPersistenceAndPubSubTest {
                     .build(),
             )
 
-        @Bean("pubsubJedisPool")
-        open fun jedisPoolForPubSub(): JedisPool =
-            JedisPool(
+        @Bean("pubsubJedisPooled")
+        open fun jedisPooledForPubSub(): JedisPooled =
+            JedisPooled(
                 HostAndPort.from("${redisContainer.host}:${redisContainer.getMappedPort(6379)}"),
                 DefaultJedisClientConfig
                     .builder()
@@ -143,9 +152,9 @@ class RedisPersistenceAndPubSubTest {
 
         @Bean
         open fun redisSubscriber(
-            @Qualifier("pubsubJedisPool") jedisPool: JedisPool,
+            @Qualifier("pubsubJedisPooled") jedisPooled: JedisPooled,
             redisSubscriptions: List<RedisSubscription>,
-        ): RedisSubscriber = RedisSubscriber(jedisPool, redisSubscriptions).apply { start() }
+        ): RedisSubscriber = RedisSubscriber(jedisPooled, redisSubscriptions).apply { start() }
 
         @Bean
         open fun authContextService(): AuthContextService = mockk()
@@ -155,14 +164,14 @@ class RedisPersistenceAndPubSubTest {
 
         @Bean
         open fun veilederContextDatabase(
-            @Qualifier("persistenceJedisPool") jedisPool: JedisPool,
+            @Qualifier("persistenceJedisPooled") jedisPooled: JedisPooled,
             objectMapper: ObjectMapper,
-        ): VeilederContextDatabase = RedisVeilederContextDatabase(jedisPool, objectMapper)
+        ): VeilederContextDatabase = RedisVeilederContextDatabase(jedisPooled, objectMapper)
 
         @Bean
         open fun redisPublisher(
-            @Qualifier("pubsubJedisPool") jedisPool: JedisPool,
-        ): RedisPublisher = RedisPublisher(jedisPool, "test-channel")
+            @Qualifier("pubsubJedisPooled") jedisPooled: JedisPooled,
+        ): RedisPublisher = RedisPublisher(jedisPooled, "test-channel")
 
         @Bean
         open fun contextService(

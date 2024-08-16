@@ -12,7 +12,7 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import redis.clients.jedis.DefaultJedisClientConfig
 import redis.clients.jedis.HostAndPort
-import redis.clients.jedis.JedisPool
+import redis.clients.jedis.JedisPooled
 
 @Testcontainers
 class RedisVeilederContextDatabaseTest {
@@ -24,11 +24,11 @@ class RedisVeilederContextDatabaseTest {
     @AfterEach
     fun afterEach(): Unit =
         runBlocking {
-            jedisPool.resource.use { jedis -> jedis.flushAll() }
+            jedisPooled.flushAll()
         }
 
-    private val jedisPool by lazy {
-        JedisPool(
+    private val jedisPooled by lazy {
+        JedisPooled(
             HostAndPort.from("${redisContainer.host}:${redisContainer.getMappedPort(6379)}"),
             DefaultJedisClientConfig
                 .builder()
@@ -39,7 +39,7 @@ class RedisVeilederContextDatabaseTest {
     }
     private val redisVeilederContextDatabase by lazy {
         RedisVeilederContextDatabase(
-            jedisPool,
+            jedisPooled,
             jacksonObjectMapper().registerModule(JavaTimeModule()),
         )
     }

@@ -13,11 +13,12 @@ import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.rest.model.RSEvent
 import no.nav.sbl.websocket.WebSocketContextEventPublisher
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import redis.clients.jedis.DefaultJedisClientConfig
 import redis.clients.jedis.HostAndPort
-import redis.clients.jedis.JedisPool
+import redis.clients.jedis.JedisPooled
 import kotlin.jvm.optionals.getOrDefault
 
 @Configuration
@@ -29,35 +30,50 @@ open class RedisConfig {
     private val channel = "ContextOppdatering-$environment"
 
     @Bean
-    open fun redisPublisher(jedisPool: JedisPool): RedisPublisher = RedisPublisher(jedisPool, channel)
+    open fun redisPublisher(
+        @Qualifier("pubsubJedisPooled") jedisPooled: JedisPooled,
+    ): RedisPublisher = RedisPublisher(jedisPooled, channel)
 
     @Bean
     open fun redisSubscriber(
-        jedisPool: JedisPool,
+        @Qualifier("pubsubJedisPooled") jedisPooled: JedisPooled,
         redisSubscriptions: List<RedisSubscription>,
-    ): RedisSubscriber = RedisSubscriber(jedisPool, redisSubscriptions)
+    ): RedisSubscriber = RedisSubscriber(jedisPooled, redisSubscriptions)
 
-    @Bean
-    open fun jedisPooled(): JedisPool {
+    @Bean("persistenceJedisPooled")
+    open fun persistenceJedisPooled(): JedisPooled {
         val hostAndPort = HostAndPort.from(redisUri)
         val jedisClientConfig =
             DefaultJedisClientConfig
                 .builder()
                 .user(redisUser)
                 .password(redisPassword)
-                .timeoutMillis(0)
                 .build()
-        return JedisPool(hostAndPort, jedisClientConfig)
+        return JedisPooled(hostAndPort, jedisClientConfig)
+    }
+
+    @Bean("pubsubJedisPooled")
+    open fun pubsubJedisPooled(): JedisPooled {
+        val hostAndPort = HostAndPort.from(redisUri)
+        val jedisClientConfig =
+            DefaultJedisClientConfig
+                .builder()
+                .user(redisUser)
+                .password(redisPassword)
+                .build()
+        return JedisPooled(hostAndPort, jedisClientConfig)
     }
 
     @Bean
-    open fun redisPersistence(jedisPool: JedisPool): RedisPersistence = RedisPersistence(jedisPool)
+    open fun redisPersistence(
+        @Qualifier("persistenceJedisPooled") jedisPooled: JedisPooled,
+    ): RedisPersistence = RedisPersistence(jedisPooled)
 
     @Bean
     open fun veilederContextDatabase(
-        jedisPool: JedisPool,
+        @Qualifier("persistenceJedisPooled") jedisPooled: JedisPooled,
         objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule()),
-    ): VeilederContextDatabase = RedisVeilederContextDatabase(jedisPool, objectMapper)
+    ): VeilederContextDatabase = RedisVeilederContextDatabase(jedisPooled, objectMapper)
 
     @Bean
     open fun contextEventRedisSubscription(

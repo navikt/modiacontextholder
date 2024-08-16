@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertTrue
 import redis.clients.jedis.DefaultJedisClientConfig
-import redis.clients.jedis.JedisPool
+import redis.clients.jedis.JedisPooled
 
 class RedisTest : TestUtils.WithRedis() {
     private val hostAndPort = redisHostAndPort()
@@ -18,12 +18,12 @@ class RedisTest : TestUtils.WithRedis() {
             .user("default")
             .password(PASSWORD)
             .build()
-    private val jedisPool = JedisPool(hostAndPort, jedisClientConfig)
+    private val jedisPooled = JedisPooled(hostAndPort, jedisClientConfig)
 
     @Test
     fun `sender redis-meldinger`() =
         runBlocking {
-            val redisPublisher = RedisPublisher(jedisPool, "TestChannel")
+            val redisPublisher = RedisPublisher(jedisPooled, "TestChannel")
             redisPublisher.publishMessage("TestMessage1")
             redisPublisher.publishMessage("TestMessage2")
             redisPublisher.publishMessage("TestMessage3")
@@ -42,9 +42,9 @@ class RedisTest : TestUtils.WithRedis() {
                     println("Received message $message")
                     defferedMessage.complete(message)
                 }
-            val redisSubscriber = RedisSubscriber(jedisPool, listOf(redisSubscription))
+            val redisSubscriber = RedisSubscriber(jedisPooled, listOf(redisSubscription))
             redisSubscriber.start()
-            val redisPublisher = RedisPublisher(jedisPool, "TestChannel")
+            val redisPublisher = RedisPublisher(jedisPooled, "TestChannel")
             println("Awaiting")
             val job =
                 launch {

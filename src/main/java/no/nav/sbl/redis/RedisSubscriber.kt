@@ -12,10 +12,10 @@ import no.nav.common.health.HealthCheck
 import no.nav.common.health.HealthCheckResult
 import org.slf4j.LoggerFactory
 import org.springframework.context.SmartLifecycle
-import redis.clients.jedis.JedisPool
+import redis.clients.jedis.JedisPooled
 
 class RedisSubscriber(
-    private val jedisPool: JedisPool,
+    private val jedisPooled: JedisPooled,
     private val redisSubscriptions: List<RedisSubscription>,
 ) : SmartLifecycle,
     HealthCheck {
@@ -33,10 +33,7 @@ class RedisSubscriber(
             redisSubscriptions.forEach { subscription ->
                 launch {
                     try {
-                        jedisPool.resource.use { jedis ->
-                            log.info("Starter å lytte på kanal ${subscription.channel}")
-                            jedis.subscribe(subscription.jedisPubSub, subscription.channel)
-                        }
+                        jedisPooled.subscribe(subscription.jedisPubSub, subscription.channel)
                     } finally {
                         log.info("Avslutter å lytte på kanal ${subscription.channel}")
                         subscription.jedisPubSub.unsubscribe()

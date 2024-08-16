@@ -135,6 +135,8 @@ class ContextService(
 
     private fun saveToDb(event: VeilederContext) = veilederContextDatabase.save(event)
 
-    private fun burdeSynceContextMedGcp(): Boolean =
-        ApplicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SYNC_CONTEXT_MED_GCP)
+    private fun burdeSynceContextMedGcp(): Boolean {
+        log.info("isFss: ${ApplicationCluster.isFss()}")
+        return ApplicationCluster.isFss() && toggleableFeatureService.isEnabled(ToggleableFeatures.SYNC_CONTEXT_MED_GCP)
+    }
 }
