@@ -1,6 +1,6 @@
 package no.nav.sbl.websocket
 
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import no.nav.sbl.config.WebSocketConfiguration
 import org.assertj.core.api.Assertions.assertThat
@@ -12,7 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.web.socket.TextMessage
+import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.client.standard.StandardWebSocketClient
+import org.springframework.web.socket.handler.TextWebSocketHandler
 import java.util.concurrent.TimeUnit
 
 @ExtendWith(SpringExtension::class)
@@ -30,11 +33,11 @@ class ContextWebSocketHandlerTest {
     fun `client can connect to websocket and receive message`() =
         runBlocking<Unit> {
             val ident = "ident1"
-            val channel = Channel<String>()
+            val deferredMessage = CompletableDeferred<String>()
             val webSocketClient = StandardWebSocketClient()
 
             val clientWebSocketHandler =
-                ClientWebSocketHandler(channel)
+                ClientWebSocketHandler(deferredMessage)
 
             val session =
                 webSocketClient
@@ -44,7 +47,7 @@ class ContextWebSocketHandlerTest {
                     ).get()
 
             handler.publishMessage(ident, "eventType")
-            val responseMessage = channel.receive()
+            val responseMessage = deferredMessage.await()
 
             session.close()
 
@@ -55,25 +58,26 @@ class ContextWebSocketHandlerTest {
     fun `client can have multiple sessions at the same time`() =
         runBlocking<Unit> {
             val ident = "ident2"
-            val channel = Channel<String>()
+            val defferedMessage1 = CompletableDeferred<String>()
+            val defferedMessage2 = CompletableDeferred<String>()
 
             val webSocketClient = StandardWebSocketClient()
 
             val session1 =
                 webSocketClient
                     .execute(
-                        ClientWebSocketHandler(channel),
+                        ClientWebSocketHandler(defferedMessage1),
                         "ws://localhost:$port/ws/$ident",
                     ).get(5, TimeUnit.SECONDS)
 
             val session2 =
                 webSocketClient
-                    .execute(ClientWebSocketHandler(channel), "ws://localhost:$port/ws/$ident")
+                    .execute(ClientWebSocketHandler(defferedMessage2), "ws://localhost:$port/ws/$ident")
                     .get(1, TimeUnit.SECONDS)
 
             handler.publishMessage(ident, "eventType")
-            val responseMessage1 = channel.receive()
-            val responseMessage2 = channel.receive()
+            val responseMessage1 = defferedMessage1.await()
+            val responseMessage2 = defferedMessage2.await()
 
             session1.close()
             session2.close()
@@ -82,4 +86,14 @@ class ContextWebSocketHandlerTest {
             assertThat(responseMessage2).isEqualTo("eventType")
         }
 
+    class ClientWebSocketHandler(
+        private val deferredMessage: CompletableDeferred<String>,
+    ) : TextWebSocketHandler() {
+        override fun handleTextMessage(
+            session: WebSocketSession,
+            message: TextMessage,
+        ) {
+            deferredMessage.complete(message.payload)
+        }
+    }
 }
