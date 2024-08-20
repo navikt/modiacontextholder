@@ -10,12 +10,12 @@ class RedisPublisher(
     private val logger = LoggerFactory.getLogger(RedisPublisher::class.java)
 
     fun publishMessage(message: String) {
-        jedisPooled.publish(channel, message)
         logger.info(
             """
-            Redismelding sendt på kanal '$channel' med melding:
+            Redismelding sendes på kanal '$channel' med melding:
             $message
             """.trimIndent(),
         )
+        jedisPooled.publish(channel, message)
     }
 }

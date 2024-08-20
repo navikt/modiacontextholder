@@ -43,7 +43,7 @@ class RedisTest : TestUtils.WithRedis() {
                     defferedMessage.complete(message)
                 }
             val redisSubscriber = RedisSubscriber(jedisPooled, listOf(redisSubscription))
-            redisSubscriber.start()
+            redisSubscriber.subscribe()
             val redisPublisher = RedisPublisher(jedisPooled, "TestChannel")
             println("Awaiting")
             val job =
@@ -54,6 +54,6 @@ class RedisTest : TestUtils.WithRedis() {
                 redisPublisher.publishMessage("TestMessage")
                 delay(1000)
             }
-            redisSubscriber.stop()
+            redisSubscriber.unsubscribe()
         }
 }

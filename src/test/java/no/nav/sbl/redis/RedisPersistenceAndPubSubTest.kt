@@ -21,6 +21,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -55,6 +56,7 @@ class RedisPersistenceAndPubSubTest {
     companion object {
         @Container
         private val redisContainer = TestUtils.RedisContainer()
+
         const val IDENT = "ident1"
         const val REDIS_CHANNEL = "test-channel"
 
@@ -75,6 +77,9 @@ class RedisPersistenceAndPubSubTest {
 
     @Autowired
     private lateinit var authContextService: AuthContextService
+
+    @Autowired
+    private lateinit var redisSubscriber: RedisSubscriber
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -117,6 +122,8 @@ class RedisPersistenceAndPubSubTest {
                 }
 
             session.close()
+
+            redisSubscriber.unsubscribe()
         }
 
     @Configuration
@@ -146,7 +153,7 @@ class RedisPersistenceAndPubSubTest {
         @Bean
         open fun redisSubscription(handler: ContextWebSocketHandler): RedisSubscription =
             RedisSubscription(REDIS_CHANNEL) { _, message ->
-                println("Received message $message")
+                LoggerFactory.getLogger(RedisSubscription::class.java).info("Received message $message")
                 handler.publishMessage(IDENT, message)
             }
 
@@ -154,7 +161,7 @@ class RedisPersistenceAndPubSubTest {
         open fun redisSubscriber(
             @Qualifier("pubsubJedisPooled") jedisPooled: JedisPooled,
             redisSubscriptions: List<RedisSubscription>,
-        ): RedisSubscriber = RedisSubscriber(jedisPooled, redisSubscriptions).apply { start() }
+        ): RedisSubscriber = RedisSubscriber(jedisPooled, redisSubscriptions)
 
         @Bean
         open fun authContextService(): AuthContextService = mockk()
