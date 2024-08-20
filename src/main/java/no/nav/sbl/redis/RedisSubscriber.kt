@@ -32,7 +32,7 @@ class RedisSubscriber(
             redisSubscriptions
                 .map { subscription ->
                     launch {
-                        jedisPooled.subscribe(subscription.jedisPubSub, subscription.channel)
+                        jedisPooled.subscribe(subscription, subscription.channel)
                         log.info("Satt opp Redis-abonnement på kanal ${subscription.channel}")
                     }
                 }.joinAll()
@@ -41,7 +41,7 @@ class RedisSubscriber(
     @PreDestroy
     fun unsubscribe() {
         redisSubscriptions.forEach {
-            it.jedisPubSub.unsubscribe()
+            it.unsubscribe()
             log.info("Avsluttet Redis-abonnement på kanal ${it.channel}")
         }
     }

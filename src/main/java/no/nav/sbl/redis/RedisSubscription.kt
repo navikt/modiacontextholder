@@ -4,15 +4,12 @@ import redis.clients.jedis.JedisPubSub
 
 data class RedisSubscription(
     val channel: String,
-    private val onMessage: (channel: String, message: String) -> Unit,
-) {
-    val jedisPubSub: JedisPubSub =
-        object : JedisPubSub() {
-            override fun onMessage(
-                channel: String,
-                message: String,
-            ) {
-                this@RedisSubscription.onMessage(channel, message)
-            }
-        }
+    private val onMessageHandler: (channel: String, message: String) -> Unit,
+) : JedisPubSub() {
+    override fun onMessage(
+        channel: String,
+        message: String,
+    ) {
+        onMessageHandler(channel, message)
+    }
 }
