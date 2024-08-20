@@ -37,7 +37,7 @@ class ContextServiceGcpTest {
     private val contextService =
         ContextService(
             veilederContextDatabase,
-            listOf(redisPublisher),
+            redisPublisher,
             contextHolderClient,
             toggleableFeatureService,
         )
@@ -86,7 +86,7 @@ class ContextServiceGcpTest {
 
         verify { contextHolderClient wasNot Called }
         verify { veilederContextDatabase.save(any()) }
-        verify { redisPublisher.publishMessage(any(), any()) }
+        verify { redisPublisher.publishMessage(any()) }
     }
 
     @Test
