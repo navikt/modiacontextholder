@@ -48,6 +48,7 @@ open class RedisConfig {
                 .builder()
                 .user(redisUser)
                 .password(redisPassword)
+                .ssl(true)
                 .build()
         return JedisPooled(hostAndPort, jedisClientConfig)
     }
@@ -60,6 +61,7 @@ open class RedisConfig {
                 .builder()
                 .user(redisUser)
                 .password(redisPassword)
+                .ssl(true)
                 .build()
         return JedisPooled(hostAndPort, jedisClientConfig)
     }
