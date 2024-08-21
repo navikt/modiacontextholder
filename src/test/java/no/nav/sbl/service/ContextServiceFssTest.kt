@@ -35,7 +35,7 @@ class ContextServiceFssTest {
     private val contextService =
         ContextService(
             veilederContextDatabase,
-            redisPublisher,
+            listOf(redisPublisher),
             contextHolderClient,
             toggleableFeatureService,
         )
@@ -74,7 +74,7 @@ class ContextServiceFssTest {
 
         verify { contextHolderClient.oppdaterVeiledersContext(any(), any()) }
         verify { veilederContextDatabase wasNot Called }
-        verify { redisPublisher.publishMessage(any()) }
+        verify { redisPublisher.publishMessage(any(), any()) }
     }
 
     @Test

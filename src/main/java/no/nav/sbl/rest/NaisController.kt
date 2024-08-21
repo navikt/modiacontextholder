@@ -3,7 +3,7 @@ package no.nav.sbl.rest
 import no.nav.common.health.selftest.SelfTestUtils
 import no.nav.common.health.selftest.SelftestHtmlGenerator
 import no.nav.sbl.config.Pingable
-import org.springframework.http.HttpStatus
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,14 +12,15 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/internal")
-class NaisController(
-    private val pingables: List<Pingable>,
-) {
+class NaisController {
+    @Autowired
+    lateinit var pingables: List<Pingable>
+
     @GetMapping("/isReady")
-    fun isReady(): ResponseEntity<Void> = ResponseEntity.status(HttpStatus.OK).build()
+    fun isReady(): ResponseEntity<Void> = ResponseEntity.status(200).build()
 
     @GetMapping("/isAlive")
-    fun isAlive(): ResponseEntity<Void> = ResponseEntity.status(HttpStatus.OK).build()
+    fun isAlive(): ResponseEntity<Void> = ResponseEntity.status(200).build()
 
     @GetMapping("/selftest")
     fun selftest(): ResponseEntity<String> {

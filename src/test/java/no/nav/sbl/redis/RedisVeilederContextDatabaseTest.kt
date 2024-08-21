@@ -2,8 +2,6 @@ package no.nav.sbl.redis
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.lettuce.core.RedisClient
-import io.lettuce.core.RedisURI
 import kotlinx.coroutines.runBlocking
 import no.nav.sbl.domain.VeilederContext
 import no.nav.sbl.domain.VeilederContextType
@@ -23,25 +21,22 @@ class RedisVeilederContextDatabaseTest {
     @AfterEach
     fun afterEach(): Unit =
         runBlocking {
-            redis.flushall()
+            authJedisPool.useResource { it.flushAll() }
         }
 
-    private val redis by lazy {
-        val redisConnection =
-            RedisClient
-                .create(
-                    RedisURI
-                        .builder()
-                        .withHost(redisContainer.host)
-                        .withPort(redisContainer.getMappedPort(6379))
-                        .withAuthentication("default", "password")
-                        .build(),
-                ).connect()
-        redisConnection.sync()
+    private val authJedisPool by lazy {
+        AuthJedisPool(
+            uriWithAuth =
+                RedisUriWithAuth(
+                    uri = "redis://${redisContainer.host}:${redisContainer.getMappedPort(6379)}",
+                    password = "password",
+                    user = "default",
+                ),
+        )
     }
     private val redisVeilederContextDatabase by lazy {
         RedisVeilederContextDatabase(
-            redis,
+            authJedisPool,
             jacksonObjectMapper().registerModule(JavaTimeModule()),
         )
     }
