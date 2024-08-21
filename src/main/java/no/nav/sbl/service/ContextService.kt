@@ -1,13 +1,16 @@
 package no.nav.sbl.service
 
+import no.nav.common.json.JsonUtils
 import no.nav.sbl.config.ApplicationCluster
 import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.domain.VeilederContext
 import no.nav.sbl.domain.VeilederContextType
+import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.rest.model.RSAktivBruker
 import no.nav.sbl.rest.model.RSAktivEnhet
 import no.nav.sbl.rest.model.RSContext
+import no.nav.sbl.rest.model.RSEvent
 import no.nav.sbl.rest.model.RSNyContext
 import no.nav.sbl.service.unleash.ToggleableFeatureService
 import no.nav.sbl.service.unleash.ToggleableFeatures
@@ -17,7 +20,7 @@ import org.springframework.stereotype.Service
 @Service
 class ContextService(
     private val veilederContextDatabase: VeilederContextDatabase,
-    private val contextEventPublishers: List<ContextEventPublisher>,
+    private val redisPublisher: RedisPublisher,
     private val contextHolderClient: ModiaContextHolderClient,
     private val toggleableFeatureService: ToggleableFeatureService,
 ) {
@@ -60,14 +63,7 @@ class ContextService(
             saveToDb(veilederContext)
         }
 
-        // Sender både til redis og direkte på websocket frem til frontend har byttet bort fra websocket i modiaeventdistribution.
-        // Det skal ikke ha noe å si om dette kjører i GCP eller FSS, da det ikke vil være noen som er tilkoblet websocket i FSS.
-        contextEventPublishers.forEach {
-            it.publishMessage(
-                veilederContext.veilederIdent,
-                veilederContext.contextType.name,
-            )
-        }
+        redisPublisher.publishMessage(JsonUtils.toJson(RSEvent.from(veilederContext)))
     }
 
     fun hentAktivBruker(veilederIdent: String): RSContext =

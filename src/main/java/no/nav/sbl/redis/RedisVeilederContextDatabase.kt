@@ -1,7 +1,7 @@
 package no.nav.sbl.redis
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlinx.coroutines.runBlocking
+import io.lettuce.core.api.sync.RedisCommands
 import no.nav.sbl.domain.VeilederContext
 import no.nav.sbl.domain.VeilederContextType
 import no.nav.sbl.redis.model.RedisPEvent
@@ -10,75 +10,49 @@ import no.nav.sbl.redis.model.RedisVeilederContextType
 import java.time.Duration
 
 class RedisVeilederContextDatabase(
-    private val authJedisPool: AuthJedisPool,
+    private val redis: RedisCommands<String, String>,
     private val objectMapper: ObjectMapper,
 ) : VeilederContextDatabase {
     private val timeToLive = Duration.ofHours(12L)
 
-    override fun save(veilederContext: VeilederContext): Unit =
-        runBlocking {
-            val redisPEvent = RedisPEvent.from(veilederContext)
-            val json = objectMapper.writeValueAsString(redisPEvent)
+    override fun save(veilederContext: VeilederContext) {
+        val redisPEvent = RedisPEvent.from(veilederContext)
+        val json = objectMapper.writeValueAsString(redisPEvent)
 
-            authJedisPool
-                .useResource {
-                    val redisKey = redisPEvent.key.toString()
-                    when (redisPEvent.contextType) {
-                        RedisVeilederContextType.AKTIV_BRUKER -> it.setex(redisKey, timeToLive.seconds, json)
-                        RedisVeilederContextType.AKTIV_ENHET -> it.set(redisKey, json)
-                    }
-                }.getOrThrow()
+        val redisKey = redisPEvent.key.toString()
+        when (redisPEvent.contextType) {
+            RedisVeilederContextType.AKTIV_BRUKER -> redis.setex(redisKey, timeToLive.seconds, json)
+            RedisVeilederContextType.AKTIV_ENHET -> redis.set(redisKey, json)
         }
+    }
 
-    override fun sistAktiveBrukerEvent(veilederIdent: String): VeilederContext? =
-        runBlocking {
-            val key = RedisPEventKey(RedisVeilederContextType.AKTIV_BRUKER, veilederIdent)
+    override fun sistAktiveBrukerEvent(veilederIdent: String): VeilederContext? {
+        val key = RedisPEventKey(RedisVeilederContextType.AKTIV_BRUKER, veilederIdent)
 
-            authJedisPool
-                .useResource {
-                    it.get(key.toString())
-                }.map {
-                    if (it == null) return@map null
-                    objectMapper.readValue(it, RedisPEvent::class.java).toPEvent()
-                }.getOrThrow()
-        }
+        val result = redis.get(key.toString()) ?: return null
+        return objectMapper.readValue(result, RedisPEvent::class.java).toPEvent()
+    }
 
-    override fun sistAktiveEnhetEvent(veilederIdent: String): VeilederContext? =
-        runBlocking {
-            val key = RedisPEventKey(RedisVeilederContextType.AKTIV_ENHET, veilederIdent)
+    override fun sistAktiveEnhetEvent(veilederIdent: String): VeilederContext? {
+        val key = RedisPEventKey(RedisVeilederContextType.AKTIV_ENHET, veilederIdent)
 
-            authJedisPool
-                .useResource {
-                    it.get(key.toString())
-                }.map {
-                    if (it == null) return@map null
-                    objectMapper.readValue(it, RedisPEvent::class.java).toPEvent()
-                }.getOrThrow()
-        }
+        val result = redis.get(key.toString()) ?: return null
+        return objectMapper.readValue(result, RedisPEvent::class.java).toPEvent()
+    }
 
-    override fun slettAlleEventer(veilederIdent: String): Unit =
-        runBlocking {
-            val keys =
-                RedisVeilederContextType.entries
-                    .map { RedisPEventKey(it, veilederIdent).toString() }
-                    .toTypedArray()
-
-            authJedisPool
-                .useResource { jedis ->
-                    jedis.del(*keys)
-                }.getOrThrow()
-        }
+    override fun slettAlleEventer(veilederIdent: String) {
+        val keys =
+            RedisVeilederContextType.entries
+                .map { RedisPEventKey(it, veilederIdent).toString() }
+                .toTypedArray()
+        redis.del(*keys)
+    }
 
     override fun slettAlleAvEventTypeForVeileder(
         contextType: VeilederContextType,
         veilederIdent: String,
-    ): Unit =
-        runBlocking {
-            val key = RedisPEventKey(RedisVeilederContextType.from(contextType), veilederIdent)
-
-            authJedisPool
-                .useResource { jedis ->
-                    jedis.del(key.toString())
-                }.getOrThrow()
-        }
+    ) {
+        val key = RedisPEventKey(RedisVeilederContextType.from(contextType), veilederIdent)
+        redis.del(key.toString())
+    }
 }
