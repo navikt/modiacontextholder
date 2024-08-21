@@ -4,7 +4,6 @@ import no.nav.common.health.HealthCheck
 import no.nav.common.health.selftest.SelfTestUtils
 import no.nav.common.health.selftest.SelftestHtmlGenerator
 import no.nav.sbl.config.Pingable
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -16,10 +15,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/internal")
 class NaisController(
     private val healthChecks: List<HealthCheck>,
+    private val pingables: List<Pingable>,
 ) {
-    @Autowired
-    lateinit var pingables: List<Pingable>
-
     @GetMapping("/isReady")
     fun isReady(): ResponseEntity<Void> = ResponseEntity.status(200).build()
 
