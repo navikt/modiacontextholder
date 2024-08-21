@@ -1,6 +1,5 @@
 package no.nav.sbl.rest
 
-import no.nav.common.health.HealthCheck
 import no.nav.common.health.selftest.SelfTestUtils
 import no.nav.common.health.selftest.SelftestHtmlGenerator
 import no.nav.sbl.config.Pingable
@@ -14,21 +13,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/internal")
 class NaisController(
-    private val healthChecks: List<HealthCheck>,
     private val pingables: List<Pingable>,
 ) {
     @GetMapping("/isReady")
-    fun isReady(): ResponseEntity<Void> = ResponseEntity.status(200).build()
+    fun isReady(): ResponseEntity<Void> = ResponseEntity.status(HttpStatus.OK).build()
 
     @GetMapping("/isAlive")
-    fun isAlive(): ResponseEntity<Void> {
-        val anyIsUnhealthy = healthChecks.map { it.checkHealth() }.any { it.isUnhealthy }
-        return if (anyIsUnhealthy) {
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
-        } else {
-            ResponseEntity.status(HttpStatus.OK).build()
-        }
-    }
+    fun isAlive(): ResponseEntity<Void> = ResponseEntity.status(HttpStatus.OK).build()
 
     @GetMapping("/selftest")
     fun selftest(): ResponseEntity<String> {
