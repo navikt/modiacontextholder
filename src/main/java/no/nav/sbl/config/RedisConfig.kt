@@ -50,7 +50,7 @@ open class RedisConfig {
         redisPubSubListeners: List<RedisPubSubListener<String, String>>,
     ): StatefulRedisPubSubConnection<String, String> =
         redisClient.connectPubSub().apply {
-            redisPubSubListeners.forEach(this::addListener)
+            redisPubSubListeners.forEach(::addListener)
         }
 
     @Bean("redisCommands")

@@ -16,9 +16,7 @@ class RedisTest : TestUtils.WithRedis() {
         RedisClient
             .create(
                 RedisURI
-                    .builder()
-                    .withHost(hostAndPort.host)
-                    .withPort(hostAndPort.port)
+                    .builder(RedisURI.create("redis://$hostAndPort"))
                     .withAuthentication("default", PASSWORD)
                     .build(),
             ).connectPubSub()

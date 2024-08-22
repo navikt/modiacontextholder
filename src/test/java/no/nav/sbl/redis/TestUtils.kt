@@ -1,16 +1,23 @@
 package no.nav.sbl.redis
 
-import kotlinx.coroutines.*
+import io.lettuce.core.RedisClient
+import io.lettuce.core.RedisURI
+import io.lettuce.core.internal.HostAndPort
+import io.lettuce.core.pubsub.RedisPubSubAdapter
+import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withTimeout
 import no.nav.sbl.redis.TestUtils.WithRedis.Companion.PASSWORD
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
 import org.testcontainers.containers.GenericContainer
-import redis.clients.jedis.HostAndPort
-import redis.clients.jedis.Jedis
-import redis.clients.jedis.JedisPubSub
 import java.time.Duration
 import java.util.*
 
@@ -24,11 +31,11 @@ object TestUtils {
 
     class RedisSubscriber(
         private val subscribeCallback: () -> Unit = {},
-    ) : JedisPubSub() {
+    ) : RedisPubSubAdapter<String, String>() {
         val messages: MutableList<Pair<String, String>> = mutableListOf()
         private val lock = WaitLock(false)
 
-        override fun onPMessage(
+        override fun message(
             pattern: String,
             channel: String,
             message: String,
@@ -40,9 +47,9 @@ object TestUtils {
             }
         }
 
-        override fun onPSubscribe(
-            pattern: String?,
-            subscribedChannels: Int,
+        override fun psubscribed(
+            pattern: String,
+            count: Long,
         ) {
             subscribeCallback()
         }
@@ -61,8 +68,9 @@ object TestUtils {
 
     open class WithRedis {
         companion object {
-            private var job: Job? = null
-            private var subscriber: RedisSubscriber? = null
+            private lateinit var job: Job
+            private lateinit var subscriber: RedisSubscriber
+            private lateinit var redisPubSub: RedisPubSubCommands<String, String>
             val container = RedisContainer()
 
             const val PASSWORD = "password"
@@ -86,26 +94,34 @@ object TestUtils {
                 val lock = WaitLock(true)
                 subscriber = RedisSubscriber { lock.unlock() }
                 val hostAndPort = redisHostAndPort()
-                val jedis = Jedis(hostAndPort)
-                jedis.auth(PASSWORD)
+
+                val redisClient =
+                    RedisClient.create(
+                        RedisURI
+                            .builder(RedisURI.create("redis://$hostAndPort"))
+                            .withAuthentication("default", PASSWORD)
+                            .build(),
+                    )
+                val statefulRedisPubSubConnection = redisClient.connectPubSub()
+                statefulRedisPubSubConnection.addListener(subscriber)
+                redisPubSub = statefulRedisPubSubConnection.sync()
+
                 job =
-                    GlobalScope.launch {
-                        jedis.psubscribe(subscriber, "*")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        redisPubSub.psubscribe("*")
                     }
                 lock.waitForUnlock()
             }
 
         @After
         fun closeSubscriber() {
-            subscriber?.unsubscribe()
-            job?.cancel()
-            subscriber = null
-            job = null
+            redisPubSub.punsubscribe()
+            job.cancel()
         }
 
-        fun redisHostAndPort() = HostAndPort(container.host, container.getMappedPort(6379))
+        fun redisHostAndPort(): HostAndPort = HostAndPort.of(container.host, container.getMappedPort(6379))
 
-        fun getMessages() = subscriber?.messages ?: emptyList<Pair<String, String>>()
+        fun getMessages() = subscriber.messages
 
         suspend fun assertReceivedMessage(
             channel: String,
@@ -113,7 +129,7 @@ object TestUtils {
             timeout: Duration = Duration.ofSeconds(1),
         ) {
             withTimeout(timeout.toMillis()) {
-                subscriber?.assertReceivedMessage(channel, message)
+                subscriber.assertReceivedMessage(channel, message)
             }
         }
     }
