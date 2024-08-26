@@ -41,12 +41,15 @@ class ContextWebSocketHandler : TextWebSocketHandler() {
         ident: String,
         message: String,
     ) {
-        try {
+        runCatching {
             sessions[ident]?.forEach {
                 it.sendMessage(TextMessage(message))
             }
-        } catch (e: IOException) {
-            log.error("Error sending message to websocket", e)
+        }.onFailure {
+            when (it) {
+                is IOException -> log.error("Error sending message to websocket", it)
+                is IllegalStateException, is NullPointerException -> log.debug("Session is closed, ignoring message")
+            }
         }
     }
 }
