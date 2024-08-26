@@ -12,6 +12,8 @@ class ContextWebSocketHandler : TextWebSocketHandler() {
     private val log = LoggerFactory.getLogger(this::class.java)
     private val sessions = ConcurrentHashMap<String, MutableList<WebSocketSession>>()
 
+    val activeSessions: Int get() = sessions.values.sumOf { it.size }
+
     override fun afterConnectionEstablished(session: WebSocketSession) {
         val ident =
             session.uri

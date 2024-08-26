@@ -1,5 +1,7 @@
 package no.nav.sbl.config
 
+import io.micrometer.core.instrument.Gauge
+import io.micrometer.core.instrument.MeterRegistry
 import no.nav.sbl.websocket.ContextWebSocketHandler
 import no.nav.sbl.websocket.WebSocketRegistry
 import org.springframework.context.annotation.Bean
@@ -14,5 +16,11 @@ open class WebSocketConfiguration {
         WebSocketRegistry(contextWebSocketHandler)
 
     @Bean
-    open fun webSocketHandler(): ContextWebSocketHandler = ContextWebSocketHandler()
+    open fun webSocketHandler(meterRegistry: MeterRegistry): ContextWebSocketHandler =
+        ContextWebSocketHandler().also {
+            Gauge
+                .builder("websocket_clients", it::activeSessions)
+                .description("Antall aktive websocket-sessioner")
+                .register(meterRegistry)
+        }
 }
