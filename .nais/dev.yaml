@@ -57,11 +57,12 @@ spec:
         - host: personoversikt-unleash-api.nav.cloud.nais.io
         - host: axsys.dev-fss-pub.nais.io
         - host: pdl-api.dev-fss-pub.nais.io
-        - host: norg2.dev-fss-pub.nais.io
       rules:
         - application: nom-api
           namespace: nom
           cluster: dev-gcp
+        - application: norg2
+          namespace: org
     inbound:
       rules:
         - application: arbeidssokerregistrering-veileder
@@ -149,9 +150,9 @@ spec:
     - name: PDL_SCOPE
       value: "dev-fss:pdl:pdl-api"
     - name: NORG2_API_URL
-      value: "https://norg2.dev-fss-pub.nais.io/norg2"
+      value: "http://norg2.org/norg2"
     - name: NORG2_SCOPE
-      value: "dev-fss:org:norg2"
+      value: "dev-gcp:org:norg2"
     - name: NOM_URL
       value: "https://nom-api.intern.dev.nav.no"
     - name: NOM_SCOPE
