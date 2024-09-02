@@ -190,7 +190,7 @@ class RedisPersistenceAndPubSubTest {
         open fun contextService(
             veilederContextDatabase: VeilederContextDatabase,
             redisPublisher: RedisPublisher,
-        ): ContextService = ContextService(veilederContextDatabase, redisPublisher, mockk(), mockk())
+        ): ContextService = ContextService(veilederContextDatabase, redisPublisher)
 
         @Bean
         open fun contextRessurs(
