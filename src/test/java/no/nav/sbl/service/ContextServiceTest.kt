@@ -4,14 +4,11 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import no.nav.sbl.config.ApplicationCluster
-import no.nav.sbl.consumers.modiacontextholder.ModiaContextHolderClient
 import no.nav.sbl.domain.VeilederContext
 import no.nav.sbl.domain.VeilederContextType.NY_AKTIV_BRUKER
 import no.nav.sbl.redis.RedisPublisher
 import no.nav.sbl.redis.VeilederContextDatabase
 import no.nav.sbl.rest.model.RSContext
-import no.nav.sbl.service.unleash.ToggleableFeature
-import no.nav.sbl.service.unleash.ToggleableFeatureService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -22,17 +19,10 @@ class ContextServiceTest {
 
     private val veilederContextDatabase: VeilederContextDatabase = mockk()
     private val redisPublisher: RedisPublisher = mockk()
-    private val contextHolderClient: ModiaContextHolderClient = mockk(relaxed = true)
-    private val toggleableFeatureService: ToggleableFeatureService =
-        mockk {
-            every { isEnabled(any<ToggleableFeature>()) } returns false
-        }
     private val contextService: ContextService =
         ContextService(
             veilederContextDatabase,
             redisPublisher,
-            contextHolderClient,
-            toggleableFeatureService,
         )
 
     companion object {
