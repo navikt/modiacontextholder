@@ -26,9 +26,9 @@ import kotlin.jvm.optionals.getOrDefault
 
 @Configuration
 open class RedisConfig {
-    private val redisUri = EnvironmentUtils.getRequiredProperty("REDIS_URI")
-    private val redisUser = EnvironmentUtils.getOptionalProperty("REDIS_USER").getOrDefault("default")
-    private val redisPassword = EnvironmentUtils.getRequiredProperty("REDIS_PASSWORD")
+    private val redisUri = EnvironmentUtils.getRequiredProperty("REDIS_URI_CONTEXTHOLDER")
+    private val redisUser = EnvironmentUtils.getOptionalProperty("REDIS_USERNAME_CONTEXTHOLDER").getOrDefault("default")
+    private val redisPassword = EnvironmentUtils.getRequiredProperty("REDIS_PASSWORD_CONTEXTHOLDER")
     private val environment = EnvironmentUtils.getRequiredProperty("APP_ENVIRONMENT_NAME")
     private val channel = "ContextOppdatering-$environment"
 
