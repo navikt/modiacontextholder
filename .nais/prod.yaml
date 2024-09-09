@@ -162,12 +162,6 @@ spec:
       value: "https://arbeid-og-inntekt.prod-fss-pub.nais.io"
     - name: AAREG_PUBLIC_URL
       value: "https://arbeid-og-inntekt.nais.adeo.no"
-    - name: REDIS_URI
-      value: "$(REDIS_URI_CONTEXTHOLDER)"
-    - name: REDIS_USER
-      value: "$(REDIS_USERNAME_CONTEXTHOLDER)"
-    - name: REDIS_PASSWORD
-      value: "$(REDIS_PASSWORD_CONTEXTHOLDER)"
     - name: SALESFORCE_URL
       value: "https://navdialog.lightning.force.com"
     - name: UNLEASH_ENVIRONMENT
