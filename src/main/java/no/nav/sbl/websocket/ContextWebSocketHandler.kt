@@ -65,7 +65,14 @@ class ContextWebSocketHandler : TextWebSocketHandler() {
         val ping = PingMessage(ByteBuffer.allocate(1))
         sessions.values.forEach {
             it.forEach { session ->
-                session.sendMessage(ping)
+                runCatching {
+                    session.sendMessage(ping)
+                }.onFailure { err ->
+                    when (err) {
+                        is IOException -> log.error("Error sending PING to websocket", err)
+                        else -> log.error("Error sending to websocket", err)
+                    }
+                }
             }
         }
     }
