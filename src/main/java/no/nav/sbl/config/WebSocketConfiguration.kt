@@ -28,8 +28,9 @@ open class WebSocketConfiguration {
     @Bean
     open fun createWebSocketContainerFactoryBean(): ServletServerContainerFactoryBean {
         val container = ServletServerContainerFactoryBean()
-        // Set idle timeout to 2 minutes
-        container.maxSessionIdleTimeout = 120 * 1000
+        // Set idle timeout to 24 hours
+        // The default timeout seems to be 1 minute, which causes some issues on the client side
+        container.maxSessionIdleTimeout = 24 * 60 * 60 * 1000
 
         return container
     }
