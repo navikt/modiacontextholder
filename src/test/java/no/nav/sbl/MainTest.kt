@@ -2,7 +2,6 @@ package no.nav.sbl
 
 import no.nav.common.nais.NaisYamlUtils
 import no.nav.common.rest.client.RestClient
-import no.nav.common.test.SystemProperties
 import no.nav.common.test.ssl.SSLTestUtils
 import no.nav.common.test.ssl.TrustAllSSLSocketFactory
 import org.springframework.boot.SpringApplication
@@ -14,10 +13,9 @@ import javax.net.ssl.X509TrustManager
 object MainTest {
     init {
         setupRestClient()
-        SystemProperties.setFrom(".vault.properties")
         val naisConfig =
             NaisYamlUtils.getTemplatedConfig(
-                ".nais/qa-template.yaml",
+                ".nais/dev.yaml",
                 object : HashMap<Any?, Any?>() {
                     init {
                         put("namespace", "q0")
