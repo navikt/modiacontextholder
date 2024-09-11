@@ -7,12 +7,12 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import no.nav.common.types.identer.AzureObjectId
 import no.nav.common.types.identer.NavIdent
-import no.nav.sbl.util.BoundedOnBehalfOfTokenClient
+import no.nav.modiacontextholder.utils.BoundedOnBehalfOfTokenClient
+import no.nav.modiacontextholder.utils.CacheFactory
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import org.slf4j.LoggerFactory
-import org.springframework.cache.annotation.Cacheable
 
 interface AzureADService {
     fun fetchRoller(
@@ -29,35 +29,37 @@ open class AzureADServiceImpl(
     private val json = Json { ignoreUnknownKeys = true }
     private val log = LoggerFactory.getLogger(AzureADServiceImpl::class.java)
 
-    @Cacheable("azureAdCache", key = "#veilederIdent")
+    private val cache = CacheFactory.createCache<String, List<AnsattRolle>>()
+
     override fun fetchRoller(
         userToken: String,
         veilederIdent: NavIdent,
-    ): List<AnsattRolle> {
-        val url =
-            URLBuilder(graphUrl)
-                .apply {
-                    path("v1.0/me/memberOf/microsoft.graph.group")
-                    parameters.append("\$count", "true")
-                    parameters.append("\$top", "500")
-                    parameters.append("\$select", "displayName,id")
-                }.buildString()
+    ): List<AnsattRolle> =
+        cache.get(veilederIdent.get()) {
+            val url =
+                URLBuilder(graphUrl)
+                    .apply {
+                        path("v1.0/me/memberOf/microsoft.graph.group")
+                        parameters.append("\$count", "true")
+                        parameters.append("\$top", "500")
+                        parameters.append("\$select", "displayName,id")
+                    }.buildString()
 
-        return try {
-            runBlocking {
-                val response = handleRequest(url, userToken, veilederIdent)
-                response.value.map {
-                    AnsattRolle(
-                        gruppeNavn = requireNotNull(it.displayName),
-                        gruppeId = AzureObjectId(requireNotNull(it.id)),
-                    )
+            try {
+                runBlocking {
+                    val response = handleRequest(url, userToken, veilederIdent)
+                    response.value.map {
+                        AnsattRolle(
+                            gruppeNavn = requireNotNull(it.displayName),
+                            gruppeId = AzureObjectId(requireNotNull(it.id)),
+                        )
+                    }
                 }
+            } catch (e: Exception) {
+                log.error("Kall til azureAD feilet", veilederIdent, e)
+                listOf()
             }
-        } catch (e: Exception) {
-            log.error("Kall til azureAD feilet", veilederIdent, e)
-            return listOf()
         }
-    }
 
     private fun handleRequest(
         url: String,

@@ -10,6 +10,9 @@ val unleash_version = "9.2.4"
 val okhttp3_version = "4.12.0"
 val mockk_version = "1.13.12"
 val testcontainers_version = "1.20.1"
+val vavr_version = "0.10.4"
+val jedis_version = "5.1.4"
+val kotlinx_serialization_version = "1.7.1"
 
 group = "no.nav"
 version = "1.0.0-SNAPSHOT"
@@ -18,6 +21,7 @@ description = "modiacontextholder"
 plugins {
     kotlin("jvm") version "2.0.20"
     id("io.ktor.plugin") version "2.3.12"
+    kotlin("plugin.serialization") version "2.0.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     idea
 }
@@ -38,6 +42,8 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
+
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
@@ -67,8 +73,10 @@ dependencies {
 
     implementation("io.getunleash:unleash-client-java:$unleash_version")
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeine_version")
+    implementation("redis.clients:jedis:$jedis_version")
 
     implementation("com.squareup.okhttp3:okhttp:$okhttp3_version")
+    implementation("io.vavr:vavr:$vavr_version")
     // api(libs.io.micrometer.micrometer.registry.prometheus)
     // api(libs.io.lettuce.lettuce.core)
     // api(libs.org.jetbrains.kotlin.kotlin.stdlib)

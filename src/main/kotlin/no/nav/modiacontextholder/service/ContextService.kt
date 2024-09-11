@@ -1,19 +1,17 @@
-package no.nav.sbl.service
+package no.nav.modiacontextholder.service
 
 import no.nav.common.json.JsonUtils
-import no.nav.sbl.domain.VeilederContext
-import no.nav.sbl.domain.VeilederContextType
-import no.nav.sbl.redis.RedisPublisher
-import no.nav.sbl.redis.VeilederContextDatabase
-import no.nav.sbl.rest.model.RSAktivBruker
-import no.nav.sbl.rest.model.RSAktivEnhet
-import no.nav.sbl.rest.model.RSContext
-import no.nav.sbl.rest.model.RSEvent
-import no.nav.sbl.rest.model.RSNyContext
+import no.nav.modiacontextholder.domain.VeilederContext
+import no.nav.modiacontextholder.domain.VeilederContextType
+import no.nav.modiacontextholder.redis.RedisPublisher
+import no.nav.modiacontextholder.redis.VeilederContextDatabase
+import no.nav.modiacontextholder.rest.model.RSAktivBruker
+import no.nav.modiacontextholder.rest.model.RSAktivEnhet
+import no.nav.modiacontextholder.rest.model.RSContext
+import no.nav.modiacontextholder.rest.model.RSEvent
+import no.nav.modiacontextholder.rest.model.RSNyContext
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 
-@Service
 class ContextService(
     private val veilederContextDatabase: VeilederContextDatabase,
     private val redisPublisher: RedisPublisher,

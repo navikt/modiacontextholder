@@ -1,4 +1,4 @@
-package no.nav.sbl.service.unleash
+package no.nav.modiacontextholder.service.unleash
 
 enum class ToggleableFeatures : ToggleableFeature {
     SYNC_CONTEXT_MED_GCP {

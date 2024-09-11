@@ -1,21 +1,24 @@
-package no.nav.sbl.service
+package no.nav.modiacontextholder.service
 
 import no.nav.common.client.nom.NomClient
 import no.nav.common.client.nom.VeilederNavn
 import no.nav.common.types.identer.NavIdent
-import no.nav.sbl.rest.model.DecoratorDomain
-import org.springframework.cache.annotation.Cacheable
+import no.nav.modiacontextholder.rest.model.DecoratorDomain
+import no.nav.modiacontextholder.utils.CacheFactory
 
-open class VeilederService(private val nomClient: NomClient) {
+open class VeilederService(
+    private val nomClient: NomClient,
+) {
+    private val cache = CacheFactory.createCache<String, DecoratorDomain.Saksbehandler>()
 
-    @Cacheable("veilederCache")
-    open fun hentVeilederNavn(ident: String): DecoratorDomain.Saksbehandler {
-        val veilederNavn: VeilederNavn = nomClient.finnNavn(NavIdent(ident))
+    open fun hentVeilederNavn(ident: String): DecoratorDomain.Saksbehandler =
+        cache.get(ident) {
+            val veilederNavn: VeilederNavn = nomClient.finnNavn(NavIdent(ident))
 
-        return DecoratorDomain.Saksbehandler(
-            ident,
-            veilederNavn.fornavn,
-            veilederNavn.etternavn
-        )
-    }
+            DecoratorDomain.Saksbehandler(
+                ident,
+                veilederNavn.fornavn,
+                veilederNavn.etternavn,
+            )
+        }
 }

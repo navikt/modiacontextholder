@@ -1,7 +1,7 @@
-package no.nav.sbl.service
+package no.nav.modiacontextholder.service
 
-import no.nav.sbl.redis.RedisPersistence
-import no.nav.sbl.redis.TempCodeResult
+import no.nav.modiacontextholder.redis.RedisPersistence
+import no.nav.modiacontextholder.redis.TempCodeResult
 import org.springframework.beans.factory.annotation.Autowired
 
 class FnrCodeExchangeService(
