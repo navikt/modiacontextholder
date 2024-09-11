@@ -1,5 +1,6 @@
 val ktor_version = "2.3.12"
 val kotlin_version = "2.0.20"
+val koin_version = "3.5.6"
 
 val modia_common_version = "1.2024.09.09-09.18-1e1cb34aaec3"
 val nav_common_version = "3.2024.02.21_11.18-8f9b43befae1"
@@ -46,8 +47,12 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
     implementation("io.ktor:ktor-server-websockets:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-client-core-jvm:$ktor_version")
 
-    implementation("io.getunleash:unleash-client-java:$unleash_version")
+    implementation("io.insert-koin.koin-core:$koin_version")
+    implementation("io.insert-koin:koin-ktor:$koin_version")
+    implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
+
     implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")
     implementation("com.github.navikt.modia-common-utils:kotlin-utils:$modia_common_version")
@@ -59,9 +64,11 @@ dependencies {
     implementation("no.nav.common:rest:$nav_common_version")
     implementation("no.nav.common:token-client:$nav_common_version")
     implementation("no.nav.common:util:$nav_common_version")
+
+    implementation("io.getunleash:unleash-client-java:$unleash_version")
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeine_version")
 
-    api("com.squareup.okhttp3:okhttp:$okhttp3_version")
+    implementation("com.squareup.okhttp3:okhttp:$okhttp3_version")
     // api(libs.io.micrometer.micrometer.registry.prometheus)
     // api(libs.io.lettuce.lettuce.core)
     // api(libs.org.jetbrains.kotlin.kotlin.stdlib)
@@ -69,8 +76,6 @@ dependencies {
     // api(libs.org.jetbrains.kotlin.kotlin.reflect)
     implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphql_kotlin_version")
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphql_kotlin_version")
-
-    implementation("io.ktor:ktor-client-core-jvm:2.3.12")
 
     testImplementation("no.nav.common:test:$nav_common_version")
     // testImplementation(libs.org.mockito.mockito.core)
