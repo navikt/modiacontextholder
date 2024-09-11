@@ -29,17 +29,19 @@ spec:
   resources:
     limits:
       cpu: 3000m
-      memory: 2048Mi
+      memory: 4096Mi
     requests:
       cpu: 1500m
-      memory: 2024Mi
+      memory: 2048Mi
   ingresses:
     - https://modiacontextholder.intern.nav.no
     - https://modiacontextholder.ansatt.nav.no
   replicas:
     min: 2
-    max: 4
-    cpuThresholdPercentage: 50
+    max: 6
+    scalingStrategy:
+      cpu:
+        thresholdPercentage: 50
   redis:
     - instance: contextholder
       access: readwrite
