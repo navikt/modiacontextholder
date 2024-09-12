@@ -7,6 +7,8 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.micrometer.prometheusmetrics.PrometheusConfig
@@ -14,6 +16,9 @@ import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import no.nav.modiacontextholder.AppModule.appModule
 import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.redis.setupRedis
+import no.nav.modiacontextholder.routes.decoratorRoutes
+import no.nav.modiacontextholder.utils.AuthorizationException
+import no.nav.modiacontextholder.utils.HTTPException
 import no.nav.modiacontextholder.utils.WebsocketStorage
 import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Security
@@ -69,6 +74,19 @@ fun Application.modiacontextholderApp(
         }
     }
 
+    install(StatusPages) {
+        exception<Throwable> { call, cause ->
+            if (cause is HTTPException) {
+                call.respondText(text = "${cause.statusCode()}: $cause}", status = cause.statusCode())
+            }
+            if (cause is AuthorizationException) {
+                call.respondText(text = "403: $cause", status = HttpStatusCode.Forbidden)
+            } else {
+                call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
+            }
+        }
+    }
+
     install(ContentNegotiation) {
         json()
     }
@@ -81,7 +99,7 @@ fun Application.modiacontextholderApp(
     routing {
         authenticate(*security.authproviders) {
             route("/api") {
-                contextRoutes()
+                decoratorRoutes()
             }
         }
 

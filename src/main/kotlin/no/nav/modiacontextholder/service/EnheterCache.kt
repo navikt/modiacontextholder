@@ -4,7 +4,6 @@ import no.nav.modiacontextholder.consumers.norg2.Norg2Client
 import no.nav.modiacontextholder.consumers.norg2.domain.Enhet
 import no.nav.modiacontextholder.rest.model.DecoratorDomain
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import java.util.*
 
 class EnheterCache(
@@ -18,7 +17,7 @@ class EnheterCache(
     private var cache: Map<String, DecoratorDomain.Enhet> = Collections.unmodifiableMap(HashMap())
     private var cacheList: List<DecoratorDomain.Enhet> = Collections.unmodifiableList(ArrayList())
 
-    @Scheduled(fixedRate = HVER_TOLVTE_TIME)
+    // FIXME  schedule this in ktor timer
     private fun refreshCache() {
         try {
             val enheter: List<Enhet> = norg2Client.hentAlleEnheter()

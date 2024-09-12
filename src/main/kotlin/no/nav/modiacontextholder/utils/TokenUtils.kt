@@ -1,7 +1,13 @@
 package no.nav.modiacontextholder.utils
 
+import io.ktor.http.auth.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
+import java.text.ParseException
+import java.util.*
 
 class DownstreamApi(
     val cluster: String,
@@ -58,4 +64,25 @@ fun OnBehalfOfTokenClient.bindTo(api: DownstreamApi) =
 fun OnBehalfOfTokenClient.bindTo(api: String) =
     object : BoundedOnBehalfOfTokenClient {
         override fun exchangeOnBehalfOfToken(accesstoken: String) = exchangeOnBehalfOfToken(api, accesstoken)
+    }
+
+fun ApplicationCall.getIdToken(): String {
+    val authHeader = this.request.parseAuthorizationHeader()
+    if (authHeader != null && authHeader is HttpAuthHeader.Single && authHeader.authScheme == "Bearer") {
+        return authHeader.blob
+    }
+    throw AuthorizationException("Missing or invavlid authorization header")
+}
+
+fun ApplicationCall.getIdent(): String =
+    checkNotNull(this.principal<JWTPrincipal>()?.subject) {
+        "Could not find subject from JWT"
+    }
+
+fun ApplicationCall.getAuthorizedParty(): Optional<String> =
+    try {
+        val claim = this.principal<JWTPrincipal>()?.getClaim("azp_name", String::class)
+        Optional.ofNullable(claim)
+    } catch (_: ParseException) {
+        Optional.empty()
     }

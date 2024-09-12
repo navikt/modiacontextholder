@@ -2,7 +2,9 @@ package no.nav.modiacontextholder.service
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
-import io.ktor.client.request.*
+import io.ktor.client.request.header
+import io.ktor.http.HttpStatusCode
+import io.vavr.control.Try
 import kotlinx.coroutines.runBlocking
 import no.nav.common.client.utils.CacheUtils
 import no.nav.common.utils.EnvironmentUtils
@@ -10,8 +12,7 @@ import no.nav.modiacontextholder.consumers.pdl.HeadersBuilder
 import no.nav.modiacontextholder.consumers.pdl.PdlClient
 import no.nav.modiacontextholder.consumers.pdl.generated.HentIdent
 import no.nav.modiacontextholder.utils.BoundedMachineToMachineTokenClient
-import org.springframework.http.HttpStatus
-import org.springframework.web.server.ResponseStatusException
+import no.nav.modiacontextholder.utils.HTTPException
 import java.net.URL
 import java.time.Duration
 
@@ -44,7 +45,7 @@ class PdlService(
             runBlocking {
                 val response = graphQLClient.execute(HentIdent(HentIdent.Variables(fnr)), systemTokenAuthorizationHeaders)
                 if (response.errors != null) {
-                    throw ResponseStatusException(HttpStatus.BAD_REQUEST, response.errors.toString())
+                    throw HTTPException(HttpStatusCode.BadRequest, response.errors.toString())
                 }
                 response
                     .data
@@ -52,7 +53,7 @@ class PdlService(
                     ?.identer
                     ?.first()
                     ?.ident
-                    ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "AktørId for $fnr ble ikke funnet")
+                    ?: throw HTTPException(HttpStatusCode.NotFound, "AktørId for $fnr ble ikke funnet")
             }
         }
 

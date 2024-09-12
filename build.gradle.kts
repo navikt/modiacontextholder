@@ -1,9 +1,13 @@
+import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
+import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLDownloadSDLTask
+import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
+
 val ktor_version = "2.3.12"
 val kotlin_version = "2.0.20"
 val koin_version = "3.5.6"
 
 val modia_common_version = "1.2024.09.09-09.18-1e1cb34aaec3"
-val nav_common_version = "3.2024.02.21_11.18-8f9b43befae1"
+val nav_common_version = "3.2024.05.23_05.46-2b29fa343e8e"
 val graphql_kotlin_version = "8.0.0"
 val caffeine_version = "3.1.8"
 val unleash_version = "9.2.4"
@@ -23,11 +27,12 @@ plugins {
     id("io.ktor.plugin") version "2.3.12"
     kotlin("plugin.serialization") version "2.0.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.expediagroup.graphql") version "8.0.0"
     idea
 }
 
 application {
-    mainClass.set("no.nav.modiacontextholder.ApplicationKt")
+    mainClass.set("no.nav.modiacontextholder.MainKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -47,15 +52,14 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-server-serialization-ktor:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+    implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("io.ktor:ktor-server-websockets:$ktor_version")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("io.ktor:ktor-client-core-jvm:$ktor_version")
 
-    implementation("io.insert-koin.koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
@@ -85,7 +89,6 @@ dependencies {
     implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphql_kotlin_version")
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphql_kotlin_version")
 
-    testImplementation("no.nav.common:test:$nav_common_version")
     // testImplementation(libs.org.mockito.mockito.core)
     // testImplementation(libs.org.assertj.assertj.core)
     // testImplementation(libs.org.junit.jupiter.junit.jupiter.api)
@@ -98,13 +101,27 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
+}
+
+val graphqlDownloadSDL by tasks.getting(GraphQLDownloadSDLTask::class) {
+    endpoint.set("https://navikt.github.io/pdl/pdl-api-sdl.graphqls")
+}
+
+val graphqlGenerateClient by tasks.getting(GraphQLGenerateClientTask::class) {
+    packageName.set("no.nav.modiacontextholder.consumers.pdl.generated")
+    schemaFile.set(graphqlDownloadSDL.outputFile)
+    queryFileDirectory.set(file("${project.projectDir}/src/main/resources/pdl/queries"))
+    serializer.set(GraphQLSerializer.KOTLINX)
+
+    dependsOn("graphqlDownloadSDL")
 }
 
 tasks {
     shadowJar {
         archiveBaseName.set("app")
+        dependsOn("graphqlGenerateClient")
     }
 
     build {

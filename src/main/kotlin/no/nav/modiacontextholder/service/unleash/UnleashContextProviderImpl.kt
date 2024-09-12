@@ -2,7 +2,6 @@ package no.nav.modiacontextholder.service.unleash
 
 import io.getunleash.UnleashContext
 import io.getunleash.UnleashContextProvider
-import no.nav.modiacontextholder.service.AuthContextService
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 
