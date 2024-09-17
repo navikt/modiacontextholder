@@ -1,15 +1,13 @@
 package no.nav.modiacontextholder.routes
 
 import io.ktor.http.*
-import io.ktor.http.auth.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.vavr.control.Try
 import no.nav.common.types.identer.NavIdent
+import no.nav.modiacontextholder.log
 import no.nav.modiacontextholder.rest.FnrRequest
 import no.nav.modiacontextholder.rest.model.DecoratorDomain
 import no.nav.modiacontextholder.rest.model.DecoratorDomain.DecoratorConfig
@@ -74,7 +72,7 @@ fun Route.decoratorRoutes() {
                             if (exception is HTTPException) {
                                 throw exception
                             } else {
-                                log.error(exception)
+                                log.error("Could not get iden", exception)
                                 throw HTTPException(HttpStatusCode.BadRequest, "Unknown error")
                             }
                         },

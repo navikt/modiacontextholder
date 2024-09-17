@@ -16,7 +16,10 @@ val mockk_version = "1.13.12"
 val testcontainers_version = "1.20.1"
 val vavr_version = "0.10.4"
 val jedis_version = "5.1.4"
+val lettuce_version = "6.4.0.RELEASE"
 val kotlinx_serialization_version = "1.7.1"
+val kotlinx_datetime_version = "0.6.1"
+val assertj_version = "3.25.3"
 
 group = "no.nav"
 version = "1.0.0-SNAPSHOT"
@@ -26,9 +29,8 @@ plugins {
     kotlin("jvm") version "2.0.20"
     id("io.ktor.plugin") version "2.3.12"
     kotlin("plugin.serialization") version "2.0.20"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.1"
     id("com.expediagroup.graphql") version "8.0.0"
-    idea
 }
 
 application {
@@ -39,7 +41,6 @@ application {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven {
         url = uri("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
@@ -48,6 +49,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
 
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
@@ -78,25 +80,25 @@ dependencies {
     implementation("io.getunleash:unleash-client-java:$unleash_version")
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeine_version")
     implementation("redis.clients:jedis:$jedis_version")
+    implementation("io.lettuce:lettuce-core:$lettuce_version")
 
     implementation("com.squareup.okhttp3:okhttp:$okhttp3_version")
     implementation("io.vavr:vavr:$vavr_version")
-    // api(libs.io.micrometer.micrometer.registry.prometheus)
-    // api(libs.io.lettuce.lettuce.core)
-    // api(libs.org.jetbrains.kotlin.kotlin.stdlib)
-    // api(libs.org.jetbrains.kotlin.kotlin.stdlib.jdk8)
-    // api(libs.org.jetbrains.kotlin.kotlin.reflect)
     implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphql_kotlin_version")
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphql_kotlin_version")
 
-    // testImplementation(libs.org.mockito.mockito.core)
-    // testImplementation(libs.org.assertj.assertj.core)
-    // testImplementation(libs.org.junit.jupiter.junit.jupiter.api)
-    testImplementation("org.testcontainers:testcontainers:$testcontainers_version")
-    // testImplementation(libs.com.squareup.okhttp3.mockwebserver)
+    testImplementation(kotlin("test"))
+    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktor_version")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("io.ktor:ktor-client-core:$ktor_version")
+    testImplementation("io.ktor:ktor-client-okhttp:$ktor_version")
+    testImplementation("org.testcontainers:testcontainers:$testcontainers_version")
+    testImplementation("org.testcontainers:junit-jupiter:$testcontainers_version")
+    testImplementation("com.squareup.okhttp3:mockwebserver:$okhttp3_version")
     testImplementation("io.mockk:mockk-jvm:$mockk_version")
+    testImplementation("org.assertj:assertj-core:$assertj_version")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.12")
+    testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
 }
 
 java {
@@ -116,6 +118,10 @@ val graphqlGenerateClient by tasks.getting(GraphQLGenerateClientTask::class) {
     serializer.set(GraphQLSerializer.KOTLINX)
 
     dependsOn("graphqlDownloadSDL")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks {

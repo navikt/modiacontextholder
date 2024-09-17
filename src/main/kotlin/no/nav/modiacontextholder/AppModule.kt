@@ -1,6 +1,11 @@
 package no.nav.modiacontextholder
 
+import io.getunleash.UnleashContextProvider
 import io.ktor.http.*
+import io.ktor.server.application.*
+import io.lettuce.core.RedisClient
+import io.lettuce.core.api.StatefulRedisConnection
+import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import no.nav.common.client.axsys.AxsysV2ClientImpl
 import no.nav.common.client.msgraph.CachedMsGraphClient
 import no.nav.common.client.msgraph.MsGraphHttpClient
@@ -9,24 +14,41 @@ import no.nav.common.token_client.builder.AzureAdTokenClientBuilder
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
 import no.nav.common.utils.EnvironmentUtils
+import no.nav.modiacontextholder.consumers.norg2.Norg2Client
+import no.nav.modiacontextholder.redis.RedisPublisher
+import no.nav.modiacontextholder.redis.RedisVeilederContextDatabase
+import no.nav.modiacontextholder.redis.VeilederContextDatabase
+import no.nav.modiacontextholder.service.AzureADServiceImpl
 import no.nav.modiacontextholder.service.ContextService
 import no.nav.modiacontextholder.service.PdlService
 import no.nav.modiacontextholder.service.VeilederService
 import no.nav.modiacontextholder.service.unleash.ToggleableFeatureService
+import no.nav.modiacontextholder.service.unleash.UnleashContextProviderImpl
 import no.nav.modiacontextholder.service.unleash.UnleashService
 import no.nav.modiacontextholder.utils.*
-import no.nav.sbl.azure.AzureADServiceImpl
-import no.nav.sbl.consumers.norg2.Norg2Client
 import okhttp3.OkHttpClient
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+import org.koin.dsl.onClose
+import org.koin.ktor.plugin.RequestScope
 
 object AppModule {
-    val appModule =
+    fun appModule(redisClient: RedisClient) =
         module {
+            scope<RequestScope> {
+                scoped<UnleashContextProvider> { (call: ApplicationCall) ->
+                    UnleashContextProviderImpl(call)
+                }
+            }
+
+            single<StatefulRedisConnection<String, String>> { redisClient.connect() } onClose { it?.close() }
+            single<StatefulRedisPubSubConnection<String, String>> { redisClient.connectPubSub() } onClose { it?.close() }
 
             singleOf(::UnleashService) { bind<ToggleableFeatureService>() }
+
+            singleOf(::RedisVeilederContextDatabase) { bind<VeilederContextDatabase>() }
+            single { RedisPublisher(get()) }
 
             singleOf(::VeilederService)
             singleOf(::ContextService)

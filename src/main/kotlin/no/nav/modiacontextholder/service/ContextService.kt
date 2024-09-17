@@ -31,11 +31,11 @@ class ContextService(
         val veilederContext =
             VeilederContext(
                 verdi = nyContext.verdi,
-                contextType = VeilederContextType.valueOf(nyContext.eventType),
+                contextType = nyContext.eventType,
                 veilederIdent = veilederIdent,
             )
 
-        if (VeilederContextType.NY_AKTIV_BRUKER.name == nyContext.eventType && nyContext.verdi.isEmpty()) {
+        if (nyContext.eventType == VeilederContextType.NY_AKTIV_BRUKER && nyContext.verdi.isEmpty()) {
             nullstillAktivBruker(veilederIdent)
             return
         } else if (nyContext.verdi.isEmpty()) {

@@ -1,7 +1,8 @@
 package no.nav.modiacontextholder.redis
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.lettuce.core.api.sync.RedisCommands
+import io.lettuce.core.api.StatefulRedisConnection
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import no.nav.modiacontextholder.domain.VeilederContext
 import no.nav.modiacontextholder.domain.VeilederContextType
 import no.nav.modiacontextholder.redis.model.RedisPEvent
@@ -10,14 +11,15 @@ import no.nav.modiacontextholder.redis.model.RedisVeilederContextType
 import java.time.Duration
 
 class RedisVeilederContextDatabase(
-    private val redis: RedisCommands<String, String>,
-    private val objectMapper: ObjectMapper,
+    redisConnection: StatefulRedisConnection<String, String>,
 ) : VeilederContextDatabase {
     private val timeToLive = Duration.ofHours(12L)
 
+    private val redis = redisConnection.sync()
+
     override fun save(veilederContext: VeilederContext) {
         val redisPEvent = RedisPEvent.from(veilederContext)
-        val json = objectMapper.writeValueAsString(redisPEvent)
+        val json = Json.encodeToString(redisPEvent)
 
         val redisKey = redisPEvent.key.toString()
         when (redisPEvent.contextType) {
@@ -30,14 +32,14 @@ class RedisVeilederContextDatabase(
         val key = RedisPEventKey(RedisVeilederContextType.AKTIV_BRUKER, veilederIdent)
 
         val result = redis.get(key.toString()) ?: return null
-        return objectMapper.readValue(result, RedisPEvent::class.java).toPEvent()
+        return Json.decodeFromString<RedisPEvent>(result).toPEvent()
     }
 
     override fun sistAktiveEnhetEvent(veilederIdent: String): VeilederContext? {
         val key = RedisPEventKey(RedisVeilederContextType.AKTIV_ENHET, veilederIdent)
 
         val result = redis.get(key.toString()) ?: return null
-        return objectMapper.readValue(result, RedisPEvent::class.java).toPEvent()
+        return Json.decodeFromString<RedisPEvent>(result).toPEvent()
     }
 
     override fun slettAlleEventer(veilederIdent: String) {

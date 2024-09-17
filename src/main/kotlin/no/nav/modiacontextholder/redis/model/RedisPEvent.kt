@@ -1,8 +1,13 @@
 package no.nav.modiacontextholder.redis.model
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.Serializable
 import no.nav.modiacontextholder.domain.VeilederContext
-import java.time.LocalDateTime
 
+@Serializable
 data class RedisPEvent(
     val veilederIdent: String,
     val contextType: RedisVeilederContextType,
@@ -25,7 +30,7 @@ data class RedisPEvent(
                 veilederIdent = veilederContext.veilederIdent,
                 contextType = RedisVeilederContextType.from(veilederContext.contextType),
                 verdi = veilederContext.verdi,
-                created = veilederContext.created ?: LocalDateTime.now(),
+                created = veilederContext.created ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
             )
     }
 }

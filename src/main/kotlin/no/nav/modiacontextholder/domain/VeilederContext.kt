@@ -1,6 +1,6 @@
 package no.nav.modiacontextholder.domain
 
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 
 data class VeilederContext(
     val veilederIdent: String,

@@ -8,6 +8,7 @@ import no.nav.personoversikt.common.utils.EnvUtils.getRequiredConfig
 private val defaultValues =
     mapOf(
         "AZURE_APP_WELL_KNOWN_URL" to "",
+        "REDIS_URI_MODIACONTEXTHOLDER" to "redis://localhost:6379/0",
     )
 
 class Configuration(
@@ -26,4 +27,5 @@ class Configuration(
                     Security.TokenLocation.Header(HttpHeaders.Authorization),
                 ),
         ),
+    val redisUri: String = getRequiredConfig("REDIS_URI_MODIACONTEXTHOLDER", defaultValues),
 )

@@ -1,5 +1,9 @@
 package no.nav.modiacontextholder.redis
 
+import io.lettuce.core.RedisClient
+import io.lettuce.core.pubsub.RedisPubSubAdapter
+import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
+import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -8,35 +12,37 @@ import no.nav.common.health.selftest.SelfTestCheck
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.modiacontextholder.infrastructur.HealthCheckAware
 import org.slf4j.LoggerFactory
-import redis.clients.jedis.Jedis
-import redis.clients.jedis.JedisPubSub
 
 object Redis {
-    private val environment = EnvironmentUtils.getRequiredProperty("APP_ENVIRONMENT")
+    private val environment = EnvironmentUtils.getOptionalProperty("APP_ENVIRONMENT") ?: "local"
     private val log = LoggerFactory.getLogger(Redis::class.java)
 
     @JvmStatic
     fun getChannel() = "ContextOppdatering-$environment"
 
     class Consumer(
-        private val uri: String,
-        private val password: String,
-        private val user: String = "default",
+        private val redis: RedisClient,
         private val channel: String = getChannel(),
     ) : HealthCheckAware {
         private var running = false
         private var thread: Thread? = null
-        private var jedis: Jedis? = null
         private val channelReference = Channel<String?>()
 
+        private var connection: StatefulRedisPubSubConnection<String, String>? = null
+        private var redisCommands: RedisPubSubCommands<String, String>? = null
+
         private val subscriber =
-            object : JedisPubSub() {
-                override fun onMessage(
+            object : RedisPubSubAdapter<String, String>() {
+                override fun message(
                     channel: String?,
                     message: String?,
                 ) {
                     runBlocking {
-                        channelReference.send(message)
+                        try {
+                            channelReference.send(message)
+                        } catch (e: Exception) {
+                            log.error(e.message, e)
+                        }
                     }
                     log.info(
                         """
@@ -61,35 +67,36 @@ object Redis {
 
         fun stop() {
             running = false
-            subscriber.unsubscribe()
+            connection?.close()
             channelReference.close()
             thread = null
         }
 
         private fun run() {
-            while (running) {
-                try {
-                    jedis = Jedis(uri)
-                    jedis?.auth(user, password)
-                    jedis?.subscribe(subscriber, channel)
-                } catch (e: Exception) {
-                    log.error(e.message, e)
-                }
+            try {
+                connection = redis.connectPubSub()
+                connection?.addListener(subscriber)
+
+                redisCommands = connection?.sync()
+                redisCommands?.subscribe(channel)
+            } catch (e: Exception) {
+                log.error(e.message, e)
             }
         }
 
         private fun checkHealth(): HealthCheckResult =
             try {
-                jedis?.ping()
-                HealthCheckResult.healthy()
+                redisCommands?.ping()
+                HealthCheckResult
+                    .healthy()
             } catch (e: Exception) {
                 HealthCheckResult.unhealthy(e)
             }
 
         override fun getHealthCheck(): SelfTestCheck =
             SelfTestCheck(
-                "Redis - via $uri",
-                false,
+                "Redis litener on channel: $channel",
+                true,
             ) { this.checkHealth() }
     }
 }

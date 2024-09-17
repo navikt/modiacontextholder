@@ -9,7 +9,10 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import no.nav.modiacontextholder.log
 import no.nav.modiacontextholder.metricsRegistry
+import no.nav.modiacontextholder.rest.model.RSEvent
 import java.time.Duration
 import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
@@ -33,6 +36,7 @@ class WebsocketStorage(
     private val sessions = ConcurrentHashMap<String, MutableList<WebSocketServerSession>>()
     val wsHandler: suspend DefaultWebSocketServerSession.() -> Unit = {
         val ident = (call.parameters["ident"] ?: throw BadRequestException("No ident found"))
+        log.info("Connected to websocket from $ident")
         try {
             sessions.computeIfAbsent(ident) { mutableListOf() }.add(this)
             incoming.receive() // Waiting so that the connection isn't closed at once
@@ -54,12 +58,13 @@ class WebsocketStorage(
     private suspend fun propagateMessageToWebsocket() {
         flow.filterNotNull().collect { value ->
             try {
-                val event = value.fromJson<Event>()
+                val event = value.fromJson<RSEvent>()
                 val (veilederIdent, eventType) = event
                 log.info("Sending $eventType to $veilederIdent")
 
+                val frame = Frame.Text(eventType)
                 sessions[veilederIdent]?.forEach {
-                    it.send(Frame.Text(eventType))
+                    it.send(frame)
                 }
             } catch (_: CancellationException) {
                 // Ignore these types of errors
@@ -69,3 +74,5 @@ class WebsocketStorage(
         }
     }
 }
+
+inline fun <reified T> String.fromJson(): T = Json.decodeFromString<T>(this)

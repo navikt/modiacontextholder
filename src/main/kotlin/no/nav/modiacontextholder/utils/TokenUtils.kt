@@ -6,8 +6,11 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
+import no.nav.personoversikt.common.ktor.utils.Security
 import java.text.ParseException
 import java.util.*
+
+const val AAD_NAV_IDENT_CLAIM = "NAVident"
 
 class DownstreamApi(
     val cluster: String,
@@ -71,11 +74,14 @@ fun ApplicationCall.getIdToken(): String {
     if (authHeader != null && authHeader is HttpAuthHeader.Single && authHeader.authScheme == "Bearer") {
         return authHeader.blob
     }
-    throw AuthorizationException("Missing or invavlid authorization header")
+    throw AuthorizationException("Missing or invalid authorization header")
 }
 
 fun ApplicationCall.getIdent(): String =
-    checkNotNull(this.principal<JWTPrincipal>()?.subject) {
+    checkNotNull(
+        this.principal<JWTPrincipal>()?.getClaim(AAD_NAV_IDENT_CLAIM, String::class)
+            ?: this.principal<Security.SubjectPrincipal>()?.subject,
+    ) {
         "Could not find subject from JWT"
     }
 
