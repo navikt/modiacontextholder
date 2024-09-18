@@ -60,7 +60,7 @@ class WebsocketStorage(
             try {
                 val event = value.fromJson<RSEvent>()
                 val (veilederIdent, eventType) = event
-                log.info("Sending $eventType to $veilederIdent")
+                log.debug("Sending $eventType to $veilederIdent")
 
                 val frame = Frame.Text(eventType)
                 sessions[veilederIdent]?.forEach {

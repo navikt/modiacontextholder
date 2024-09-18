@@ -36,6 +36,7 @@ fun Route.contextRoutes() {
             withAudit(describe(ident, Audit.Action.DELETE, AuditResources.NullstillKontekst, url)) {
                 ident.ifPresent(contextService::nullstillContext)
             }
+            call.response.status(HttpStatusCode.OK)
         }
         delete {
             val ident = Optional.of(call.getIdent())
@@ -44,6 +45,7 @@ fun Route.contextRoutes() {
             withAudit(describe(ident, Audit.Action.DELETE, AuditResources.NullstillKontekst, url)) {
                 ident.ifPresent(contextService::nullstillContext)
             }
+            call.response.status(HttpStatusCode.OK)
         }
         delete("/aktivbruker") {
             val ident = Optional.of(call.getIdent())
@@ -52,6 +54,7 @@ fun Route.contextRoutes() {
             withAudit(describe(ident, Audit.Action.DELETE, AuditResources.NullstillBrukerIKontekst, url)) {
                 ident.ifPresent(contextService::nullstillAktivBruker)
             }
+            call.response.status(HttpStatusCode.OK)
         }
 
         post {

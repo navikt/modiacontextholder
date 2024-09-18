@@ -30,6 +30,7 @@ class WebsocketTest : TestUtils.WithRedis() {
                         json()
                     }
                 }
+
             application {
                 modiacontextholderApp(configuration = Configuration(redisUri = redisUri), useMock = true)
             }

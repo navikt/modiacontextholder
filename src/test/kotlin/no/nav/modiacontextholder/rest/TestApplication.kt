@@ -7,8 +7,12 @@ import io.ktor.server.testing.*
 import io.mockk.mockkClass
 import no.nav.modiacontextholder.AppModule
 import no.nav.modiacontextholder.config.Configuration
+import no.nav.modiacontextholder.mock.MockAzureADService
 import no.nav.modiacontextholder.modiacontextholderApp
+import no.nav.modiacontextholder.service.AzureADService
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.koin.core.context.loadKoinModules
+import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.junit5.KoinTestExtension
 import org.koin.test.junit5.mock.MockProviderExtension
@@ -19,6 +23,12 @@ open class TestApplication : KoinTest {
             application {
                 modiacontextholderApp(Configuration(), true)
             }
+            startApplication()
+            loadKoinModules(
+                module {
+                    single<AzureADService> { MockAzureADService() }
+                },
+            )
             val client =
                 createClient {
                     install(ContentNegotiation) { json() }
@@ -32,7 +42,7 @@ open class TestApplication : KoinTest {
     val koinTestExtension =
         KoinTestExtension.create {
             modules(
-                AppModule.appModule(),
+                AppModule.appModule,
             )
         }
 

@@ -54,9 +54,15 @@ fun Route.decoratorRoutes() {
             .getOrElseThrow(::exceptionHandlder)
     }
 
-    route("/v2") {
+    route("") {
         route("/decorator") {
-            get(Regex("(/v2)?")) {
+            get("/v2") {
+                val ident = call.getIdent()
+                val token = call.getIdToken()
+                call.respond(getDecoratorRessurs(ident, token))
+            }
+
+            get {
                 val ident = call.getIdent()
                 val token = call.getIdToken()
                 call.respond(getDecoratorRessurs(ident, token))
@@ -72,7 +78,7 @@ fun Route.decoratorRoutes() {
                             if (exception is HTTPException) {
                                 throw exception
                             } else {
-                                log.error("Could not get iden", exception)
+                                log.error("Could not get ident", exception)
                                 throw HTTPException(HttpStatusCode.BadRequest, "Unknown error")
                             }
                         },

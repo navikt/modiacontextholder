@@ -44,7 +44,7 @@ object Redis {
                             log.error(e.message, e)
                         }
                     }
-                    log.info(
+                    log.debug(
                         """
                         Redismelding mottatt på kanal '$channel' med melding:
                         $message

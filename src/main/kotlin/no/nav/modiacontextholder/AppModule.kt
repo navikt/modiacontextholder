@@ -14,27 +14,27 @@ import no.nav.common.token_client.builder.AzureAdTokenClientBuilder
 import no.nav.common.token_client.client.MachineToMachineTokenClient
 import no.nav.common.token_client.client.OnBehalfOfTokenClient
 import no.nav.common.utils.EnvironmentUtils
+import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.consumers.norg2.Norg2Client
+import no.nav.modiacontextholder.consumers.norg2.Norg2ClientImpl
 import no.nav.modiacontextholder.redis.RedisPublisher
 import no.nav.modiacontextholder.redis.RedisVeilederContextDatabase
 import no.nav.modiacontextholder.redis.VeilederContextDatabase
-import no.nav.modiacontextholder.service.AzureADServiceImpl
-import no.nav.modiacontextholder.service.ContextService
-import no.nav.modiacontextholder.service.PdlService
-import no.nav.modiacontextholder.service.VeilederService
+import no.nav.modiacontextholder.service.*
 import no.nav.modiacontextholder.service.unleash.ToggleableFeatureService
 import no.nav.modiacontextholder.service.unleash.UnleashContextProviderImpl
 import no.nav.modiacontextholder.service.unleash.UnleashService
 import no.nav.modiacontextholder.utils.*
 import okhttp3.OkHttpClient
 import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 import org.koin.ktor.plugin.RequestScope
 
 object AppModule {
-    fun appModule(redisClient: RedisClient) =
+    val appModule =
         module {
             scope<RequestScope> {
                 scoped<UnleashContextProvider> { (call: ApplicationCall) ->
@@ -42,8 +42,20 @@ object AppModule {
                 }
             }
 
-            single<StatefulRedisConnection<String, String>> { redisClient.connect() } onClose { it?.close() }
-            single<StatefulRedisPubSubConnection<String, String>> { redisClient.connectPubSub() } onClose { it?.close() }
+            single<RedisClient> {
+                val configuration = get<Configuration>()
+                RedisClient.create(configuration.redisUri)
+            } onClose { it?.close() }
+
+            single<StatefulRedisConnection<String, String>> {
+                val redisClient = get<RedisClient>()
+                redisClient.connect()
+            } onClose { it?.close() }
+
+            single<StatefulRedisPubSubConnection<String, String>> {
+                val redisClient = get<RedisClient>()
+                redisClient.connectPubSub()
+            } onClose { it?.close() }
 
             singleOf(::UnleashService) { bind<ToggleableFeatureService>() }
 
@@ -67,7 +79,9 @@ object AppModule {
                     .buildOnBehalfOfTokenClient()
             }
 
-            singleOf(::PdlService)
+            singleOf(::PdlServiceImpl) { bind<PdlService>() }
+            singleOf(::EnheterCache) { createdAtStart() }
+            singleOf(::EnheterService)
 
             single {
                 CachedMsGraphClient(
@@ -75,7 +89,7 @@ object AppModule {
                 )
             }
 
-            single {
+            single<AzureADService> {
                 val oboflowTokenProvider: OnBehalfOfTokenClient = get()
                 AzureADServiceImpl(
                     graphUrl = Url(EnvironmentUtils.getRequiredProperty("MS_GRAPH_URL")),
@@ -106,7 +120,7 @@ object AppModule {
                 )
             }
 
-            single {
+            single<Norg2Client> {
                 val client: OkHttpClient =
                     RestClient
                         .baseClient()
@@ -120,7 +134,7 @@ object AppModule {
                             },
                         ).build()
 
-                Norg2Client(EnvironmentUtils.getRequiredProperty("NORG2_API_URL"), client)
+                Norg2ClientImpl(EnvironmentUtils.getRequiredProperty("NORG2_API_URL"), client)
             }
         }
 }

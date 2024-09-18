@@ -23,9 +23,13 @@ const val ALLE_TEMA_HEADERVERDI = "GEN"
 const val AUTH_SEPERATOR = " "
 const val AUTH_METHOD_BEARER = "Bearer"
 
-class PdlService(
+interface PdlService {
+    fun hentIdent(fnr: String): Try<String>
+}
+
+class PdlServiceImpl(
     private val machineToMachineTokenClient: BoundedMachineToMachineTokenClient,
-) {
+) : PdlService {
     private val hentIdentCache: Cache<String, Try<String>> =
         Caffeine
             .newBuilder()
@@ -34,7 +38,7 @@ class PdlService(
             .build()
     private val graphQLClient = PdlClient(url = pdlApiUrl)
 
-    fun hentIdent(fnr: String): Try<String> =
+    override fun hentIdent(fnr: String): Try<String> =
         CacheUtils.tryCacheFirst(
             hentIdentCache,
             fnr,

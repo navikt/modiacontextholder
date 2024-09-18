@@ -60,6 +60,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("io.ktor:ktor-server-websockets:$ktor_version")
+    implementation("io.ktor:ktor-server-call-logging:$ktor_version")
     implementation("io.ktor:ktor-client-core-jvm:$ktor_version")
 
     implementation("io.insert-koin:koin-ktor:$koin_version")

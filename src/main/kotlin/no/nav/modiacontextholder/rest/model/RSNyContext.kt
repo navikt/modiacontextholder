@@ -5,6 +5,6 @@ import no.nav.modiacontextholder.domain.VeilederContextType
 
 @Serializable
 data class RSNyContext(
-    val verdi: String,
+    val verdi: String = "",
     val eventType: VeilederContextType,
 )

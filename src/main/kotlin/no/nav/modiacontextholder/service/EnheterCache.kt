@@ -1,10 +1,14 @@
 package no.nav.modiacontextholder.service
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import no.nav.modiacontextholder.consumers.norg2.Norg2Client
 import no.nav.modiacontextholder.consumers.norg2.domain.Enhet
 import no.nav.modiacontextholder.rest.model.DecoratorDomain
 import org.slf4j.LoggerFactory
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class EnheterCache(
     private val norg2Client: Norg2Client,
@@ -17,8 +21,25 @@ class EnheterCache(
     private var cache: Map<String, DecoratorDomain.Enhet> = Collections.unmodifiableMap(HashMap())
     private var cacheList: List<DecoratorDomain.Enhet> = Collections.unmodifiableList(ArrayList())
 
-    // FIXME  schedule this in ktor timer
+    private val executor = Executors.newSingleThreadScheduledExecutor()
+
+    init {
+        schedule()
+    }
+
+    private fun schedule() {
+        val task =
+            Runnable {
+                refreshCache()
+            }
+
+        GlobalScope.launch {
+            executor.scheduleWithFixedDelay(task, 0, HVER_TOLVTE_TIME, TimeUnit.MILLISECONDS)
+        }
+    }
+
     private fun refreshCache() {
+        log.info("Henter enheter fra NORG2 for populering av cache")
         try {
             val enheter: List<Enhet> = norg2Client.hentAlleEnheter()
 

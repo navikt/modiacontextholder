@@ -2,8 +2,7 @@ package no.nav.modiacontextholder.service
 
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import no.nav.common.types.identer.AzureObjectId
-import no.nav.common.types.identer.NavIdent
+import no.nav.modiacontextholder.mock.MockAzureADService
 import no.nav.modiacontextholder.utils.BoundedOnBehalfOfTokenClient
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -11,10 +10,6 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.Assertions.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-
-val GROUP_ID = AzureObjectId("d2987104-63b2-4110-83ac-20ff6afe24a2")
-val GROUP_NAME = "0000-GA-GOSYS_REGIONAL"
-val VEILEDER_NAV_IDENT = NavIdent("FK12345")
 
 class AzureADServiceTest {
     private lateinit var mockWebServer: MockWebServer
@@ -89,14 +84,14 @@ class AzureADServiceTest {
             val result =
                 azureADService.fetchRoller(
                     userToken = "fake-token",
-                    veilederIdent = VEILEDER_NAV_IDENT,
+                    veilederIdent = MockAzureADService.VEILEDER_NAV_IDENT,
                 )
             assertEquals(1, result.size)
 
             val firstElement = result.first()
 
-            assertEquals(GROUP_ID, firstElement.gruppeId)
-            assertEquals(GROUP_NAME, firstElement.gruppeNavn)
+            assertEquals(MockAzureADService.GROUP_ID, firstElement.gruppeId)
+            assertEquals(MockAzureADService.GROUP_NAME, firstElement.gruppeNavn)
         }
 
     @Test
@@ -124,7 +119,7 @@ class AzureADServiceTest {
             val result =
                 azureADService.fetchRoller(
                     userToken = "fake-token",
-                    veilederIdent = VEILEDER_NAV_IDENT,
+                    veilederIdent = MockAzureADService.VEILEDER_NAV_IDENT,
                 )
             assertEquals(0, result.size)
         }
