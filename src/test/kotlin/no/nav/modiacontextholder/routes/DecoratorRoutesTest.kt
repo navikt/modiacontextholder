@@ -124,8 +124,6 @@ class DecoratorRoutesTest : TestApplication() {
             )
     }
 
-    private suspend fun HttpClient.getAuth(url: String) = this.get(url) { header("Authorization", "Bearer token") }
-
     private fun enhet(
         id: String,
         navn: String,

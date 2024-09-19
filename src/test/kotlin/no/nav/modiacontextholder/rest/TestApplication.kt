@@ -2,33 +2,28 @@ package no.nav.modiacontextholder.rest
 
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
 import io.mockk.mockkClass
 import no.nav.modiacontextholder.AppModule
 import no.nav.modiacontextholder.config.Configuration
-import no.nav.modiacontextholder.mock.MockAzureADService
 import no.nav.modiacontextholder.modiacontextholderApp
-import no.nav.modiacontextholder.service.AzureADService
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.koin.core.context.loadKoinModules
-import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.junit5.KoinTestExtension
 import org.koin.test.junit5.mock.MockProviderExtension
 
 open class TestApplication : KoinTest {
+    var configuration = Configuration()
+
     fun testApp(block: suspend ApplicationTestBuilder.(client: HttpClient) -> Unit) =
         testApplication {
             application {
-                modiacontextholderApp(Configuration(), true)
+                modiacontextholderApp(configuration = configuration, useMock = true)
             }
             startApplication()
-            loadKoinModules(
-                module {
-                    single<AzureADService> { MockAzureADService() }
-                },
-            )
             val client =
                 createClient {
                     install(ContentNegotiation) { json() }
@@ -52,4 +47,15 @@ open class TestApplication : KoinTest {
         MockProviderExtension.create { clazz ->
             mockkClass(clazz)
         }
+
+    suspend fun HttpClient.getAuth(url: String) = this.get(url) { header("Authorization", "Bearer token") }
+
+    suspend inline fun <reified T> HttpClient.postAuth(
+        url: String,
+        body: T,
+    ) = this.post(url) {
+        header("Authorization", "Bearer token")
+        setBody(body)
+        contentType(ContentType.Application.Json)
+    }
 }

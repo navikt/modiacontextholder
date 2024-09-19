@@ -21,6 +21,13 @@ import org.koin.ktor.ext.inject
 private const val ROLLE_MODIA_ADMIN = "0000-GA-Modia_Admin"
 
 fun Route.decoratorRoutes() {
+    decoratorRoutesInternal()
+    route("/v2") {
+        decoratorRoutesInternal()
+    }
+}
+
+fun Route.decoratorRoutesInternal() {
     val veilederService: VeilederService by inject()
     val enheterService: EnheterService by inject()
     val azureADService: AzureADService by inject()
@@ -54,36 +61,34 @@ fun Route.decoratorRoutes() {
             .getOrElseThrow(::exceptionHandlder)
     }
 
-    route("") {
-        route("/decorator") {
-            get("/v2") {
-                val ident = call.getIdent()
-                val token = call.getIdToken()
-                call.respond(getDecoratorRessurs(ident, token))
-            }
+    route("/decorator") {
+        get("/v2") {
+            val ident = call.getIdent()
+            val token = call.getIdToken()
+            call.respond(getDecoratorRessurs(ident, token))
+        }
 
-            get {
-                val ident = call.getIdent()
-                val token = call.getIdToken()
-                call.respond(getDecoratorRessurs(ident, token))
-            }
+        get {
+            val ident = call.getIdent()
+            val token = call.getIdToken()
+            call.respond(getDecoratorRessurs(ident, token))
+        }
 
-            post("/aktor/hent-fnr") {
-                val fnrRequest: FnrRequest = call.receive()
-                call.respond(
-                    pdlService
-                        .hentIdent(fnrRequest.fnr)
-                        .map { aktorId -> FnrAktorId(fnrRequest.fnr, aktorId) }
-                        .getOrElseThrow { exception ->
-                            if (exception is HTTPException) {
-                                throw exception
-                            } else {
-                                log.error("Could not get ident", exception)
-                                throw HTTPException(HttpStatusCode.BadRequest, "Unknown error")
-                            }
-                        },
-                )
-            }
+        post("/aktor/hent-fnr") {
+            val fnrRequest: FnrRequest = call.receive()
+            call.respond(
+                pdlService
+                    .hentIdent(fnrRequest.fnr)
+                    .map { aktorId -> FnrAktorId(fnrRequest.fnr, aktorId) }
+                    .getOrElseThrow { exception ->
+                        if (exception is HTTPException) {
+                            throw exception
+                        } else {
+                            log.error("Could not get ident", exception)
+                            throw HTTPException(HttpStatusCode.BadRequest, "Unknown error")
+                        }
+                    },
+            )
         }
     }
 }

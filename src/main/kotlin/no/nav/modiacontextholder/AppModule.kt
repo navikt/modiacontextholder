@@ -27,7 +27,6 @@ import no.nav.modiacontextholder.service.unleash.UnleashService
 import no.nav.modiacontextholder.utils.*
 import okhttp3.OkHttpClient
 import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.koin.dsl.onClose
@@ -79,9 +78,13 @@ object AppModule {
                     .buildOnBehalfOfTokenClient()
             }
 
-            singleOf(::PdlServiceImpl) { bind<PdlService>() }
-            singleOf(::EnheterCache) { createdAtStart() }
+            singleOf(::EnheterCache)
             singleOf(::EnheterService)
+        }
+    val externalModules =
+        module {
+
+            singleOf(::PdlServiceImpl) { bind<PdlService>() }
 
             single {
                 CachedMsGraphClient(

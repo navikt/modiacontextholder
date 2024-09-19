@@ -29,13 +29,12 @@ fun Application.modiacontextholderApp(
     install(Koin) {
         slf4jLogger()
         modules(
+            if (useMock) mockModule else AppModule.externalModules,
             appModule,
             module {
                 single { configuration }
             },
         )
-
-        if (useMock) modules(mockModule)
     }
 
     install(ContentNegotiation) {
