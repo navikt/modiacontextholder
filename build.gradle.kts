@@ -22,14 +22,13 @@ val kotlinx_datetime_version = "0.6.1"
 val assertj_version = "3.25.3"
 
 group = "no.nav"
-version = "1.0.0-SNAPSHOT"
 description = "modiacontextholder"
 
 plugins {
     kotlin("jvm") version "2.0.20"
     id("io.ktor.plugin") version "2.3.12"
     kotlin("plugin.serialization") version "2.0.20"
-    id("com.gradleup.shadow") version "8.3.1"
+    id("com.gradleup.shadow") version "8.3.2"
     id("com.expediagroup.graphql") version "8.0.0"
 }
 
@@ -127,8 +126,17 @@ tasks.test {
 
 tasks {
     shadowJar {
-        archiveBaseName.set("app")
+        archiveBaseName.set("modiacontextholder")
+        archiveClassifier.set("")
+        archiveVersion.set("")
         dependsOn("graphqlGenerateClient")
+        manifest {
+            attributes(
+                mapOf(
+                    "Main-Class" to application.mainClass,
+                ),
+            )
+        }
     }
 
     build {

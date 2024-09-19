@@ -2,14 +2,12 @@ package no.nav.modiacontextholder.service.unleash
 
 import io.getunleash.UnleashContext
 import io.getunleash.UnleashContextProvider
-import io.ktor.server.application.ApplicationCall
-import no.nav.modiacontextholder.utils.getIdent
+import no.nav.common.log.MDCConstants
+import org.slf4j.MDC
 
-class UnleashContextProviderImpl(
-    private val call: ApplicationCall,
-) : UnleashContextProvider {
+class UnleashContextProviderImpl : UnleashContextProvider {
     override fun getContext(): UnleashContext {
-        val ident = call.getIdent()
+        val ident = MDC.get(MDCConstants.MDC_USER_ID)
 
         return UnleashContext
             .builder()

@@ -2,7 +2,6 @@ package no.nav.modiacontextholder
 
 import io.getunleash.UnleashContextProvider
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.lettuce.core.RedisClient
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
@@ -30,16 +29,12 @@ import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import org.koin.dsl.onClose
-import org.koin.ktor.plugin.RequestScope
 
 object AppModule {
     val appModule =
         module {
-            scope<RequestScope> {
-                scoped<UnleashContextProvider> { (call: ApplicationCall) ->
-                    UnleashContextProviderImpl(call)
-                }
-            }
+            singleOf(::UnleashContextProviderImpl) { bind<UnleashContextProvider>() }
+            singleOf(::UnleashService) { bind<ToggleableFeatureService>() }
 
             single<RedisClient> {
                 val configuration = get<Configuration>()
@@ -55,8 +50,6 @@ object AppModule {
                 val redisClient = get<RedisClient>()
                 redisClient.connectPubSub()
             } onClose { it?.close() }
-
-            singleOf(::UnleashService) { bind<ToggleableFeatureService>() }
 
             singleOf(::RedisVeilederContextDatabase) { bind<VeilederContextDatabase>() }
             single { RedisPublisher(get()) }
@@ -83,7 +76,6 @@ object AppModule {
         }
     val externalModules =
         module {
-
             singleOf(::PdlServiceImpl) { bind<PdlService>() }
 
             single {
