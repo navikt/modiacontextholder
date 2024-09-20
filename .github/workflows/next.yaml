@@ -1,0 +1,72 @@
+name: Modiacontextholder-next (ktor)
+
+on:
+  push:
+    branches: [ktor]
+
+concurrency:
+  group: ktor-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+  TZ: Europe/Oslo
+
+jobs:
+  build:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          cache: 'gradle'
+
+      - name: Build
+        run: gradle build
+
+  build-and-push:
+    name: Build and push Docker container
+    needs: build
+    permissions:
+      packages: write
+      contents: read
+      id-token: write
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          cache: 'gradle'
+      - name: Publish Docker image
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          image_suffix: ktor
+          team: personoversikt
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
+
+  deploy-gcp-dev:
+    name: Deploy to dev gcp
+    needs: build-and-push
+    environment: dev-gcp
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          PRINT_PAYLOAD: true
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/dev-ktor.yaml
+          VAR: image=${{ needs.build-and-push.outputs.image }}
