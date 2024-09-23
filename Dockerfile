@@ -10,7 +10,7 @@ RUN gradle build -x test
 
 FROM gcr.io/distroless/java21-debian12
 
-COPY --from=builder /source/build/libs/modiacontextholder.jar app.jar
+COPY --from=builder /source/build/libs/modiacontextholder-all.jar app.jar
 
 USER nonroot
 

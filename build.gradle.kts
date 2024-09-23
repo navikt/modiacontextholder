@@ -21,8 +21,7 @@ val kotlinx_serialization_version = "1.7.1"
 val kotlinx_datetime_version = "0.6.1"
 val assertj_version = "3.25.3"
 
-group = "no.nav"
-description = "modiacontextholder"
+val mainClass = "no.nav.modiacontextholder.MainKt"
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -32,12 +31,7 @@ plugins {
     id("com.expediagroup.graphql") version "8.0.0"
 }
 
-application {
-    mainClass.set("no.nav.modiacontextholder.MainKt")
-
-    val isDevelopment: Boolean = project.ext.has("development")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
-}
+project.setProperty("mainClassName", mainClass)
 
 repositories {
     mavenCentral()
@@ -124,19 +118,21 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.jar {
+    enabled = false
+}
+
 tasks {
     shadowJar {
         archiveBaseName.set("modiacontextholder")
         archiveClassifier.set("")
         archiveVersion.set("")
-        dependsOn("graphqlGenerateClient")
         manifest {
             attributes(
-                mapOf(
-                    "Main-Class" to application.mainClass,
-                ),
+                mapOf("Main-Class" to mainClass),
             )
         }
+        dependsOn("graphqlGenerateClient")
     }
 
     build {
