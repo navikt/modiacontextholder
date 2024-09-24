@@ -26,11 +26,6 @@ fun Application.setupApi(useMock: Boolean = false) {
         } else {
             security.setupJWT(this)
         }
-        basic("ws") {
-            validate {
-                UUIDPrincipal(it.name)
-            }
-        }
     }
     routing {
         authenticate(*security.authproviders) {

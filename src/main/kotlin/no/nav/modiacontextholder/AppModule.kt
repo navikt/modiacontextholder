@@ -3,6 +3,7 @@ package no.nav.modiacontextholder
 import io.getunleash.UnleashContextProvider
 import io.ktor.http.*
 import io.lettuce.core.RedisClient
+import io.lettuce.core.RedisURI
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import no.nav.common.client.axsys.AxsysV2ClientImpl
@@ -38,7 +39,19 @@ object AppModule {
 
             single<RedisClient> {
                 val configuration = get<Configuration>()
-                RedisClient.create(configuration.redisUri)
+                val baseUri = RedisURI.create(configuration.redisUri)
+                val uri =
+                    if (configuration.redisUsername.isNullOrEmpty() && configuration.redisPassword.isNullOrEmpty()) {
+                        baseUri
+                    } else {
+                        RedisURI
+                            .builder(baseUri)
+                            .withHost(baseUri.host)
+                            .withPort(baseUri.port)
+                            .withAuthentication(configuration.redisUsername, configuration.redisPassword)
+                            .build()
+                    }
+                RedisClient.create(uri)
             } onClose { it?.close() }
 
             single<StatefulRedisConnection<String, String>> {

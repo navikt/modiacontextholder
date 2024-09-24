@@ -1,6 +1,7 @@
 package no.nav.modiacontextholder
 
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.lettuce.core.RedisClient

@@ -10,8 +10,7 @@ internal class NaisRoutesTest : TestApplication() {
     internal fun `is ready`() =
         testApp {
             val res =
-                it
-                    .get("/internal/isAlive")
+                client.get("/internal/isReady")
 
             assertEquals(res.status, HttpStatusCode.OK)
         }

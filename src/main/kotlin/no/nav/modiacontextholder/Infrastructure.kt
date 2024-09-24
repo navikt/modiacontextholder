@@ -7,7 +7,6 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import no.nav.modiacontextholder.routes.naisRoutes
 import no.nav.modiacontextholder.utils.AuthorizationException
 import no.nav.modiacontextholder.utils.HTTPException
 import no.nav.modiacontextholder.utils.getAuthorizedParty
@@ -54,8 +53,4 @@ fun Application.setupInfrastructure() {
     }
 
     install(CallLogging)
-
-    routing {
-        naisRoutes()
-    }
 }

@@ -8,35 +8,36 @@ metadata:
     team: personoversikt
 spec:
   image: "{{ image }}"
-  port: 8080
+  port: 4000
   liveness:
-    path: internal/isAlive
+    path: /internal/isAlive
     initialDelay: 50
     timeout: 1
     periodSeconds: 5
     failureThreshold: 10
   prometheus:
     enabled: true
-    path: internal/prometheus
+    path: internal/metrics
   observability:
     autoInstrumentation:
       enabled: true
       runtime: java
   readiness:
-    path: internal/isReady
+    path: /internal/isReady
     initialDelay: 50
+    periodSeconds: 10
     timeout: 1
   resources:
     limits:
-      cpu: 3000m
-      memory: 1024Mi
-    requests:
       cpu: 400m
-      memory: 768Mi
+      memory: 2048Mi
+    requests:
+      cpu: 200m
+      memory: 1024Mi
   ingresses:
     - https://modiacontextholder-next.intern.dev.nav.no
   replicas:
-    min: 2
+    min: 1
     max: 2
   redis:
     - instance: contextholder
