@@ -9,7 +9,7 @@ class RedisPublisher(
     private val channel: String = getChannel(),
 ) {
     companion object {
-        private val environment = EnvironmentUtils.getOptionalProperty("APP_ENVIRONMENT") ?: "local"
+        private val environment = EnvironmentUtils.getOptionalProperty("APP_ENVIRONMENT").orElse("local")
 
         @JvmStatic
         fun getChannel() = "ContextOppdatering-$environment"

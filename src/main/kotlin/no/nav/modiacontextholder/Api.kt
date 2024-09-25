@@ -27,6 +27,7 @@ fun Application.setupApi(useMock: Boolean = false) {
             security.setupJWT(this)
         }
     }
+
     routing {
         authenticate(*security.authproviders) {
             route("/api") {

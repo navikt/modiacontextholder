@@ -2,6 +2,7 @@ package no.nav.modiacontextholder.utils
 
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.websocket.*
+import io.ktor.util.debug.*
 import io.ktor.websocket.Frame
 import io.micrometer.core.instrument.Gauge
 import kotlinx.coroutines.GlobalScope
@@ -62,9 +63,8 @@ class WebsocketStorage(
                 val (veilederIdent, eventType) = event
                 log.debug("Sending $eventType to $veilederIdent")
 
-                val frame = Frame.Text(eventType)
                 sessions[veilederIdent]?.forEach {
-                    it.send(frame)
+                    it.send(Frame.Text(eventType))
                 }
             } catch (_: CancellationException) {
                 // Ignore these types of errors
