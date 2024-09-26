@@ -6,23 +6,18 @@ import no.nav.common.health.HealthCheckResult
 import no.nav.common.types.identer.NavIdent
 
 class MockNomClient : NomClient {
-    override fun finnNavn(identer: MutableList<NavIdent>?): MutableList<VeilederNavn> {
-        val navn =
-            (identer ?: mutableListOf(NavIdent("Z999999"))).mapIndexed { index, ident ->
-                val navn = VeilederNavn()
-                navn.fornavn = "Navn $index"
-                navn.etternavn = "Navnesen $index"
-                navn
-            }
-        return navn.toMutableList()
-    }
+    override fun finnNavn(navIdent: NavIdent): VeilederNavn = lagVeilederNavn(navIdent)
 
-    override fun finnNavn(ident: NavIdent?): VeilederNavn {
-        val navn = VeilederNavn()
-        navn.fornavn = "Navn"
-        navn.etternavn = "Navnesen"
+    override fun finnNavn(identer: MutableList<NavIdent>): List<VeilederNavn> = identer.map(::lagVeilederNavn)
 
-        return navn
+    private fun lagVeilederNavn(navIdent: NavIdent): VeilederNavn {
+        val ident = navIdent.get()
+        val identNr = ident.substring(1)
+        return VeilederNavn()
+            .setNavIdent(navIdent)
+            .setFornavn("F_$identNr")
+            .setEtternavn("E_$identNr")
+            .setVisningsNavn("F_$identNr E_$identNr")
     }
 
     override fun checkHealth(): HealthCheckResult = HealthCheckResult.healthy()

@@ -10,6 +10,8 @@ import no.nav.common.client.axsys.AxsysClient
 import no.nav.common.client.axsys.AxsysV2ClientImpl
 import no.nav.common.client.msgraph.CachedMsGraphClient
 import no.nav.common.client.msgraph.MsGraphHttpClient
+import no.nav.common.client.nom.NomClient
+import no.nav.common.client.nom.NomClientImpl
 import no.nav.common.rest.client.RestClient
 import no.nav.common.token_client.builder.AzureAdTokenClientBuilder
 import no.nav.common.token_client.client.MachineToMachineTokenClient
@@ -18,6 +20,7 @@ import no.nav.common.utils.EnvironmentUtils
 import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.consumers.norg2.Norg2Client
 import no.nav.modiacontextholder.consumers.norg2.Norg2ClientImpl
+import no.nav.modiacontextholder.mock.MockNomClient
 import no.nav.modiacontextholder.redis.RedisPublisher
 import no.nav.modiacontextholder.redis.RedisVeilederContextDatabase
 import no.nav.modiacontextholder.redis.VeilederContextDatabase
@@ -127,6 +130,32 @@ object AppModule {
                     tokenSupplier,
                     httpClient,
                 )
+            }
+
+            single<NomClient> {
+                val machineToMachineTokenProvider: MachineToMachineTokenClient = get()
+                val httpClient: OkHttpClient =
+                    RestClient
+                        .baseClient()
+                        .newBuilder()
+                        .addInterceptor(
+                            LoggingInterceptor("Nom") {
+                                getCallId()
+                            },
+                        ).build()
+                if (EnvironmentUtils.isDevelopment().orElse(false)) {
+                    MockNomClient()
+                } else {
+
+                    val downstreamApi = DownstreamApi.parse(EnvironmentUtils.getRequiredProperty("NOM_SCOPE"))
+                    val url = EnvironmentUtils.getRequiredProperty("NOM_URL")
+
+                    val tokenSupplier = {
+                        machineToMachineTokenProvider.createMachineToMachineToken(downstreamApi)
+                    }
+
+                    NomClientImpl(url, tokenSupplier, httpClient)
+                }
             }
 
             single<Norg2Client> {
