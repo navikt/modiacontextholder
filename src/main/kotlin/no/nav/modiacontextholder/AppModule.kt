@@ -6,6 +6,7 @@ import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
+import no.nav.common.client.axsys.AxsysClient
 import no.nav.common.client.axsys.AxsysV2ClientImpl
 import no.nav.common.client.msgraph.CachedMsGraphClient
 import no.nav.common.client.msgraph.MsGraphHttpClient
@@ -105,7 +106,7 @@ object AppModule {
                 )
             }
 
-            single {
+            single<AxsysClient> {
                 val machineToMachineTokenProvider: MachineToMachineTokenClient = get()
                 val httpClient: OkHttpClient =
                     RestClient
