@@ -14,7 +14,7 @@ import no.nav.modiacontextholder.infrastructur.HealthCheckAware
 import org.slf4j.LoggerFactory
 
 object Redis {
-    private val environment = EnvironmentUtils.getOptionalProperty("APP_ENVIRONMENT").orElse("local")
+    private val environment = EnvironmentUtils.getOptionalProperty("APP_ENVIRONMENT_NAME").orElse("local")
     private val log = LoggerFactory.getLogger(Redis::class.java)
 
     @JvmStatic

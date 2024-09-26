@@ -155,7 +155,7 @@ spec:
     - name: MS_GRAPH_SCOPE
       value: "https://graph.microsoft.com/.default"
     - name: APP_ENVIRONMENT_NAME
-      value: "{{ namespace }}"
+      value: q2
     - name: AAREG_URL
       value: "https://arbeid-og-inntekt-q2.dev-fss-pub.nais.io"
     - name: AAREG_PUBLIC_URL
@@ -163,4 +163,4 @@ spec:
     - name: SALESFORCE_URL
       value: "https://navdialog--sit2.lightning.force.com"
     - name: UNLEASH_ENVIRONMENT
-      value: "development"
+      value: development
