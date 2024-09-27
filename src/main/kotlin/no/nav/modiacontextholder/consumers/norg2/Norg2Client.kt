@@ -9,6 +9,7 @@ import no.nav.common.log.MDCConstants
 import no.nav.common.utils.IdUtils
 import no.nav.modiacontextholder.consumers.norg2.domain.Enhet
 import no.nav.modiacontextholder.infrastructur.HealthCheckAware
+import no.nav.personoversikt.common.utils.SelftestGenerator
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -28,6 +29,8 @@ class Norg2ClientImpl(
     private val objectmapper =
         jacksonObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+    private val reporter = SelftestGenerator.Reporter(name = "Norg2 client", critical = true)
 
     override fun hentAlleEnheter(): List<Enhet> {
         val callId = MDC.get(MDCConstants.MDC_CALL_ID) ?: IdUtils.generateId()
@@ -62,8 +65,10 @@ class Norg2ClientImpl(
     private fun checkHealth(): HealthCheckResult {
         try {
             ping()
+            reporter.reportOk()
             return HealthCheckResult.healthy()
         } catch (e: RuntimeException) {
+            reporter.reportError(e)
             return HealthCheckResult.unhealthy(e.cause)
         }
     }

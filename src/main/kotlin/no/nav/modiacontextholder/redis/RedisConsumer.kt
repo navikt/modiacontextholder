@@ -11,11 +11,15 @@ import no.nav.common.health.HealthCheckResult
 import no.nav.common.health.selftest.SelfTestCheck
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.modiacontextholder.infrastructur.HealthCheckAware
+import no.nav.personoversikt.common.utils.SelftestGenerator
 import org.slf4j.LoggerFactory
+import kotlin.concurrent.fixedRateTimer
+import kotlin.time.Duration.Companion.minutes
 
 object Redis {
     private val environment = EnvironmentUtils.getOptionalProperty("APP_ENVIRONMENT_NAME").orElse("local")
     private val log = LoggerFactory.getLogger(Redis::class.java)
+    private val reporter = SelftestGenerator.Reporter(name = "Redis pubSub consumer", critical = true)
 
     @JvmStatic
     fun getChannel() = "ContextOppdatering-$environment"
@@ -30,6 +34,12 @@ object Redis {
 
         private var connection: StatefulRedisPubSubConnection<String, String>? = null
         private var redisCommands: RedisPubSubCommands<String, String>? = null
+
+        init {
+            fixedRateTimer(name = "Ping", daemon = true, period = 5.minutes.inWholeMilliseconds, initialDelay = 0) {
+                checkHealth()
+            }
+        }
 
         private val subscriber =
             object : RedisPubSubAdapter<String, String>() {
@@ -87,15 +97,17 @@ object Redis {
         private fun checkHealth(): HealthCheckResult =
             try {
                 redisCommands?.ping()
+                reporter.reportOk()
                 HealthCheckResult
                     .healthy()
             } catch (e: Exception) {
+                reporter.reportError(e)
                 HealthCheckResult.unhealthy(e)
             }
 
         override fun getHealthCheck(): SelfTestCheck =
             SelfTestCheck(
-                "Redis litener on channel: $channel",
+                "Redis listener on channel: $channel",
                 true,
             ) { this.checkHealth() }
     }

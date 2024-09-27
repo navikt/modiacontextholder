@@ -20,6 +20,7 @@ import no.nav.common.utils.EnvironmentUtils
 import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.consumers.norg2.Norg2Client
 import no.nav.modiacontextholder.consumers.norg2.Norg2ClientImpl
+import no.nav.modiacontextholder.infrastructur.HealthCheckAware
 import no.nav.modiacontextholder.mock.MockNomClient
 import no.nav.modiacontextholder.redis.RedisPublisher
 import no.nav.modiacontextholder.redis.RedisVeilederContextDatabase
@@ -31,7 +32,9 @@ import no.nav.modiacontextholder.service.unleash.UnleashService
 import no.nav.modiacontextholder.utils.*
 import okhttp3.OkHttpClient
 import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.binds
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 
@@ -56,7 +59,9 @@ object AppModule {
                             .build()
                     }
                 RedisClient.create(uri)
-            } onClose { it?.close() }
+            } onClose {
+                it?.close()
+            }
 
             single<StatefulRedisConnection<String, String>> {
                 val redisClient = get<RedisClient>()
@@ -68,7 +73,9 @@ object AppModule {
                 redisClient.connectPubSub()
             } onClose { it?.close() }
 
-            singleOf(::RedisVeilederContextDatabase) { bind<VeilederContextDatabase>() }
+            singleOf(::RedisVeilederContextDatabase) {
+                binds(listOf(VeilederContextDatabase::class, HealthCheckAware::class))
+            }
             single { RedisPublisher(get()) }
 
             singleOf(::VeilederService)
@@ -88,7 +95,7 @@ object AppModule {
                     .buildOnBehalfOfTokenClient()
             }
 
-            singleOf(::EnheterCache)
+            singleOf(::EnheterCache) { bind<HealthCheckAware>() }
             singleOf(::EnheterService)
         }
     val externalModules =
@@ -173,6 +180,8 @@ object AppModule {
                         ).build()
 
                 Norg2ClientImpl(EnvironmentUtils.getRequiredProperty("NORG2_API_URL"), client)
+            } withOptions {
+                binds(listOf(HealthCheckAware::class))
             }
         }
 }

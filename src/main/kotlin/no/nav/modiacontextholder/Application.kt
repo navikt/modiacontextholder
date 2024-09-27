@@ -13,19 +13,12 @@ import org.koin.ktor.ext.getKoin
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
-data class ApplicationState(
-    var running: Boolean = true,
-    var initialized: Boolean = false,
-)
-
 val metricsRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
 fun Application.modiacontextholderApp(
     configuration: Configuration,
     useMock: Boolean = false,
 ) {
-    val applicationState = ApplicationState()
-
     install(Koin) {
         slf4jLogger()
         modules(
@@ -41,17 +34,14 @@ fun Application.modiacontextholderApp(
         json()
     }
 
-    setupInfrastructure()
     setupApi(useMock)
     setupWebsocket()
-
-    applicationState.initialized = true
+    setupInfrastructure()
 
     Runtime.getRuntime().addShutdownHook(
         Thread {
             log.info("Shutdown hook called, shutting down gracefully")
             getKoin().close()
-            applicationState.running = false
         },
     )
 }

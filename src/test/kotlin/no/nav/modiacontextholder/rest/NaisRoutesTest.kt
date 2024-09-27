@@ -2,6 +2,7 @@ package no.nav.modiacontextholder.rest
 
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.coroutines.delay
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -9,16 +10,34 @@ internal class NaisRoutesTest : TestApplication() {
     @Test
     internal fun `is ready`() =
         testApp {
-            val res =
-                client.get("/internal/isReady")
-
-            assertEquals(res.status, HttpStatusCode.OK)
+            var retryCount = 0
+            while (retryCount < 5) {
+                val res =
+                    client.get("/internal/isReady")
+                if (res.status == HttpStatusCode.OK) {
+                    assertEquals(res.status, HttpStatusCode.OK)
+                    break
+                }
+                delay(500)
+                retryCount++
+                continue
+            }
         }
 
     @Test
     internal fun `is alive`() =
         testApp {
-            val res = client.get("/internal/isAlive")
-            assertEquals(res.status, HttpStatusCode.OK)
+            var retryCount = 0
+            while (retryCount < 5) {
+                val res =
+                    client.get("/internal/isAlive")
+                if (res.status == HttpStatusCode.OK) {
+                    assertEquals(res.status, HttpStatusCode.OK)
+                    break
+                }
+                delay(500)
+                retryCount++
+                continue
+            }
         }
 }

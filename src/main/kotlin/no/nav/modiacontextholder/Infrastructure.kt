@@ -8,11 +8,18 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import no.nav.common.health.selftest.SelfTestUtils
+import no.nav.common.health.selftest.SelftestHtmlGenerator
+import no.nav.modiacontextholder.infrastructur.HealthCheckAware
 import no.nav.modiacontextholder.utils.AuthorizationException
 import no.nav.modiacontextholder.utils.HTTPException
 import no.nav.modiacontextholder.utils.getAuthorizedParty
 import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Selftest
+import org.koin.ktor.ext.getKoin
+import kotlin.concurrent.fixedRateTimer
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 fun Application.setupInfrastructure() {
     install(CORS) {
@@ -29,6 +36,26 @@ fun Application.setupInfrastructure() {
         metricsRegistry
         timers { call, exception ->
             tag("authorized_party", call.getAuthorizedParty().orElse(""))
+        }
+    }
+
+    fixedRateTimer(
+        name = "Healthchecks",
+        daemon = false,
+        period = 5.minutes.inWholeMilliseconds,
+        initialDelay = 30.seconds.inWholeMilliseconds,
+    ) {
+        val selfTests = getKoin().getAll<HealthCheckAware>().map { it.getHealthCheck() }
+        SelfTestUtils.checkAllParallel(selfTests)
+    }
+    routing {
+        route("/internal/health") {
+            val selfTests = getKoin().getAll<HealthCheckAware>().map { it.getHealthCheck() }
+            get {
+                val result = SelfTestUtils.checkAllParallel(selfTests)
+                val markup = SelftestHtmlGenerator.generate(result)
+                call.respondText(markup, contentType = ContentType.Text.Html)
+            }
         }
     }
 
