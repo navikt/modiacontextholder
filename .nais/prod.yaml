@@ -136,6 +136,9 @@ spec:
         - application: tiltaksgjennomforing-intern
           namespace: arbeidsgiver
           cluster: prod-gcp
+        - application: tiltak-refusjon-saksbehandler
+          namespace: arbeidsgiver
+          cluster: prod-gcp
   secureLogs:
     enabled: true
   envFrom:
