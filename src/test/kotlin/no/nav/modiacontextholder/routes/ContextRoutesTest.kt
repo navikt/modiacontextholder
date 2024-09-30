@@ -4,48 +4,18 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
-import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.domain.VeilederContextType
-import no.nav.modiacontextholder.redis.TestUtils
-import no.nav.modiacontextholder.redis.TestUtils.WithRedis.Companion.PASSWORD
 import no.nav.modiacontextholder.rest.TestApplication
 import no.nav.modiacontextholder.rest.model.RSAktivBruker
 import no.nav.modiacontextholder.rest.model.RSAktivEnhet
 import no.nav.modiacontextholder.rest.model.RSNyContext
 import no.nav.modiacontextholder.service.ContextService
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ContextRoutesTest : TestApplication() {
     private val ident = "Z999999"
-
-    companion object {
-        val withRedis = TestUtils.WithRedis()
-
-        @JvmStatic
-        @BeforeAll
-        fun setup() {
-            TestUtils.WithRedis.startContainer()
-        }
-
-        @JvmStatic
-        @AfterAll
-        fun tearDown() {
-            TestUtils.WithRedis.stopContainer()
-        }
-    }
-
-    private val hostAndPort = withRedis.redisHostAndPort()
-    private val redisUri = "redis://default:$PASSWORD@$hostAndPort"
-
-    @BeforeEach
-    fun beforeEach() {
-        this.configuration = Configuration(redisUri = redisUri)
-    }
 
     @Test
     fun testDeleteContext() =

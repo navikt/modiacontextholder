@@ -10,12 +10,41 @@ import io.mockk.mockkClass
 import no.nav.modiacontextholder.AppModule
 import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.modiacontextholderApp
+import no.nav.modiacontextholder.redis.TestUtils
+import no.nav.modiacontextholder.redis.TestUtils.WithRedis.Companion.PASSWORD
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.test.KoinTest
 import org.koin.test.junit5.KoinTestExtension
 import org.koin.test.junit5.mock.MockProviderExtension
 
 open class TestApplication : KoinTest {
+    companion object {
+        val withRedis = TestUtils.WithRedis()
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            TestUtils.WithRedis.startContainer()
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun tearDown() {
+            TestUtils.WithRedis.stopContainer()
+        }
+    }
+
+    private val hostAndPort = withRedis.redisHostAndPort()
+    private val redisUri = "redis://default:$PASSWORD@$hostAndPort"
+
+    @BeforeEach
+    fun beforeEach() {
+        this.configuration = Configuration(redisUri = redisUri)
+    }
+
     var configuration = Configuration()
 
     fun testApp(block: suspend ApplicationTestBuilder.(client: HttpClient) -> Unit) =

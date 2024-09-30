@@ -16,6 +16,7 @@ import io.ktor.server.testing.*
 import no.nav.modiacontextholder.AppModule
 import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.mock.mockModule
+import no.nav.modiacontextholder.redis.TestUtils
 import no.nav.modiacontextholder.setupInfrastructure
 import no.nav.modiacontextholder.utils.getAuthorizedParty
 import org.koin.core.context.stopKoin
@@ -30,9 +31,12 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
-class MetricsTest {
+class MetricsTest : TestUtils.WithRedis() {
     val audience = "testaudience"
     val issuer = "testissuer"
+
+    private val hostAndPort = this.redisHostAndPort()
+    private val redisUri = "redis://default:$PASSWORD@$hostAndPort"
 
     @Test
     fun `authorized_party is available`() =
@@ -48,7 +52,7 @@ class MetricsTest {
                         AppModule.appModule,
                         mockModule,
                         module {
-                            single { Configuration() }
+                            single { Configuration(redisUri = redisUri) }
                         },
                     )
                 }
