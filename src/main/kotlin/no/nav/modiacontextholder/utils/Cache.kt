@@ -9,7 +9,7 @@ import kotlin.time.toJavaDuration
 object CacheFactory {
     fun <KEY, VALUE> createCache(
         expiry: Duration = 1.hours,
-        maximumSize: Long = 10_1000,
+        maximumSize: Long = 10_000,
     ): Cache<KEY, VALUE> =
         Caffeine
             .newBuilder()
