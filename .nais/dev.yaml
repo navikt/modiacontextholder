@@ -31,11 +31,11 @@ spec:
     timeout: 1
   resources:
     limits:
-      cpu: 3000m
+      cpu: 1000m
       memory: 1024Mi
     requests:
-      cpu: 400m
-      memory: 768Mi
+      cpu: 200m
+      memory: 1024Mi
   ingresses:
     - https://modiacontextholder.intern.dev.nav.no
     - https://modiacontextholder.ansatt.dev.nav.no
