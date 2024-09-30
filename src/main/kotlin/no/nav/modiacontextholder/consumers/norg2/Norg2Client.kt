@@ -74,7 +74,7 @@ class Norg2ClientImpl(
     }
 
     fun ping() {
-        val status = client.newCall(Request.Builder().url("$url/internal/isAlive").build()).execute().code
+        val status = client.newCall(Request.Builder().url("$url/internal/health/liveness").build()).execute().code
         if (status != 200) {
             throw RuntimeException("Norg2 /isAlive status: $status")
         }
