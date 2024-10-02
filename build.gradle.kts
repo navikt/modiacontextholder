@@ -122,20 +122,28 @@ tasks.jar {
     enabled = false
 }
 
-tasks {
-    shadowJar {
-        archiveBaseName.set("modiacontextholder")
-        archiveClassifier.set("")
-        archiveVersion.set("")
-        manifest {
-            attributes(
-                mapOf("Main-Class" to mainClass),
-            )
-        }
-        dependsOn("graphqlGenerateClient")
+tasks.shadowJar {
+    archiveFileName.set("modiacontextholder.jar")
+    manifest {
+        attributes(
+            mapOf("Main-Class" to mainClass),
+        )
     }
+    dependsOn("graphqlGenerateClient")
+}
 
-    build {
-        dependsOn("shadowJar")
-    }
+tasks.distZip {
+    dependsOn("shadowJar")
+}
+
+tasks.distTar {
+    dependsOn("shadowJar")
+}
+
+tasks.startScripts {
+    dependsOn("shadowJar")
+}
+
+tasks.build {
+    dependsOn("shadowJar")
 }
