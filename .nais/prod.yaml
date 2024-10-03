@@ -11,7 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
 spec:
   image: "{{ image }}"
-  port: 8080
+  port: 4000
   liveness:
     path: internal/isAlive
     initialDelay: 50
@@ -20,7 +20,7 @@ spec:
     failureThreshold: 10
   prometheus:
     enabled: true
-    path: internal/prometheus
+    path: internal/metrics
   observability:
     autoInstrumentation:
       enabled: true
@@ -28,6 +28,7 @@ spec:
   readiness:
     path: internal/isReady
     initialDelay: 50
+    periodSeconds: 10
     timeout: 1
   resources:
     limits:

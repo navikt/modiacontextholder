@@ -1,4 +1,4 @@
-FROM maven:3.9.6-eclipse-temurin-17-alpine as builder
+FROM gradle:8-jdk21-alpine as builder
 
 # sett riktig tidssone
 ENV TZ Europe/Oslo
@@ -6,11 +6,11 @@ RUN ln -fs /usr/share/zoneinfo/Europe/Oslo /etc/localtime
 
 ADD / /source
 WORKDIR /source
-RUN mvn package -DskipTests
+RUN gradle build -x test
 
-FROM gcr.io/distroless/java17-debian12
+FROM gcr.io/distroless/java21-debian12
 
-COPY --from=builder /source/target/modiacontextholder.jar app.jar
+COPY --from=builder /source/build/libs/modiacontextholder.jar app.jar
 
 USER nonroot
 

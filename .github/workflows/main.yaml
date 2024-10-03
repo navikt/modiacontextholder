@@ -19,11 +19,11 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 17
-          cache: 'maven'
-      - name: Build using maven
-        run: |
-          mvn -P ci -B verify
+          java-version: 21
+          cache: 'gradle'
+
+      - name: Build
+        run: gradle build
 
   build-and-push:
     name: Build and push Docker container
@@ -41,8 +41,8 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 17
-          cache: 'maven'
+          java-version: 21
+          cache: 'gradle'
       - name: Publish Docker image
         uses: nais/docker-build-push@v0
         id: docker-build-push
@@ -61,9 +61,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    strategy:
-      matrix:
-        namespace: [ q2 ]
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2

@@ -11,7 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
 spec:
   image: "{{ image }}"
-  port: 8080
+  port: 4000
   liveness:
     path: internal/isAlive
     initialDelay: 50
@@ -20,7 +20,7 @@ spec:
     failureThreshold: 10
   prometheus:
     enabled: true
-    path: internal/prometheus
+    path: internal/metrics
   observability:
     autoInstrumentation:
       enabled: true
@@ -28,6 +28,7 @@ spec:
   readiness:
     path: internal/isReady
     initialDelay: 50
+    periodSeconds: 10
     timeout: 1
   resources:
     limits:
@@ -42,7 +43,9 @@ spec:
   replicas:
     min: 2
     max: 4
-    cpuThresholdPercentage: 50
+    scalingStrategy:
+      cpu:
+        thresholdPercentage: 50
   redis:
     - instance: contextholder
       access: readwrite
@@ -60,6 +63,7 @@ spec:
         - host: personoversikt-unleash-api.nav.cloud.nais.io
         - host: axsys.dev-fss-pub.nais.io
         - host: pdl-api.dev-fss-pub.nais.io
+        - host: graph.microsoft.com
       rules:
         - application: nom-api
           namespace: nom
@@ -162,7 +166,7 @@ spec:
     - name: MS_GRAPH_SCOPE
       value: "https://graph.microsoft.com/.default"
     - name: APP_ENVIRONMENT_NAME
-      value: "{{ namespace }}"
+      value: "q2"
     - name: AAREG_URL
       value: "https://arbeid-og-inntekt-q2.dev-fss-pub.nais.io"
     - name: AAREG_PUBLIC_URL
