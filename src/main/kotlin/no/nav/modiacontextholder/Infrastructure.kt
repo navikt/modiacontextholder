@@ -33,7 +33,7 @@ fun Application.setupInfrastructure() {
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Delete)
-        allowCredentials
+        allowCredentials = true
         allowHeader(HttpHeaders.Authorization)
         allowHeader(HttpHeaders.ContentType)
     }
