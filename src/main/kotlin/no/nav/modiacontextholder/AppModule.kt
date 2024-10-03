@@ -1,6 +1,9 @@
 package no.nav.modiacontextholder
 
+import io.getunleash.DefaultUnleash
+import io.getunleash.Unleash
 import io.getunleash.UnleashContextProvider
+import io.getunleash.util.UnleashConfig
 import io.ktor.http.*
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
@@ -100,6 +103,25 @@ object AppModule {
         }
     val externalModules =
         module {
+            single<Unleash> {
+                val api: String = EnvironmentUtils.getRequiredProperty("UNLEASH_SERVER_API_URL") + "/api"
+                val apiToken: String = EnvironmentUtils.getRequiredProperty("UNLEASH_SERVER_API_TOKEN")
+
+                val unleashConfig =
+                    UnleashConfig
+                        .builder()
+                        .apply {
+                            appName("modiacontextholder")
+                            environment(System.getProperty("UNLEASH_ENVIRONMENT"))
+                            instanceId(System.getProperty("APP_ENVIRONMENT_NAME", "local"))
+                            unleashAPI(api)
+                            apiKey(apiToken)
+                            unleashContextProvider(get())
+                            synchronousFetchOnInitialisation(true)
+                        }.build()
+
+                DefaultUnleash(unleashConfig)
+            }
             singleOf(::PdlServiceImpl) { bind<PdlService>() }
 
             single {
