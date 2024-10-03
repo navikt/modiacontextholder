@@ -1,16 +1,18 @@
 package no.nav.modiacontextholder.redis
 
-import io.lettuce.core.api.sync.RedisStringCommands
+import io.lettuce.core.api.StatefulRedisConnection
 import java.util.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 class RedisPersistence(
-    private val redis: RedisStringCommands<String, String>,
+    redisConnection: StatefulRedisConnection<String, String>,
     private val codeGenerator: CodeGenerator = UUIDGenerator(),
     private val expiration: Duration = 10.minutes,
     private val scope: String = "fnr-code",
 ) {
+    private val redis = redisConnection.sync()
+
     fun getFnr(code: String): Result<String?> =
         runCatching {
             val key = getKey(code)

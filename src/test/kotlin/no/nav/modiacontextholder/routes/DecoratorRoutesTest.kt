@@ -1,6 +1,6 @@
 package no.nav.modiacontextholder.routes
 
-import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -8,14 +8,13 @@ import io.mockk.every
 import io.vavr.control.Try
 import kotlinx.serialization.json.Json
 import no.nav.common.types.identer.AzureObjectId
+import no.nav.modiacontextholder.rest.FnrRequest
 import no.nav.modiacontextholder.rest.TestApplication
 import no.nav.modiacontextholder.rest.model.DecoratorDomain
-import no.nav.modiacontextholder.service.AnsattRolle
-import no.nav.modiacontextholder.service.AzureADService
-import no.nav.modiacontextholder.service.EnheterService
-import no.nav.modiacontextholder.service.VeilederService
-import org.assertj.core.api.Assertions.*
+import no.nav.modiacontextholder.service.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.koin.test.inject
 import org.koin.test.mock.declareMock
 import kotlin.test.Test
 
@@ -88,7 +87,13 @@ class DecoratorRoutesTest : TestApplication() {
     fun alle_enheter_om_saksbehandler_har_modia_admin() =
         testApp {
             val azureADService = declareMock<AzureADService>()
-            every { azureADService.fetchRoller(any(), any()) } returns listOf(AnsattRolle(adminGroupName, azureObjectId))
+            every { azureADService.fetchRoller(any(), any()) } returns
+                listOf(
+                    AnsattRolle(
+                        adminGroupName,
+                        azureObjectId,
+                    ),
+                )
 
             gitt_saksbehandler_i_ad()
             gitt_tilgang_til_enheter(
@@ -100,6 +105,17 @@ class DecoratorRoutesTest : TestApplication() {
             client.getAuth("/api/v2/decorator").apply {
                 val decoratorConfig = Json.decodeFromString<DecoratorDomain.DecoratorConfig>(this.bodyAsText())
                 assertThat(decoratorConfig.enheter).hasSize(5)
+            }
+        }
+
+    @Test
+    fun `hent-fnr route`() =
+        testApp {
+            val mockPdl: PdlService by inject()
+
+            it.postAuth("/api/decorator/aktor/hent-fnr", FnrRequest(fnr = "10108000398")).apply {
+                val body = this.body<DecoratorDomain.FnrAktorId>()
+                assertThat(body.aktorId).isEqualTo(mockPdl.hentIdent(body.fnr).get())
             }
         }
 

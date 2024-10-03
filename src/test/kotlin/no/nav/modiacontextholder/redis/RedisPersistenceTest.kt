@@ -21,9 +21,8 @@ class RedisPersistenceTest : TestUtils.WithRedis() {
                     .withAuthentication("default", PASSWORD)
                     .build(),
             ).connect()
-    private val redis = redisConnection.sync()
 
-    private val redisPersistence: RedisPersistence = RedisPersistence(redis)
+    private val redisPersistence: RedisPersistence = RedisPersistence(redisConnection)
 
     @Test
     fun `lager kode for fnr`() {
@@ -40,7 +39,7 @@ class RedisPersistenceTest : TestUtils.WithRedis() {
 
     @Test
     fun `sletter fnr etter gitt tid`() {
-        val localRedisPersitence = RedisPersistence(redis, expiration = 1.seconds)
+        val localRedisPersitence = RedisPersistence(redisConnection, expiration = 1.seconds)
         val fnr = "10108000398"
         val fnrCodeResult = runBlocking { localRedisPersitence.generateAndStoreTempCodeForFnr(fnr) }
         assertTrue(fnrCodeResult.result.isSuccess)

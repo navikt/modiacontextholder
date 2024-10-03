@@ -7,6 +7,7 @@ import no.nav.common.log.MDCConstants
 import no.nav.modiacontextholder.routes.contextRoutes
 import no.nav.modiacontextholder.routes.decoratorRoutes
 import no.nav.modiacontextholder.routes.featureToggleRoutes
+import no.nav.modiacontextholder.routes.fnrCodeExchageRoutes
 import no.nav.modiacontextholder.utils.getIdent
 import no.nav.personoversikt.common.ktor.utils.Security
 import org.slf4j.MDC
@@ -23,10 +24,16 @@ fun Application.setupApi(security: Security) {
             }
         }
 
-        featureToggleRoutes()
+        authenticate(*security.authproviders, optional = true) {
+            intercept(ApplicationCallPipeline.Call) {
+                runCatching {
+                    call.getIdent()
+                }.onSuccess {
+                    MDC.put(MDCConstants.MDC_USER_ID, it)
+                }
+            }
+            fnrCodeExchageRoutes()
+            featureToggleRoutes()
+        }
     }
 }
-
-data class UUIDPrincipal(
-    val uuid: String,
-) : Principal

@@ -25,6 +25,7 @@ import no.nav.modiacontextholder.consumers.norg2.Norg2Client
 import no.nav.modiacontextholder.consumers.norg2.Norg2ClientImpl
 import no.nav.modiacontextholder.infrastructur.HealthCheckAware
 import no.nav.modiacontextholder.mock.MockNomClient
+import no.nav.modiacontextholder.redis.RedisPersistence
 import no.nav.modiacontextholder.redis.RedisPublisher
 import no.nav.modiacontextholder.redis.RedisVeilederContextDatabase
 import no.nav.modiacontextholder.redis.VeilederContextDatabase
@@ -76,11 +77,8 @@ object AppModule {
                 redisClient.connectPubSub()
             } onClose { it?.close() }
 
-            singleOf(::RedisVeilederContextDatabase) {
-                binds(listOf(VeilederContextDatabase::class, HealthCheckAware::class))
-            }
+            singleOf(::RedisVeilederContextDatabase) { binds(listOf(VeilederContextDatabase::class, HealthCheckAware::class)) }
             single { RedisPublisher(get()) }
-
             singleOf(::VeilederService)
             singleOf(::ContextService)
 
@@ -100,6 +98,8 @@ object AppModule {
 
             singleOf(::EnheterCache) { bind<HealthCheckAware>() }
             singleOf(::EnheterService)
+            single { RedisPersistence(get()) }
+            singleOf(::FnrCodeExchangeService)
         }
     val externalModules =
         module {

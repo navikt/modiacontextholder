@@ -21,6 +21,8 @@ fun Route.contextRoutes() {
     val contextService: ContextService by inject()
 
     route("/context") {
+        get { call.respond(contextService.hentVeiledersContext(call.getIdent())) }
+
         get("/v2/aktivbruker") { call.respond(contextService.hentAktivBrukerV2(call.getIdent())) }
 
         get("/aktivbruker") { call.respond(contextService.hentAktivBruker(call.getIdent())) }
@@ -29,15 +31,6 @@ fun Route.contextRoutes() {
 
         get("/v2/aktivenhet") { call.respond(contextService.hentAktivEnhetV2(call.getIdent())) }
 
-        delete("/nullstill") {
-            val ident = Optional.of(call.getIdent())
-            val referrer = call.request.headers[HttpHeaders.Referrer]
-            val url = Pair(AuditIdentifier.REFERER, referrer)
-            withAudit(describe(ident, Audit.Action.DELETE, AuditResources.NullstillKontekst, url)) {
-                ident.ifPresent(contextService::nullstillContext)
-            }
-            call.response.status(HttpStatusCode.OK)
-        }
         delete {
             val ident = Optional.of(call.getIdent())
             val referrer = call.request.headers[HttpHeaders.Referrer]

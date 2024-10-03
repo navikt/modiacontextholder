@@ -72,19 +72,6 @@ class ContextRoutesTest : TestApplication() {
             }
         }
 
-    @Test
-    fun testDeleteContextNullstill() =
-        testApp {
-            gittFnrIKontekst()
-            gittEnhetIKontekst()
-
-            it.delete("/api/context/nullstill").apply {
-                assertEquals(HttpStatusCode.OK, this.status)
-                assertEquals(hentFnrFraKontekst(), null)
-                assertEquals(hentEnhetFraKontekst(), null)
-            }
-        }
-
     private fun gittFnrIKontekst() {
         val contextService: ContextService by inject()
         contextService.oppdaterVeiledersContext(RSNyContext("originaltfnr", VeilederContextType.NY_AKTIV_BRUKER), ident)
