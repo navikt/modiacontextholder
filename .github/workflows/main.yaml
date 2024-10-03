@@ -61,9 +61,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    strategy:
-      matrix:
-        namespace: [ q2 ]
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
