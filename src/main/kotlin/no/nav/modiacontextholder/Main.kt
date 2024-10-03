@@ -24,7 +24,12 @@ fun main() {
 }
 
 fun runLocal() {
-    val configuration = Configuration()
+    val configuration =
+        Configuration(
+            aaRegisteretBaseUrl = "http://aaregisteret.local",
+            aaRegisteretPublicUrl = "http://aaregistert-public.local",
+            salesforceBaseUrl = "http://salesforce.local",
+        )
 
     KtorServer
         .create(Netty, port = 4000) {

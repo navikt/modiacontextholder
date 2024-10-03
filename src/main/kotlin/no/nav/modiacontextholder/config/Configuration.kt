@@ -1,6 +1,7 @@
 package no.nav.modiacontextholder.config
 
 import io.ktor.http.*
+import no.nav.common.utils.EnvironmentUtils
 import no.nav.personoversikt.common.ktor.utils.Security
 import no.nav.personoversikt.common.ktor.utils.Security.AuthProviderConfig
 import no.nav.personoversikt.common.utils.EnvUtils.getConfig
@@ -28,7 +29,11 @@ class Configuration(
                     Security.TokenLocation.Header(HttpHeaders.Authorization),
                 ),
         ),
+    val isMock: Boolean = false,
     val redisUri: String = getRequiredConfig("REDIS_URI_CONTEXTHOLDER", defaultValues),
     val redisUsername: String? = getConfig("REDIS_USERNAME_CONTEXTHOLDER"),
     val redisPassword: String? = getConfig("REDIS_PASSWORD_CONTEXTHOLDER"),
+    val aaRegisteretBaseUrl: String = if (isMock) "ignored" else EnvironmentUtils.getRequiredProperty("AAREG_URL"),
+    val aaRegisteretPublicUrl: String = if (isMock) "ignored" else EnvironmentUtils.getRequiredProperty("AAREG_PUBLIC_URL"),
+    val salesforceBaseUrl: String = if (isMock) "ignored" else EnvironmentUtils.getRequiredProperty("SALESFORCE_URL"),
 )

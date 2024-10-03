@@ -2,12 +2,14 @@ package no.nav.modiacontextholder
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import no.nav.modiacontextholder.AppModule.appModule
 import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.mock.mockModule
+import no.nav.personoversikt.common.ktor.utils.Security
 import org.koin.dsl.module
 import org.koin.ktor.ext.getKoin
 import org.koin.ktor.plugin.Koin
@@ -29,12 +31,21 @@ fun Application.modiacontextholderApp(
             },
         )
     }
+    val security =
+        Security(
+            configuration.azuread,
+        )
 
-    install(ContentNegotiation) {
-        json()
+    install(Authentication) {
+        if (useMock) {
+            security.setupMock(this, "Z999999")
+        } else {
+            security.setupJWT(this)
+        }
     }
 
-    setupApi(useMock)
+    setupApi(security)
+    setupRedirect(security)
     setupWebsocket()
     setupInfrastructure()
 

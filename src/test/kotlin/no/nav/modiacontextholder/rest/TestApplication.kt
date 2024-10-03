@@ -42,24 +42,39 @@ open class TestApplication : KoinTest {
 
     @BeforeEach
     fun beforeEach() {
-        this.configuration = Configuration(redisUri = redisUri)
+        this.configuration =
+            Configuration(
+                redisUri = redisUri,
+                aaRegisteretBaseUrl = "http://aaregisteret.local",
+                aaRegisteretPublicUrl = "http://aaregistert-public.local",
+                salesforceBaseUrl = "http://salesforce.local",
+            )
     }
 
-    var configuration = Configuration()
+    var configuration =
+        Configuration(
+            aaRegisteretBaseUrl = "http://aaregisteret.local",
+            aaRegisteretPublicUrl = "http://aaregistert-public.local",
+            salesforceBaseUrl = "http://salesforce.local",
+        )
 
-    fun testApp(block: suspend ApplicationTestBuilder.(client: HttpClient) -> Unit) =
-        testApplication {
-            application {
-                modiacontextholderApp(configuration = configuration, useMock = true)
-            }
-            startApplication()
-            val client =
-                createClient {
-                    install(ContentNegotiation) { json() }
-                }
-
-            block(client)
+    fun testApp(
+        additionalSetupBlock: suspend ApplicationTestBuilder.() -> Unit = {},
+        block: suspend ApplicationTestBuilder.(client: HttpClient) -> Unit,
+    ) = testApplication {
+        additionalSetupBlock()
+        application {
+            modiacontextholderApp(configuration = configuration, useMock = true)
         }
+        startApplication()
+        val client =
+            createClient {
+                install(ContentNegotiation) { json() }
+                followRedirects = false
+            }
+
+        block(client)
+    }
 
     @JvmField
     @RegisterExtension

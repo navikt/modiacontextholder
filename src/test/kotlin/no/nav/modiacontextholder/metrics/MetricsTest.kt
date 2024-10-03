@@ -52,7 +52,12 @@ class MetricsTest : TestUtils.WithRedis() {
                         AppModule.appModule,
                         mockModule,
                         module {
-                            single { Configuration(redisUri = redisUri) }
+                            single {
+                                Configuration(
+                                    redisUri = redisUri,
+                                    isMock = true,
+                                )
+                            }
                         },
                     )
                 }

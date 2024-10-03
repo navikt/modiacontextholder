@@ -32,7 +32,7 @@ class WebsocketTest : TestUtils.WithRedis() {
                 }
 
             application {
-                modiacontextholderApp(configuration = Configuration(redisUri = redisUri), useMock = true)
+                modiacontextholderApp(configuration = Configuration(redisUri = redisUri, isMock = true), useMock = true)
             }
 
             withTimeout(5000) {

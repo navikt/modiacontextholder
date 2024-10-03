@@ -1,8 +1,10 @@
 package no.nav.modiacontextholder
 
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
@@ -22,6 +24,10 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 fun Application.setupInfrastructure() {
+    install(ContentNegotiation) {
+        json()
+    }
+
     install(CORS) {
         anyHost()
         allowMethod(HttpMethod.Get)
