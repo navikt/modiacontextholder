@@ -39,7 +39,7 @@ fun Application.setupInfrastructure() {
     }
 
     install(Metrics.Plugin) {
-        metricsRegistry
+        registry = metricsRegistry
         timers { call, exception ->
             tag("authorized_party", call.getAuthorizedParty().orElse(""))
         }
@@ -72,8 +72,6 @@ fun Application.setupInfrastructure() {
 
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            println(cause.message)
-            println(cause.stackTraceToString())
             logger.error(cause.message, cause.stackTrace)
             if (cause is HTTPException) {
                 call.respondText(text = "${cause.statusCode()}: $cause}", status = cause.statusCode())
