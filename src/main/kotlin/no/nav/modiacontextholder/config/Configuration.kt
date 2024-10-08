@@ -1,6 +1,7 @@
 package no.nav.modiacontextholder.config
 
 import io.ktor.http.*
+import io.ktor.server.auth.jwt.*
 import no.nav.common.utils.EnvironmentUtils
 import no.nav.personoversikt.common.ktor.utils.Security
 import no.nav.personoversikt.common.ktor.utils.Security.AuthProviderConfig
@@ -28,6 +29,7 @@ class Configuration(
                 listOf(
                     Security.TokenLocation.Header(HttpHeaders.Authorization),
                 ),
+            useJWTPrincipal = true,
         ),
     val isMock: Boolean = false,
     val redisUri: String = getRequiredConfig("REDIS_URI_CONTEXTHOLDER", defaultValues),
