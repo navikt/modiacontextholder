@@ -44,7 +44,11 @@ class WebsocketStorage(
         } catch (e: ClosedReceiveChannelException) {
             // This is expected when the channel is closed, `finally`-block will remove the session
         } catch (e: Throwable) {
-            log.error("Websocket error", e)
+            if (e.message?.contains("Ping timeout") == true) {
+                // ignore ping timeouts
+            } else {
+                log.error("Websocket error", e)
+            }
         } finally {
             sessions[ident]?.remove(this)
         }
@@ -53,8 +57,7 @@ class WebsocketStorage(
     private fun getAntallTilkoblinger(): Int =
         sessions
             .values
-            .map { it.size }
-            .sum()
+            .sumOf { it.size }
 
     private suspend fun propagateMessageToWebsocket() {
         flow.filterNotNull().collect { value ->
