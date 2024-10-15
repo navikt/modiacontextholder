@@ -28,6 +28,8 @@ fun Application.setupInfrastructure() {
         json()
     }
 
+    install(IgnoreTrailingSlash)
+
     install(CORS) {
         anyHost()
         allowMethod(HttpMethod.Get)
