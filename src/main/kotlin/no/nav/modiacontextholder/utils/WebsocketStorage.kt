@@ -1,8 +1,8 @@
 package no.nav.modiacontextholder.utils
 
 import io.ktor.server.plugins.BadRequestException
-import io.ktor.server.websocket.*
-import io.ktor.util.debug.*
+import io.ktor.server.websocket.DefaultWebSocketServerSession
+import io.ktor.server.websocket.WebSocketServerSession
 import io.ktor.websocket.Frame
 import io.micrometer.core.instrument.Gauge
 import kotlinx.coroutines.GlobalScope
@@ -14,19 +14,12 @@ import kotlinx.serialization.json.Json
 import no.nav.modiacontextholder.log
 import no.nav.modiacontextholder.metricsRegistry
 import no.nav.modiacontextholder.rest.model.RSEvent
-import java.time.Duration
 import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
 
 class WebsocketStorage(
     private val flow: Flow<String?>,
 ) {
-    companion object {
-        val options: WebSockets.WebSocketOptions.() -> Unit = {
-            pingPeriod = Duration.ofMinutes(3)
-        }
-    }
-
     init {
         Gauge
             .builder("websocket_clients", this::getAntallTilkoblinger)

@@ -1,13 +1,16 @@
 package no.nav.modiacontextholder.rest
 
-import io.ktor.client.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.testing.*
-import io.mockk.mockkClass
-import no.nav.modiacontextholder.AppModule
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.testing.ApplicationTestBuilder
+import io.ktor.server.testing.testApplication
 import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.modiacontextholderApp
 import no.nav.modiacontextholder.redis.TestUtils
@@ -15,10 +18,7 @@ import no.nav.modiacontextholder.redis.TestUtils.WithRedis.Companion.PASSWORD
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.test.KoinTest
-import org.koin.test.junit5.KoinTestExtension
-import org.koin.test.junit5.mock.MockProviderExtension
 
 open class TestApplication : KoinTest {
     companion object {
@@ -75,22 +75,6 @@ open class TestApplication : KoinTest {
 
         block(client)
     }
-
-    @JvmField
-    @RegisterExtension
-    val koinTestExtension =
-        KoinTestExtension.create {
-            modules(
-                AppModule.appModule,
-            )
-        }
-
-    @JvmField
-    @RegisterExtension
-    val mockProvider =
-        MockProviderExtension.create { clazz ->
-            mockkClass(clazz)
-        }
 
     suspend fun HttpClient.getAuth(url: String) = this.get(url) { header("Authorization", "Bearer token") }
 

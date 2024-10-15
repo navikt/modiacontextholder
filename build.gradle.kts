@@ -2,11 +2,11 @@ import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLDownloadSDLTask
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
 
-val ktor_version = "2.3.12"
+val ktor_version = "3.0.0"
 val kotlin_version = "2.0.20"
 val koin_version = "3.5.6"
 
-val modia_common_version = "1.2024.10.08-15.26-79dda7914471"
+val modia_common_version = "1.2024.10.15-08.58-ff5db0c77a01"
 val nav_common_version = "3.2024.05.23_05.46-2b29fa343e8e"
 val graphql_kotlin_version = "8.0.0"
 val caffeine_version = "3.1.8"
@@ -25,7 +25,7 @@ val mainClass = "no.nav.modiacontextholder.MainKt"
 
 plugins {
     kotlin("jvm") version "2.0.20"
-    id("io.ktor.plugin") version "2.3.12"
+    id("io.ktor.plugin") version "3.0.0"
     kotlin("plugin.serialization") version "2.0.20"
     id("com.gradleup.shadow") version "8.3.2"
     id("com.expediagroup.graphql") version "8.0.0"
@@ -86,12 +86,12 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktor_version")
     testImplementation("io.ktor:ktor-client-core:$ktor_version")
     testImplementation("io.ktor:ktor-client-okhttp:$ktor_version")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
     testImplementation("org.testcontainers:testcontainers:$testcontainers_version")
     testImplementation("org.testcontainers:junit-jupiter:$testcontainers_version")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttp3_version")
     testImplementation("io.mockk:mockk-jvm:$mockk_version")
     testImplementation("org.assertj:assertj-core:$assertj_version")
-    testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.12")
     testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
 }
 

@@ -1,14 +1,18 @@
 package no.nav.modiacontextholder
 
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.routing.*
-import io.ktor.server.websocket.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.application.log
+import io.ktor.server.routing.routing
+import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.pingPeriod
+import io.ktor.server.websocket.timeout
+import io.ktor.server.websocket.webSocket
 import io.lettuce.core.RedisClient
 import no.nav.modiacontextholder.redis.setupRedisConsumer
 import no.nav.modiacontextholder.utils.WebsocketStorage
 import org.koin.ktor.ext.inject
-import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 fun Application.setupWebsocket() {
     val redisClient: RedisClient by inject()
@@ -16,8 +20,8 @@ fun Application.setupWebsocket() {
     val websocketStorage = WebsocketStorage(redisConsumer.getFlow())
 
     install(WebSockets) {
-        pingPeriod = Duration.ofMinutes(1)
-        timeout = Duration.ofMinutes(5)
+        pingPeriod = 1.minutes
+        timeout = 5.minutes
     }
 
     routing {

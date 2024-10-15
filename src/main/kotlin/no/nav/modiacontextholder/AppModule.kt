@@ -4,7 +4,7 @@ import io.getunleash.DefaultUnleash
 import io.getunleash.Unleash
 import io.getunleash.UnleashContextProvider
 import io.getunleash.util.UnleashConfig
-import io.ktor.http.*
+import io.ktor.http.Url
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
 import io.lettuce.core.api.StatefulRedisConnection
@@ -29,11 +29,24 @@ import no.nav.modiacontextholder.redis.RedisPersistence
 import no.nav.modiacontextholder.redis.RedisPublisher
 import no.nav.modiacontextholder.redis.RedisVeilederContextDatabase
 import no.nav.modiacontextholder.redis.VeilederContextDatabase
-import no.nav.modiacontextholder.service.*
+import no.nav.modiacontextholder.service.AzureADService
+import no.nav.modiacontextholder.service.AzureADServiceImpl
+import no.nav.modiacontextholder.service.ContextService
+import no.nav.modiacontextholder.service.EnheterCache
+import no.nav.modiacontextholder.service.EnheterService
+import no.nav.modiacontextholder.service.FnrCodeExchangeService
+import no.nav.modiacontextholder.service.PdlService
+import no.nav.modiacontextholder.service.PdlServiceImpl
+import no.nav.modiacontextholder.service.VeilederService
 import no.nav.modiacontextholder.service.unleash.ToggleableFeatureService
 import no.nav.modiacontextholder.service.unleash.UnleashContextProviderImpl
 import no.nav.modiacontextholder.service.unleash.UnleashService
-import no.nav.modiacontextholder.utils.*
+import no.nav.modiacontextholder.utils.DownstreamApi
+import no.nav.modiacontextholder.utils.LoggingInterceptor
+import no.nav.modiacontextholder.utils.XCorrelationIdInterceptor
+import no.nav.modiacontextholder.utils.bindTo
+import no.nav.modiacontextholder.utils.createMachineToMachineToken
+import no.nav.modiacontextholder.utils.getCallId
 import okhttp3.OkHttpClient
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.binds
@@ -77,7 +90,14 @@ object AppModule {
                 redisClient.connectPubSub()
             } onClose { it?.close() }
 
-            singleOf(::RedisVeilederContextDatabase) { binds(listOf(VeilederContextDatabase::class, HealthCheckAware::class)) }
+            singleOf(::RedisVeilederContextDatabase) {
+                binds(
+                    listOf(
+                        VeilederContextDatabase::class,
+                        HealthCheckAware::class,
+                    ),
+                )
+            }
             single { RedisPublisher(get()) }
             singleOf(::VeilederService)
             singleOf(::ContextService)
