@@ -1,5 +1,6 @@
 package no.nav.modiacontextholder.routes
 
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -8,6 +9,7 @@ import no.nav.modiacontextholder.domain.VeilederContextType
 import no.nav.modiacontextholder.rest.TestApplication
 import no.nav.modiacontextholder.rest.model.RSAktivBruker
 import no.nav.modiacontextholder.rest.model.RSAktivEnhet
+import no.nav.modiacontextholder.rest.model.RSContext
 import no.nav.modiacontextholder.rest.model.RSNyContext
 import no.nav.modiacontextholder.service.ContextService
 import org.koin.test.inject
@@ -47,6 +49,29 @@ class ContextRoutesTest : TestApplication() {
                 assertEquals(HttpStatusCode.OK, this.status)
                 assertEquals(hentFnrFraKontekst(), null)
                 assertEquals(hentEnhetFraKontekst(), "originalEnhet")
+            }
+        }
+
+    @Test
+    fun testGetContext() =
+        testApp {
+            gittFnrIKontekst()
+            gittEnhetIKontekst()
+
+            it.get("/api/context").apply {
+                assertEquals(HttpStatusCode.OK, this.status)
+                assertEquals(call.body<RSContext>().aktivEnhet, "originalEnhet")
+                assertEquals(call.body<RSContext>().aktivBruker, "originaltfnr")
+            }
+        }
+
+    @Test
+    fun testGetContextTrailingSlash() =
+        testApp {
+            gittFnrIKontekst()
+
+            it.get("/api/context/").apply {
+                assertEquals(HttpStatusCode.OK, this.status)
             }
         }
 
