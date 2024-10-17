@@ -12,6 +12,9 @@ fun Route.featureToggleRoutes() {
     val featureToggleService: ToggleableFeatureService by inject()
 
     route("/api/featuretoggle") {
+        /**
+         * @OpenAPITag featuretoggle
+         */
         get("/{id}") {
             val feature = call.parameters["id"]
 
@@ -22,7 +25,10 @@ fun Route.featureToggleRoutes() {
             }
         }
 
-        get {
+        /**
+         * @OpenAPITag featuretoggle
+         */
+        get("") {
             val ids =
                 call.request.queryParameters["id"]
                     ?.split(",")

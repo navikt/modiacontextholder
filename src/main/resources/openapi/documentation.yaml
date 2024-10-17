@@ -5,12 +5,29 @@ info:
   version: "1.0.0"
 servers:
 - url: "https://modiacontextholder"
+tags:
+- name: "context"
+  description: " <br> "
+- name: "decorator"
+  description: " <br> "
+- name: "featuretoggle"
+  description: " <br> "
+- name: "fnrExchange"
+  description: " <br> "
+- name: "websocket"
+  description: " <br> "
+- name: "redirect"
+  description: " <br> "
 paths:
   /api/context:
     delete:
-      description: ""
+      tags:
+      - "context"
+      description: "Clear the users current context"
     get:
-      description: ""
+      tags:
+      - "context"
+      description: "Get the users active context"
       responses:
         "200":
           description: "OK"
@@ -19,7 +36,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/RSContext"
     post:
-      description: ""
+      tags:
+      - "context"
+      description: "Update context"
       requestBody:
         content:
           application/json:
@@ -53,9 +72,14 @@ paths:
                 $ref: "#/components/schemas/RSContext"
   /api/context/aktivbruker:
     delete:
-      description: ""
+      tags:
+      - "context"
+      description: "Clear the users active user context"
     get:
-      description: ""
+      tags:
+      - "context"
+      description: "Get the users active user from context <br> Deprecated: use v2\
+        \ instead"
       responses:
         "200":
           description: "OK"
@@ -65,7 +89,10 @@ paths:
                 $ref: "#/components/schemas/RSContext"
   /api/context/aktivenhet:
     get:
-      description: ""
+      tags:
+      - "context"
+      description: "Get the users active enhet from context <br> Deprecated: use v2\
+        \ instead"
       responses:
         "200":
           description: "OK"
@@ -75,7 +102,9 @@ paths:
                 $ref: "#/components/schemas/RSContext"
   /api/context/v2/aktivbruker:
     get:
-      description: ""
+      tags:
+      - "context"
+      description: "Get the users active user from context"
       responses:
         "200":
           description: "OK"
@@ -85,7 +114,9 @@ paths:
                 $ref: "#/components/schemas/RSAktivBruker"
   /api/context/v2/aktivenhet:
     get:
-      description: ""
+      tags:
+      - "context"
+      description: "Get the users active enhet from context"
       responses:
         "200":
           description: "OK"
@@ -95,7 +126,10 @@ paths:
                 $ref: "#/components/schemas/RSAktivEnhet"
   /api/decorator:
     get:
-      description: ""
+      tags:
+      - "decorator"
+      description: "Get info for the decorator. Includes the users enheter, name and\
+        \ ident <br> Deprecated: use v2 instead"
       responses:
         "403":
           description: "Forbidden"
@@ -123,7 +157,10 @@ paths:
                 $ref: "#/components/schemas/DecoratorConfig"
   /api/decorator/aktor/hent-fnr:
     post:
-      description: ""
+      tags:
+      - "decorator"
+      description: "Get fnr from aktorID <br> Deprecated: handle this in the app and\
+        \ remove the need for AktorID"
       requestBody:
         content:
           application/json:
@@ -161,7 +198,10 @@ paths:
                   value: ""
   /api/decorator/v2:
     get:
-      description: ""
+      tags:
+      - "decorator"
+      description: "Get info for the decorator. Includes the users enheter, name and\
+        \ ident"
       responses:
         "403":
           description: "Forbidden"
@@ -189,6 +229,8 @@ paths:
                 $ref: "#/components/schemas/DecoratorConfig"
   /api/featuretoggle:
     get:
+      tags:
+      - "featuretoggle"
       description: ""
       parameters:
       - name: "id"
@@ -205,6 +247,8 @@ paths:
                 $ref: "#/components/schemas/Map_String"
   /api/featuretoggle/{id}:
     get:
+      tags:
+      - "featuretoggle"
       description: ""
       parameters:
       - name: "id"
@@ -224,7 +268,10 @@ paths:
                   value: "false"
   /api/v2/decorator:
     get:
-      description: ""
+      tags:
+      - "decorator"
+      description: "Get info for the decorator. Includes the users enheter, name and\
+        \ ident <br> Deprecated: use v2 instead"
       responses:
         "403":
           description: "Forbidden"
@@ -252,7 +299,10 @@ paths:
                 $ref: "#/components/schemas/DecoratorConfig"
   /api/v2/decorator/aktor/hent-fnr:
     post:
-      description: ""
+      tags:
+      - "decorator"
+      description: "Get fnr from aktorID <br> Deprecated: handle this in the app and\
+        \ remove the need for AktorID"
       requestBody:
         content:
           application/json:
@@ -290,7 +340,10 @@ paths:
                   value: ""
   /api/v2/decorator/v2:
     get:
-      description: ""
+      tags:
+      - "decorator"
+      description: "Get info for the decorator. Includes the users enheter, name and\
+        \ ident"
       responses:
         "403":
           description: "Forbidden"
@@ -318,7 +371,9 @@ paths:
                 $ref: "#/components/schemas/DecoratorConfig"
   /fnr-code/generate:
     post:
-      description: ""
+      tags:
+      - "fnrExchange"
+      description: "Generate a unique, short-lived ID linked to a FNR"
       requestBody:
         content:
           application/json:
@@ -343,7 +398,9 @@ paths:
                 $ref: "#/components/schemas/CodeResponse"
   /fnr-code/retrieve:
     post:
-      description: ""
+      tags:
+      - "fnrExchange"
+      description: "Retrieve FNR from a code"
       requestBody:
         content:
           application/json:
@@ -377,7 +434,9 @@ paths:
                 $ref: "#/components/schemas/CodeResponse"
   /ws/{ident}:
     get:
-      description: ""
+      tags:
+      - "websocket"
+      description: "Websocket for context updates"
       parameters:
       - name: "ident"
         in: "path"
@@ -418,19 +477,11 @@ paths:
               required: true
               schema:
                 type: "string"
-  /internal/health:
-    get:
-      description: ""
-      responses:
-        "200":
-          description: "OK"
-          content:
-            text/html:
-              schema:
-                type: "string"
   /redirect/aaregisteret:
     get:
-      description: ""
+      tags:
+      - "redirect"
+      description: "Get redirect URL (with context) to aaregisteret"
       responses:
         "302":
           description: "Found <br> Redirect"
@@ -440,12 +491,24 @@ paths:
                 type: "string"
   /redirect/salesforce:
     get:
-      description: ""
+      tags:
+      - "redirect"
+      description: "Get redirect URL to salesforce. (does not include context)"
       responses:
         "302":
           description: "Found <br> Redirect"
           content:
             text/plain:
+              schema:
+                type: "string"
+  /internal/health:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/html:
               schema:
                 type: "string"
 components:

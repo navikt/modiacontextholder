@@ -59,11 +59,21 @@ fun Application.setupRedirect(security: Security) {
     routing {
         authenticate(*security.authproviders, optional = true) {
             route("redirect") {
+                /**
+                 * Get redirect URL (with context) to aaregisteret
+                 *
+                 * @OpenAPITag redirect
+                 */
                 get("aaregisteret") {
                     val ident = runCatching { call.getIdent() }.getOrNull()
                     call.respondRedirect(aaRegisteretUrl(getContext(ident)))
                 }
 
+                /**
+                 * Get redirect URL to salesforce. (does not include context)
+                 *
+                 * @OpenAPITag redirect
+                 */
                 get("salesforce") {
                     call.respondRedirect(configuration.salesforceBaseUrl)
                 }

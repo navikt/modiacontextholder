@@ -20,6 +20,11 @@ fun Application.setupWebsocket() {
     }
 
     routing {
+        /**
+         * Websocket for context updates
+         *
+         * @OpenAPITag websocket
+         */
         webSocket(path = "/ws/{ident}", handler = websocketStorage.wsHandler)
     }
 

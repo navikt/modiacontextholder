@@ -62,18 +62,37 @@ fun Route.decoratorRoutesInternal() {
     }
 
     route("/decorator") {
+        /**
+         * Get info for the decorator. Includes the users enheter, name and ident
+         *
+         * @OpenAPITag decorator
+         */
         get("/v2") {
             val ident = call.getIdent()
             val token = call.getIdToken()
             call.respond(getDecoratorRessurs(ident, token))
         }
 
-        get {
+        /**
+         * Get info for the decorator. Includes the users enheter, name and ident
+         *
+         * Deprecated: use v2 instead
+         *
+         * @OpenAPITag decorator
+         */
+        get("") {
             val ident = call.getIdent()
             val token = call.getIdToken()
             call.respond(getDecoratorRessurs(ident, token))
         }
 
+        /**
+         * Get fnr from aktorID
+         *
+         * Deprecated: handle this in the app and remove the need for AktorID
+         *
+         * @OpenAPITag decorator
+         */
         post("/aktor/hent-fnr") {
             val fnrRequest: FnrRequest = call.receive()
             call.respond(
