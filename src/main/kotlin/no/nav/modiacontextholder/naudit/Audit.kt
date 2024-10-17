@@ -87,8 +87,8 @@ class Audit {
             subject: Optional<String>,
             action: Action,
             resourceType: AuditResource,
-            vararg identifiers: Pair<AuditIdentifier, String?>,
-        ): AuditDescriptor<Any> = Descriptor(subject, action, resourceType, identifiers)
+            identifiers: List<Pair<AuditIdentifier, String?>>,
+        ): AuditDescriptor<Any> = Descriptor(subject, action, resourceType, identifiers.toTypedArray())
 
         @JvmStatic
         fun <T> describe(

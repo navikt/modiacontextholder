@@ -1,0 +1,552 @@
+openapi: "3.1.0"
+info:
+  title: "modiacontextholder API"
+  description: "modiacontextholder API"
+  version: "1.0.0"
+servers:
+- url: "https://modiacontextholder"
+paths:
+  /api/context:
+    delete:
+      description: ""
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RSContext"
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RSNyContext"
+        required: true
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RSContext"
+  /api/context/aktivbruker:
+    delete:
+      description: ""
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RSContext"
+  /api/context/aktivenhet:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RSContext"
+  /api/context/v2/aktivbruker:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RSAktivBruker"
+  /api/context/v2/aktivenhet:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RSAktivEnhet"
+  /api/decorator:
+    get:
+      description: ""
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DecoratorConfig"
+  /api/decorator/aktor/hent-fnr:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FnrRequest"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FnrAktorId"
+        "403":
+          description: "Forbidden"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+                Example#2:
+                  value: ""
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+                Example#2:
+                  value: ""
+  /api/decorator/v2:
+    get:
+      description: ""
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DecoratorConfig"
+  /api/featuretoggle:
+    get:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+  /api/featuretoggle/{id}:
+    get:
+      description: ""
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "false"
+  /api/v2/decorator:
+    get:
+      description: ""
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DecoratorConfig"
+  /api/v2/decorator/aktor/hent-fnr:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FnrRequest"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FnrAktorId"
+        "403":
+          description: "Forbidden"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+                Example#2:
+                  value: ""
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+                Example#2:
+                  value: ""
+  /api/v2/decorator/v2:
+    get:
+      description: ""
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DecoratorConfig"
+  /fnr-code/generate:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FnrRequest"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Unknown Error"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CodeResponse"
+  /fnr-code/retrieve:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CodeRequest"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Unknown Error"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Fant ikke fnr"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CodeResponse"
+  /ws/{ident}:
+    get:
+      description: ""
+      parameters:
+      - name: "ident"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "Connection"
+        in: "header"
+        required: true
+        description: "Websocket Connection parameter"
+        schema:
+          type: "string"
+      - name: "Upgrade"
+        in: "header"
+        required: true
+        description: "Websocket Upgrade parameter"
+        schema:
+          type: "string"
+      - name: "Sec-WebSocket-Key"
+        in: "header"
+        required: true
+        description: "Websocket Sec-WebSocket-Key parameter"
+        schema:
+          type: "string"
+      responses:
+        "101":
+          description: "Switching Protocols"
+          headers:
+            Connection:
+              required: true
+              schema:
+                type: "string"
+            Upgrade:
+              required: true
+              schema:
+                type: "string"
+            Sec-WebSocket-Accept:
+              required: true
+              schema:
+                type: "string"
+  /internal/health:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/html:
+              schema:
+                type: "string"
+  /redirect/aaregisteret:
+    get:
+      description: ""
+      responses:
+        "302":
+          description: "Found <br> Redirect"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+  /redirect/salesforce:
+    get:
+      description: ""
+      responses:
+        "302":
+          description: "Found <br> Redirect"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+components:
+  schemas:
+    RSContext:
+      type: "object"
+      properties:
+        aktivBruker:
+          type: "string"
+        aktivEnhet:
+          type: "string"
+    RSNyContext:
+      type: "object"
+      properties:
+        verdi:
+          type: "string"
+        eventType:
+          type: "string"
+          enum:
+          - "NY_AKTIV_BRUKER"
+          - "NY_AKTIV_ENHET"
+      required:
+      - "verdi"
+      - "eventType"
+    RSAktivBruker:
+      type: "object"
+      properties:
+        aktivBruker:
+          type: "string"
+    RSAktivEnhet:
+      type: "object"
+      properties:
+        aktivEnhet:
+          type: "string"
+    Enhet:
+      type: "object"
+      properties:
+        enhetId:
+          type: "string"
+        navn:
+          type: "string"
+      required:
+      - "enhetId"
+      - "navn"
+    DecoratorConfig:
+      type: "object"
+      properties:
+        enheter:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Enhet"
+        ident:
+          type: "string"
+        navn:
+          type: "string"
+        fornavn:
+          type: "string"
+        etternavn:
+          type: "string"
+      required:
+      - "enheter"
+      - "ident"
+      - "navn"
+      - "fornavn"
+      - "etternavn"
+    FnrRequest:
+      type: "object"
+      properties:
+        fnr:
+          type: "string"
+      required:
+      - "fnr"
+    FnrAktorId:
+      type: "object"
+      properties:
+        fnr:
+          type: "string"
+        aktorId:
+          type: "string"
+      required:
+      - "fnr"
+      - "aktorId"
+    Map:
+      type: "object"
+      properties: {}
+    Map_String:
+      type: "string"
+    CodeResponse:
+      type: "object"
+      properties:
+        fnr:
+          type: "string"
+        code:
+          type: "string"
+      required:
+      - "fnr"
+      - "code"
+    CodeRequest:
+      type: "object"
+      properties:
+        code:
+          type: "string"
+      required:
+      - "code"
