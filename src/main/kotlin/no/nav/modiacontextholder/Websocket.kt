@@ -1,7 +1,6 @@
 package no.nav.modiacontextholder
 
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.lettuce.core.RedisClient
@@ -13,7 +12,7 @@ import java.time.Duration
 fun Application.setupWebsocket() {
     val redisClient: RedisClient by inject()
     val redisConsumer = setupRedisConsumer(redisClient)
-    val websocketStorage = WebsocketStorage(redisConsumer.getFlow())
+    val websocketStorage = WebsocketStorage(redisConsumer.getFlow(), this)
 
     install(WebSockets) {
         pingPeriod = Duration.ofMinutes(1)

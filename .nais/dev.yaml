@@ -69,9 +69,6 @@ spec:
           namespace: org
     inbound:
       rules:
-        - application: arbeidssokerregistrering-veileder
-          namespace: paw
-          cluster: dev-gcp
         - application: arbeidssokerregistrering-for-veileder
           cluster: dev-gcp
           namespace: paw
@@ -83,9 +80,6 @@ spec:
           cluster: dev-gcp
         - application: beslutteroversikt
           namespace: obo
-          cluster: dev-gcp
-        - application: smregistrering
-          namespace: teamsykmelding
           cluster: dev-gcp
         - application: syfosmmanuell
           namespace: teamsykmelding
