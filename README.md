@@ -2,6 +2,10 @@
 
 Håndterer kontekst for veiledere på tvers av flater.
 
+## Bruk
+
+OpenAPI dokumentasjon er tilgjengelig på https://Modiacontextholder.intern.dev.nav.no/swagger
+
 ## Utvikling
 
 Kjør `main` funksjonen i Main.kt. Lokalt miljø skal detekteres automatisk og avhengigheter vil

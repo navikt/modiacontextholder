@@ -25,18 +25,55 @@ import java.util.*
 fun Route.contextRoutes() {
     val contextService: ContextService by inject()
 
+    /**
+     * Context routes
+     */
     route("/context") {
-        get { call.respond(contextService.hentVeiledersContext(call.getIdent())) }
+        /**
+         * Get the users active context
+         *
+         * @OpenAPITag context
+         */
+        get("") { call.respond(contextService.hentVeiledersContext(call.getIdent())) }
 
+        /**
+         * Get the users active user from context
+         *
+         * @OpenAPITag context
+         */
         get("/v2/aktivbruker") { call.respond(contextService.hentAktivBrukerV2(call.getIdent())) }
 
+        /**
+         * Get the users active user from context
+         *
+         * Deprecated: use v2 instead
+         *
+         * @OpenAPITag context
+         */
         get("/aktivbruker") { call.respond(contextService.hentAktivBruker(call.getIdent())) }
 
+        /**
+         * Get the users active enhet from context
+         *
+         * Deprecated: use v2 instead
+         *
+         * @OpenAPITag context
+         */
         get("/aktivenhet") { call.respond(contextService.hentAktivEnhet(call.getIdent())) }
 
+        /**
+         * Get the users active enhet from context
+         *
+         * @OpenAPITag context
+         */
         get("/v2/aktivenhet") { call.respond(contextService.hentAktivEnhetV2(call.getIdent())) }
 
-        delete {
+        /**
+         * Clear the users current context
+         *
+         * @OpenAPITag context
+         */
+        delete("") {
             val ident = Optional.of(call.getIdent())
             val referrer = call.request.headers[HttpHeaders.Referrer]
             val url = Pair(AuditIdentifier.REFERER, referrer)
@@ -45,6 +82,11 @@ fun Route.contextRoutes() {
             }
             call.response.status(HttpStatusCode.OK)
         }
+        /**
+         * Clear the users active user context
+         *
+         * @OpenAPITag context
+         */
         delete("/aktivbruker") {
             val ident = Optional.of(call.getIdent())
             val referrer = call.request.headers[HttpHeaders.Referrer]
@@ -55,7 +97,12 @@ fun Route.contextRoutes() {
             call.response.status(HttpStatusCode.OK)
         }
 
-        post {
+        /**
+         * Update context
+         *
+         * @OpenAPITag context
+         */
+        post("") {
             val rsNyContext = call.receive<RSNyContext>()
             val ident = Optional.of(call.getIdent())
 

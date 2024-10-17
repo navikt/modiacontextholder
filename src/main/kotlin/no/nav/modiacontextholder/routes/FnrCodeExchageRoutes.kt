@@ -15,6 +15,11 @@ fun Route.fnrCodeExchageRoutes() {
     val fnrCodeExchangeService: FnrCodeExchangeService by inject()
 
     route("/fnr-code") {
+        /**
+         * Generate a unique, short-lived ID linked to a FNR
+         *
+         * @OpenAPITag fnrExchange
+         */
         post("/generate") {
             val fnrRequest = call.receive<FnrRequest>()
 
@@ -26,6 +31,11 @@ fun Route.fnrCodeExchageRoutes() {
             }
         }
 
+        /**
+         * Retrieve FNR from a code
+         *
+         * @OpenAPITag fnrExchange
+         */
         post("/retrieve") {
             val codeRequest = call.receive<CodeRequest>()
 
