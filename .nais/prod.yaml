@@ -72,9 +72,6 @@ spec:
           namespace: org
     inbound:
       rules:
-        - application: arbeidssokerregistrering-veileder
-          namespace: paw
-          cluster: prod-gcp
         - application: arbeidssokerregistrering-for-veileder
           cluster: prod-gcp
           namespace: paw
@@ -86,9 +83,6 @@ spec:
           cluster: prod-gcp
         - application: beslutteroversikt
           namespace: obo
-          cluster: prod-gcp
-        - application: smregistrering
-          namespace: teamsykmelding
           cluster: prod-gcp
         - application: syfosmmanuell
           namespace: teamsykmelding
@@ -111,8 +105,6 @@ spec:
         - application: rekrutteringsbistand
           namespace: toi
           cluster: prod-gcp
-        - application: rekrutteringsbistand-next
-          namespace: toi
         - application: spinnsyn-frontend-interne
           namespace: flex
           cluster: prod-gcp

@@ -5,8 +5,8 @@ import io.lettuce.core.pubsub.RedisPubSubAdapter
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import no.nav.common.health.HealthCheckResult
 import no.nav.common.health.selftest.SelfTestCheck
 import no.nav.common.utils.EnvironmentUtils
@@ -30,7 +30,7 @@ object Redis {
     ) : HealthCheckAware {
         private var running = false
         private var thread: Thread? = null
-        private val channelReference = Channel<String?>()
+        private val messageFlow = MutableSharedFlow<String>()
 
         private var connection: StatefulRedisPubSubConnection<String, String>? = null
         private var redisCommands: RedisPubSubCommands<String, String>? = null
@@ -49,7 +49,9 @@ object Redis {
                 ) {
                     runBlocking {
                         try {
-                            channelReference.send(message)
+                            if (!message.isNullOrEmpty()) {
+                                messageFlow.emit(message)
+                            }
                         } catch (e: Exception) {
                             log.error(e.message, e)
                         }
@@ -63,7 +65,7 @@ object Redis {
                 }
             }
 
-        fun getFlow() = channelReference.consumeAsFlow()
+        fun getFlow() = messageFlow.asSharedFlow()
 
         fun start() {
             running = true
@@ -78,7 +80,6 @@ object Redis {
         fun stop() {
             running = false
             connection?.close()
-            channelReference.close()
             thread = null
         }
 

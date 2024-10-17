@@ -2,36 +2,29 @@ package no.nav.modiacontextholder.utils
 
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.websocket.*
-import io.ktor.util.debug.*
 import io.ktor.websocket.Frame
 import io.micrometer.core.instrument.Gauge
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import no.nav.modiacontextholder.log
 import no.nav.modiacontextholder.metricsRegistry
 import no.nav.modiacontextholder.rest.model.RSEvent
-import java.time.Duration
+import java.lang.NullPointerException
 import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
 
 class WebsocketStorage(
-    private val flow: Flow<String?>,
+    private val flow: SharedFlow<String>,
+    coroutineScope: CoroutineScope,
 ) {
-    companion object {
-        val options: WebSockets.WebSocketOptions.() -> Unit = {
-            pingPeriod = Duration.ofMinutes(3)
-        }
-    }
-
     init {
         Gauge
             .builder("websocket_clients", this::getAntallTilkoblinger)
             .register(metricsRegistry)
-        GlobalScope.launch { propagateMessageToWebsocket() }
+        coroutineScope.launch { propagateMessageToWebsocket() }
     }
 
     private val sessions = ConcurrentHashMap<String, MutableList<WebSocketServerSession>>()
@@ -60,7 +53,7 @@ class WebsocketStorage(
             .sumOf { it.size }
 
     private suspend fun propagateMessageToWebsocket() {
-        flow.filterNotNull().collect { value ->
+        flow.collect { value ->
             try {
                 val event = value.fromJson<RSEvent>()
                 val (veilederIdent, eventType) = event
@@ -71,6 +64,8 @@ class WebsocketStorage(
                 }
             } catch (_: CancellationException) {
                 // Ignore these types of errors
+            } catch (_: NullPointerException) {
+                log.warn("Propagating message to WebSocket: Connection is already closed")
             } catch (e: Exception) {
                 log.error("Error propagating message to Websocket:", e)
             }
