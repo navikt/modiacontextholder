@@ -39,6 +39,7 @@ import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.binds
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.withOptions
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 
@@ -60,6 +61,25 @@ object AppModule {
                             .withHost(baseUri.host)
                             .withPort(baseUri.port)
                             .withAuthentication(configuration.redisUsername, configuration.redisPassword)
+                            .build()
+                    }
+                RedisClient.create(uri)
+            } onClose {
+                it?.close()
+            }
+
+            single<RedisClient>(named("cache")) {
+                val configuration = get<Configuration>()
+                val baseUri = RedisURI.create(configuration.redisCacheUri)
+                val uri =
+                    if (configuration.redisUsername.isNullOrEmpty() && configuration.redisPassword.isNullOrEmpty()) {
+                        baseUri
+                    } else {
+                        RedisURI
+                            .builder(baseUri)
+                            .withHost(baseUri.host)
+                            .withPort(baseUri.port)
+                            .withAuthentication(configuration.redisCacheUsername, configuration.redisCachePassword)
                             .build()
                     }
                 RedisClient.create(uri)
@@ -97,7 +117,7 @@ object AppModule {
             }
 
             singleOf(::EnheterCache) { bind<HealthCheckAware>() }
-            singleOf(::EnheterService)
+            single { EnheterService(get(), get()) }
             single { RedisPersistence(get()) }
             singleOf(::FnrCodeExchangeService)
         }

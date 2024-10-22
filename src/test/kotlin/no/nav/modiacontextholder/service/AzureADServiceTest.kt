@@ -4,6 +4,7 @@ import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.modiacontextholder.mock.MockAzureADService
 import no.nav.modiacontextholder.utils.BoundedOnBehalfOfTokenClient
+import no.nav.modiacontextholder.utils.CacheFactory
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -27,6 +28,7 @@ class AzureADServiceTest {
                 httpClient = OkHttpClient(),
                 tokenClient = MockOnBehalfOfClient,
                 graphUrl = Url(mockServerBaseUrl.toString()),
+                cache = CacheFactory.createCache(),
             )
     }
 
@@ -90,7 +92,7 @@ class AzureADServiceTest {
 
             val firstElement = result.first()
 
-            assertEquals(MockAzureADService.GROUP_ID, firstElement.gruppeId)
+            assertEquals(MockAzureADService.GROUP_ID.get(), firstElement.gruppeId)
             assertEquals(MockAzureADService.GROUP_NAME, firstElement.gruppeNavn)
         }
 

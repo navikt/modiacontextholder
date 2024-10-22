@@ -4,8 +4,8 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.mockk.coEvery
 import io.mockk.every
-import io.vavr.control.Try
 import kotlinx.serialization.json.Json
 import no.nav.common.types.identer.AzureObjectId
 import no.nav.modiacontextholder.rest.FnrRequest
@@ -22,7 +22,7 @@ class DecoratorRoutesTest : TestApplication() {
     private val ident = "Z999999"
     private val adminGroupName = "0000-GA-Modia_Admin"
     private val regionalGroupName = "0000-GA-GOSYS_REGIONAL"
-    private val azureObjectId = AzureObjectId("d2987104-63b2-4110-83ac-20ff6afe24a2")
+    private val azureObjectId = AzureObjectId("d2987104-63b2-4110-83ac-20ff6afe24a2").get()
 
     private val enheterService: EnheterService by lazy { declareMock<EnheterService>() }
     private val veilederService: VeilederService by lazy { declareMock<VeilederService>() }
@@ -42,7 +42,7 @@ class DecoratorRoutesTest : TestApplication() {
         testApp {
             gitt_saksbehandler_i_ad()
 
-            every { enheterService.hentEnheter(ident) } returns Try.failure(IllegalStateException("Noe gikk feil"))
+            coEvery { enheterService.hentEnheter(ident) } returns Result.failure(IllegalStateException("Noe gikk feil"))
 
             client.getAuth("/api/v2/decorator").apply {
                 assertEquals(this.status, HttpStatusCode.InternalServerError)
@@ -87,7 +87,7 @@ class DecoratorRoutesTest : TestApplication() {
     fun alle_enheter_om_saksbehandler_har_modia_admin() =
         testApp {
             val azureADService = declareMock<AzureADService>()
-            every { azureADService.fetchRoller(any(), any()) } returns
+            coEvery { azureADService.fetchRoller(any(), any()) } returns
                 listOf(
                     AnsattRolle(
                         adminGroupName,
@@ -120,7 +120,7 @@ class DecoratorRoutesTest : TestApplication() {
         }
 
     private fun gitt_tilgang_til_enheter(data: List<DecoratorDomain.Enhet>) {
-        every { enheterService.hentEnheter(ident) } returns Try.of { data }
+        coEvery { enheterService.hentEnheter(ident) } returns Result.success(data)
         every { enheterService.hentAlleEnheter() } returns
             listOf(
                 enhet("0001", "Test 1"),
@@ -132,7 +132,7 @@ class DecoratorRoutesTest : TestApplication() {
     }
 
     private fun gitt_saksbehandler_i_ad() {
-        every { veilederService.hentVeilederNavn(any()) } returns
+        coEvery { veilederService.hentVeilederNavn(any()) } returns
             DecoratorDomain.Saksbehandler(
                 ident,
                 "Fornavn",

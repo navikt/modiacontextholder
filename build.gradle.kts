@@ -19,6 +19,7 @@ val jedis_version = "5.1.4"
 val lettuce_version = "6.4.0.RELEASE"
 val kotlinx_serialization_version = "1.7.1"
 val kotlinx_datetime_version = "0.6.1"
+val kotlinx_coroutines_version = "1.9.0"
 val assertj_version = "3.25.3"
 
 val mainClass = "no.nav.modiacontextholder.MainKt"
@@ -43,6 +44,8 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:$kotlinx_coroutines_version")
 
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
