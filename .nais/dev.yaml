@@ -48,7 +48,7 @@ spec:
   redis:
     - instance: contextholder
       access: readwrite
-    - instance: contextholder_cache
+    - instance: contextholder-cache
       access: readwrite
   azure:
     application:
