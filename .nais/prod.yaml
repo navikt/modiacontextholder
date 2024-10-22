@@ -9,6 +9,11 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+
+    config.linkerd.io/proxy-cpu-limit: "1"
+    config.linkerd.io/proxy-cpu-request: "200m"
+    config.linkerd.io/proxy-memory-limit: "1Gi"
+    config.linkerd.io/proxy-memory-request: "256Mi"
 spec:
   image: "{{ image }}"
   port: 4000
@@ -32,8 +37,7 @@ spec:
     timeout: 1
   resources:
     limits:
-      cpu: 1500m
-      memory: 4096Mi
+      memory: 6144Mi
     requests:
       cpu: 500m
       memory: 3072Mi
@@ -137,6 +141,8 @@ spec:
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
+    - name: JAVA_TOOL_OPTIONS
+      value: -XX:MaxRAMPercentage=60
     - name: AXSYS_URL
       value: "https://axsys.prod-fss-pub.nais.io"
     - name: AXSYS_SCOPE
