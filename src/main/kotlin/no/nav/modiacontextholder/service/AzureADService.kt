@@ -5,9 +5,10 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import no.nav.common.types.identer.AzureObjectId
+import kotlinx.serialization.serializer
 import no.nav.common.types.identer.NavIdent
 import no.nav.modiacontextholder.utils.BoundedOnBehalfOfTokenClient
+import no.nav.modiacontextholder.utils.Cache
 import no.nav.modiacontextholder.utils.CacheFactory
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -15,7 +16,7 @@ import okhttp3.Response
 import org.slf4j.LoggerFactory
 
 interface AzureADService {
-    fun fetchRoller(
+    suspend fun fetchRoller(
         userToken: String,
         veilederIdent: NavIdent,
     ): List<AnsattRolle>
@@ -25,12 +26,16 @@ open class AzureADServiceImpl(
     private val httpClient: OkHttpClient = OkHttpClient(),
     private val tokenClient: BoundedOnBehalfOfTokenClient,
     private val graphUrl: Url,
+    private val cache: Cache<String, List<AnsattRolle>> =
+        CacheFactory.createDistributedCache(
+            name = "azuread",
+            serializer = serializer<List<AnsattRolle>>(),
+        ),
 ) : AzureADService {
     private val json = Json { ignoreUnknownKeys = true }
     private val log = LoggerFactory.getLogger(AzureADServiceImpl::class.java)
-    private val cache = CacheFactory.createCache<String, List<AnsattRolle>>()
 
-    override fun fetchRoller(
+    override suspend fun fetchRoller(
         userToken: String,
         veilederIdent: NavIdent,
     ): List<AnsattRolle> =
@@ -50,13 +55,13 @@ open class AzureADServiceImpl(
                     response.value.map {
                         AnsattRolle(
                             gruppeNavn = requireNotNull(it.displayName),
-                            gruppeId = AzureObjectId(requireNotNull(it.id)),
+                            gruppeId = requireNotNull(it.id),
                         )
                     }
                 }
             } catch (e: Exception) {
                 log.error("Kall til azureAD feilet", veilederIdent, e)
-                listOf()
+                emptyList()
             }
         }
 
@@ -96,9 +101,10 @@ open class AzureADServiceImpl(
     }
 }
 
+@Serializable
 data class AnsattRolle(
     val gruppeNavn: String,
-    val gruppeId: AzureObjectId,
+    val gruppeId: String,
 )
 
 @Serializable

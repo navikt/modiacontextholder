@@ -5,7 +5,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.vavr.control.Try
 import no.nav.common.types.identer.NavIdent
 import no.nav.modiacontextholder.log
 import no.nav.modiacontextholder.rest.FnrRequest
@@ -33,12 +32,12 @@ fun Route.decoratorRoutesInternal() {
     val azureADService: AzureADService by inject()
     val pdlService: PdlService by inject()
 
-    fun getEnheter(
+    suspend fun getEnheter(
         roles: List<String>,
         ident: String,
-    ): Try<List<DecoratorDomain.Enhet>> {
+    ): Result<List<DecoratorDomain.Enhet>> {
         if (roles.contains(ROLLE_MODIA_ADMIN)) {
-            return Try.success(enheterService.hentAlleEnheter())
+            return Result.success(enheterService.hentAlleEnheter())
         } else {
             return enheterService.hentEnheter(ident)
         }
@@ -51,14 +50,14 @@ fun Route.decoratorRoutesInternal() {
             HTTPException(HttpStatusCode.InternalServerError, "Kunne ikke hente data om enheter")
         }
 
-    fun getDecoratorRessurs(
+    suspend fun getDecoratorRessurs(
         ident: String,
         userToken: String,
     ): DecoratorConfig {
         val roles = azureADService.fetchRoller(userToken, NavIdent(ident)).map { it.gruppeNavn }
         return getEnheter(roles, ident)
             .map { enheter -> DecoratorConfig(veilederService.hentVeilederNavn(ident), enheter) }
-            .getOrElseThrow(::exceptionHandlder)
+            .getOrElse { throw exceptionHandlder(it) }
     }
 
     route("/decorator") {

@@ -12,11 +12,11 @@ class MockAzureADService : AzureADService {
         val VEILEDER_NAV_IDENT = NavIdent("FK12345")
     }
 
-    override fun fetchRoller(
+    override suspend fun fetchRoller(
         userToken: String,
         veilederIdent: NavIdent,
     ): List<AnsattRolle> =
         listOf(
-            AnsattRolle(GROUP_NAME, GROUP_ID),
+            AnsattRolle(GROUP_NAME, GROUP_ID.get()),
         )
 }
