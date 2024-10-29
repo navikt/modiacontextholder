@@ -54,7 +54,7 @@ open class EnheterService(
             azureADService
                 .fetchRoller(token, NavIdent.of(ident))
                 .mapNotNull {
-                    enhetId(it.gruppeId)?.let { enhetId ->
+                    enhetId(it.gruppeNavn)?.let { enhetId ->
                         aktiveEnheter[enhetId]
                     }
                 }.sortedBy { it.enhetId }
@@ -63,7 +63,7 @@ open class EnheterService(
         }
     }
 
-    private fun enhetId(gruppeId: String): String? = Regex("0000-GA-ENHET_(.*)").find(gruppeId)?.groupValues?.get(1)
+    private fun enhetId(gruppeNavn: String): String? = Regex("0000-GA-ENHET_(.*)").find(gruppeNavn)?.groupValues?.get(1)
 
     open fun hentAlleEnheter(): List<DecoratorDomain.Enhet> = enheterCache.getAll()
 }
