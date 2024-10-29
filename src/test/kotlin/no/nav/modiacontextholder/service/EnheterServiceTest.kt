@@ -1,5 +1,6 @@
 package no.nav.modiacontextholder.service
 
+import io.getunleash.FakeUnleash
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -8,6 +9,7 @@ import no.nav.common.client.axsys.AxsysClient
 import no.nav.common.client.axsys.AxsysEnhet
 import no.nav.common.types.identer.EnhetId
 import no.nav.modiacontextholder.rest.model.DecoratorDomain
+import no.nav.modiacontextholder.service.unleash.UnleashService
 import no.nav.modiacontextholder.utils.DistributedCache
 import org.assertj.core.api.Assertions
 import org.koin.test.KoinTest
@@ -18,8 +20,16 @@ class EnheterServiceTest : KoinTest {
     val enhetCache: EnheterCache = mockk()
     val client: AxsysClient = mockk()
     val mockCache: DistributedCache<String, List<DecoratorDomain.Enhet>?> = mockk()
+    val unleashMock = UnleashService(FakeUnleash())
 
-    var service = EnheterService(client, enhetCache, mockCache)
+    var service =
+        EnheterService(
+            client = client,
+            azureADService = mockk(),
+            enheterCache = enhetCache,
+            unleashService = unleashMock,
+            cache = mockCache,
+        )
 
     @Test
     @Throws(Exception::class)
