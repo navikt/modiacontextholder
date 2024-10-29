@@ -117,7 +117,7 @@ object AppModule {
             }
 
             singleOf(::EnheterCache) { bind<HealthCheckAware>() }
-            single { EnheterService(get(), get()) }
+            single { EnheterService(get(), get(), get(), get()) }
             single { RedisPersistence(get()) }
             singleOf(::FnrCodeExchangeService)
         }

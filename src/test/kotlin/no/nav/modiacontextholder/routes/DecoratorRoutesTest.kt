@@ -42,7 +42,7 @@ class DecoratorRoutesTest : TestApplication() {
         testApp {
             gitt_saksbehandler_i_ad()
 
-            coEvery { enheterService.hentEnheter(ident) } returns Result.failure(IllegalStateException("Noe gikk feil"))
+            coEvery { enheterService.hentEnheter(ident, any()) } returns Result.failure(IllegalStateException("Noe gikk feil"))
 
             client.getAuth("/api/v2/decorator").apply {
                 assertEquals(this.status, HttpStatusCode.InternalServerError)
@@ -120,7 +120,7 @@ class DecoratorRoutesTest : TestApplication() {
         }
 
     private fun gitt_tilgang_til_enheter(data: List<DecoratorDomain.Enhet>) {
-        coEvery { enheterService.hentEnheter(ident) } returns Result.success(data)
+        coEvery { enheterService.hentEnheter(ident, any()) } returns Result.success(data)
         every { enheterService.hentAlleEnheter() } returns
             listOf(
                 enhet("0001", "Test 1"),

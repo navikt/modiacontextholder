@@ -35,11 +35,12 @@ fun Route.decoratorRoutesInternal() {
     suspend fun getEnheter(
         roles: List<String>,
         ident: String,
+        userToken: String,
     ): Result<List<DecoratorDomain.Enhet>> {
         if (roles.contains(ROLLE_MODIA_ADMIN)) {
             return Result.success(enheterService.hentAlleEnheter())
         } else {
-            return enheterService.hentEnheter(ident)
+            return enheterService.hentEnheter(ident, userToken)
         }
     }
 
@@ -55,7 +56,7 @@ fun Route.decoratorRoutesInternal() {
         userToken: String,
     ): DecoratorConfig {
         val roles = azureADService.fetchRoller(userToken, NavIdent(ident)).map { it.gruppeNavn }
-        return getEnheter(roles, ident)
+        return getEnheter(roles, ident, userToken)
             .map { enheter -> DecoratorConfig(veilederService.hentVeilederNavn(ident), enheter) }
             .getOrElse { throw exceptionHandlder(it) }
     }
