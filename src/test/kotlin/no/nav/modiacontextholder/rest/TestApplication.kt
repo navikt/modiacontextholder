@@ -39,14 +39,12 @@ open class TestApplication : KoinTest {
 
     private val hostAndPort = withRedis.redisHostAndPort()
     private val redisUri = "redis://default:$PASSWORD@$hostAndPort"
-    private val redisCacheUri = "redis://default:$PASSWORD@$hostAndPort/1"
 
     @BeforeEach
     fun beforeEach() {
         this.configuration =
             Configuration(
                 redisUri = redisUri,
-                redisCacheUri = redisCacheUri,
                 aaRegisteretBaseUrl = "http://aaregisteret.local",
                 aaRegisteretPublicUrl = "http://aaregistert-public.local",
                 salesforceBaseUrl = "http://salesforce.local",
