@@ -43,6 +43,8 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.dsl.onClose
 
+const val REDIS_CACHE_DB = 1
+
 object AppModule {
     val appModule =
         module {
@@ -70,16 +72,17 @@ object AppModule {
 
             single<RedisClient>(named("cache")) {
                 val configuration = get<Configuration>()
-                val baseUri = RedisURI.create(configuration.redisCacheUri)
+                val baseUri = RedisURI.create(configuration.redisUri)
                 val uri =
                     if (configuration.redisUsername.isNullOrEmpty() && configuration.redisPassword.isNullOrEmpty()) {
-                        baseUri
+                        RedisURI.builder(baseUri).withDatabase(REDIS_CACHE_DB).build()
                     } else {
                         RedisURI
                             .builder(baseUri)
                             .withHost(baseUri.host)
                             .withPort(baseUri.port)
-                            .withAuthentication(configuration.redisCacheUsername, configuration.redisCachePassword)
+                            .withDatabase(REDIS_CACHE_DB)
+                            .withAuthentication(configuration.redisUsername, configuration.redisPassword)
                             .build()
                     }
                 RedisClient.create(uri)
