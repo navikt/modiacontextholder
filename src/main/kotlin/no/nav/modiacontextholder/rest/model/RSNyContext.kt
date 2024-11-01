@@ -7,4 +7,10 @@ import no.nav.modiacontextholder.domain.VeilederContextType
 data class RSNyContext(
     val verdi: String = "",
     val eventType: VeilederContextType,
+    val verdiType: VerdiType? = VerdiType.FNR,
 )
+
+enum class VerdiType {
+    FNR,
+    FNR_KODE,
+}
