@@ -4,7 +4,7 @@ import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
 
 val ktor_version = "2.3.12"
 val kotlin_version = "2.0.20"
-val koin_version = "3.5.6"
+val koin_version = "4.0.0"
 
 val modia_common_version = "1.2024.10.08-15.26-79dda7914471"
 val nav_common_version = "3.2024.10.25_13.44-9db48a0dbe67"
