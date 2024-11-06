@@ -123,7 +123,7 @@ fun Route.contextRoutes() {
                 if (rsNyContext.verdiType == VerdiType.FNR_KODE) {
                     val result = fnrCodeExchangeService.getFnr(rsNyContext.verdi)
                     if (result.isFailure) {
-                        log.error("[AAREG] feil ved henting av aareg url. Returnerer baseurl", result.exceptionOrNull())
+                        log.error("Feil ved henting av fnr for koden", result.exceptionOrNull())
                         throw HTTPException(HttpStatusCode.BadRequest, "Fnr code til fnr error")
                     }
                     val fnr = result.getOrNull() ?: throw HTTPException(HttpStatusCode.NotFound, "Fant ikke fnr for koden")
