@@ -10,13 +10,16 @@ import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import no.nav.modiacontextholder.log
 import no.nav.modiacontextholder.naudit.Audit
 import no.nav.modiacontextholder.naudit.Audit.Companion.describe
 import no.nav.modiacontextholder.naudit.Audit.Companion.withAudit
 import no.nav.modiacontextholder.naudit.AuditIdentifier
 import no.nav.modiacontextholder.naudit.AuditResources
 import no.nav.modiacontextholder.rest.model.RSNyContext
+import no.nav.modiacontextholder.rest.model.VerdiType
 import no.nav.modiacontextholder.service.ContextService
+import no.nav.modiacontextholder.service.FnrCodeExchangeService
 import no.nav.modiacontextholder.utils.HTTPException
 import no.nav.modiacontextholder.utils.getIdent
 import org.koin.ktor.ext.inject
@@ -24,6 +27,7 @@ import java.util.*
 
 fun Route.contextRoutes() {
     val contextService: ContextService by inject()
+    val fnrCodeExchangeService: FnrCodeExchangeService by inject()
 
     /**
      * Context routes
@@ -115,6 +119,20 @@ fun Route.contextRoutes() {
                 throw HTTPException(HttpStatusCode.Unauthorized, "Fant ikke saksbehandlers ident")
             }
 
+            val context =
+                if (rsNyContext.verdiType == VerdiType.FNR_KODE) {
+                    val result = fnrCodeExchangeService.getFnr(rsNyContext.verdi)
+                    if (result.isFailure) {
+                        log.error("Feil ved henting av fnr for koden", result.exceptionOrNull())
+                        throw HTTPException(HttpStatusCode.BadRequest, "Fnr code til fnr error")
+                    }
+                    val fnr = result.getOrNull() ?: throw HTTPException(HttpStatusCode.NotFound, "Fant ikke fnr for koden")
+
+                    rsNyContext.copy(verdi = fnr)
+                } else {
+                    rsNyContext
+                }
+
             call.respond(
                 withAudit(
                     describe(
@@ -125,7 +143,7 @@ fun Route.contextRoutes() {
                     ),
                 ) {
                     val veilederIdent = ident.get()
-                    contextService.oppdaterVeiledersContext(rsNyContext, veilederIdent)
+                    contextService.oppdaterVeiledersContext(context, veilederIdent)
                     contextService.hentVeiledersContext(veilederIdent)
                 },
             )

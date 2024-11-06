@@ -6,18 +6,49 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
 import no.nav.modiacontextholder.domain.VeilederContextType
+import no.nav.modiacontextholder.rest.CodeRequest
+import no.nav.modiacontextholder.rest.CodeResponse
+import no.nav.modiacontextholder.rest.FnrRequest
 import no.nav.modiacontextholder.rest.TestApplication
-import no.nav.modiacontextholder.rest.model.RSAktivBruker
-import no.nav.modiacontextholder.rest.model.RSAktivEnhet
-import no.nav.modiacontextholder.rest.model.RSContext
-import no.nav.modiacontextholder.rest.model.RSNyContext
+import no.nav.modiacontextholder.rest.model.*
 import no.nav.modiacontextholder.service.ContextService
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class ContextRoutesTest : TestApplication() {
     private val ident = "Z999999"
+    private val testFnr = "10108000398"
+
+    @Test
+    fun testPostContextFraFnrcodeGenerate() =
+        testApp {
+            val res =
+                it.post("/fnr-code/generate") {
+                    setBody(FnrRequest(fnr = testFnr))
+                    contentType(ContentType.Application.Json)
+                }
+            assertEquals(HttpStatusCode.OK, res.status)
+            val codeResponse = res.body<CodeResponse>()
+            assertEquals(testFnr, codeResponse.fnr)
+            assertNotNull(codeResponse.code)
+
+            it
+                .post("/fnr-code/retrieve") {
+                    setBody(CodeRequest(code = codeResponse.code))
+                    contentType(ContentType.Application.Json)
+                }.apply {
+                    val retrieveResponse = this.body<CodeResponse>()
+                    assertEquals(codeResponse.code, retrieveResponse.code)
+                    assertEquals(codeResponse.fnr, retrieveResponse.fnr)
+                }
+
+            it.postAuth("/api/context", RSNyContext(codeResponse.code, VeilederContextType.NY_AKTIV_BRUKER, VerdiType.FNR_KODE)).apply {
+                assertEquals(HttpStatusCode.OK, this.status)
+                assertEquals(hentFnrFraKontekst(), testFnr)
+            }
+        }
 
     @Test
     fun testDeleteContext() =
