@@ -10,6 +10,7 @@ data class RSNyContext(
     val verdiType: VerdiType? = VerdiType.FNR,
 )
 
+@Serializable
 enum class VerdiType {
     FNR,
     FNR_KODE,
