@@ -18,7 +18,11 @@ fun main() {
     val configuration = Configuration()
 
     KtorServer
-        .create(Netty, port = 4000) {
+        .create(Netty, port = 4000, configure = {
+            connectionGroupSize = 8
+            workerGroupSize = 8
+            callGroupSize = 16
+        }) {
             modiacontextholderApp(configuration = configuration)
         }.start(wait = true)
 }
