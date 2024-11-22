@@ -2,11 +2,11 @@ import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLDownloadSDLTask
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
 
-val ktor_version = "2.3.12"
+val ktor_version = "3.0.1"
 val kotlin_version = "2.0.20"
-val koin_version = "4.0.0"
+val koin_version = "4.1.0-Beta1"
 
-val modia_common_version = "1.2024.10.08-15.26-79dda7914471"
+val modia_common_version = "1.2024.10.30-08.17-f565fe211cd4"
 val nav_common_version = "3.2024.10.25_13.44-9db48a0dbe67"
 val graphql_kotlin_version = "8.0.0"
 val caffeine_version = "3.1.8"
@@ -26,7 +26,7 @@ val mainClass = "no.nav.modiacontextholder.MainKt"
 
 plugins {
     kotlin("jvm") version "2.0.20"
-    id("io.ktor.plugin") version "2.3.12"
+    id("io.ktor.plugin") version "3.0.1"
     kotlin("plugin.serialization") version "2.0.21"
     id("com.gradleup.shadow") version "8.3.2"
     id("com.expediagroup.graphql") version "8.0.0"
@@ -60,7 +60,7 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktor_version")
     implementation("io.ktor:ktor-client-core-jvm:$ktor_version")
 
-    implementation("io.insert-koin:koin-ktor:$koin_version")
+    implementation("io.insert-koin:koin-ktor3:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
     implementation("com.github.navikt.modia-common-utils:logging:$modia_common_version")

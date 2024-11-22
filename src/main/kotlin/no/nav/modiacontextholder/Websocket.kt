@@ -9,7 +9,7 @@ import kotlinx.coroutines.GlobalScope
 import no.nav.modiacontextholder.redis.setupRedisConsumer
 import no.nav.modiacontextholder.utils.WebsocketStorage
 import org.koin.ktor.ext.inject
-import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 fun Application.setupWebsocket() {
     val redisClient: RedisClient by inject()
@@ -19,8 +19,8 @@ fun Application.setupWebsocket() {
     val websocketStorage = WebsocketStorage(redisConsumer.getFlow(), GlobalScope)
 
     install(WebSockets) {
-        pingPeriod = Duration.ofMinutes(1)
-        timeout = Duration.ofMinutes(5)
+        pingPeriod = 1.minutes
+        timeout = 5.minutes
     }
 
     routing {
