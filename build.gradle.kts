@@ -25,7 +25,7 @@ val assertj_version = "3.26.3"
 val mainClass = "no.nav.modiacontextholder.MainKt"
 
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.1.0"
     id("io.ktor.plugin") version "3.0.1"
     kotlin("plugin.serialization") version "2.0.21"
     id("com.gradleup.shadow") version "8.3.5"
