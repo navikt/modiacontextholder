@@ -20,7 +20,7 @@ val lettuce_version = "6.5.1.RELEASE"
 val kotlinx_serialization_version = "1.7.3"
 val kotlinx_datetime_version = "0.6.1"
 val kotlinx_coroutines_version = "1.9.0"
-val assertj_version = "3.26.3"
+val assertj_version = "3.27.0"
 
 val mainClass = "no.nav.modiacontextholder.MainKt"
 
