@@ -133,6 +133,9 @@ spec:
         - application: tiltak-refusjon-saksbehandler
           namespace: arbeidsgiver
           cluster: dev-gcp
+        - application: cv-veileder
+          namespace: teampam
+          cluster: dev-gcp
   secureLogs:
     enabled: true
   envFrom:
