@@ -138,7 +138,7 @@ spec:
           cluster: prod-gcp
         - application: cv-veileder
           namespace: teampam
-          cluster: prog-gcp
+          cluster: prod-gcp
   secureLogs:
     enabled: true
   envFrom:
