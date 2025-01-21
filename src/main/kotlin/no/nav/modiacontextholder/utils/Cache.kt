@@ -16,7 +16,7 @@ import kotlin.time.toJavaDuration
 import com.github.benmanes.caffeine.cache.Cache as CaffeineCache
 
 object CacheFactory {
-    fun <KEY, VALUE> createCache(
+    fun <KEY: Any, VALUE> createCache(
         expiry: Duration = 1.hours,
         maximumSize: Long = 10_000,
     ) = LocalCache<KEY, VALUE>(
@@ -42,13 +42,13 @@ interface Cache<KEY, VALUE> {
 
     suspend fun put(
         key: KEY,
-        value: VALUE,
+        value: VALUE & Any,
     )
 
     suspend fun invalidate(key: KEY)
 }
 
-class LocalCache<K, V>(
+class LocalCache<K: Any, V>(
     private val cacheDelegate: CaffeineCache<K, V>,
 ) : Cache<K, V> {
     override suspend fun get(
@@ -61,7 +61,7 @@ class LocalCache<K, V>(
 
     override suspend fun put(
         key: K,
-        value: V,
+        value: V & Any,
     ) {
         cacheDelegate.put(key, value)
     }
@@ -109,7 +109,7 @@ class DistributedCache<K : Any, V>(
 
     override suspend fun put(
         key: K,
-        value: V,
+        value: V & Any,
     ) {
         @OptIn(ExperimentalLettuceCoroutinesApi::class)
         connection.setex(encodeKey(key), expiry.inWholeSeconds, encodeValue(value))
