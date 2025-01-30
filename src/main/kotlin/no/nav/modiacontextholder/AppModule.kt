@@ -156,6 +156,15 @@ object AppModule {
             single<AzureADService> {
                 val oboflowTokenProvider: OnBehalfOfTokenClient = get()
                 AzureADServiceImpl(
+                    httpClient =
+                        RestClient
+                            .baseClient()
+                            .newBuilder()
+                            .addInterceptor(
+                                LoggingInterceptor("AzureAD") {
+                                    getCallId()
+                                },
+                            ).build(),
                     graphUrl = Url(EnvironmentUtils.getRequiredProperty("MS_GRAPH_URL")),
                     tokenClient = oboflowTokenProvider.bindTo(EnvironmentUtils.getRequiredProperty("MS_GRAPH_SCOPE")),
                 )
