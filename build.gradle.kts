@@ -28,7 +28,7 @@ plugins {
     kotlin("jvm") version "2.1.10"
     id("io.ktor.plugin") version "3.0.3"
     kotlin("plugin.serialization") version "2.1.10"
-    id("com.gradleup.shadow") version "8.3.5"
+    id("com.gradleup.shadow") version "8.3.6"
     id("com.expediagroup.graphql") version "8.3.0"
 }
 
