@@ -1,11 +1,11 @@
-name: Setup Redis instance
+name: Setup Valkey instance
 
 on:
   push:
     branches: [master]
     paths:
-      - '.github/workflows/redis.yaml'
-      - '.nais/redis-*.yaml'
+      - '.github/workflows/valkey.yaml'
+      - '.nais/valkey-*.yaml'
 
 env:
   CI: true
@@ -13,7 +13,7 @@ env:
 
 jobs:
   deploy:
-    name: Setup Redis
+    name: Setup Valkey
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -32,4 +32,4 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           PRINT_PAYLOAD: true
           CLUSTER: ${{ matrix.env }}
-          RESOURCE: .nais/redis-${{matrix.env}}.yaml
+          RESOURCE: .nais/valkey-${{matrix.env}}.yaml

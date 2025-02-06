@@ -1,4 +1,4 @@
-package no.nav.modiacontextholder.redis
+package no.nav.modiacontextholder.valkey
 
 import io.lettuce.core.RedisClient
 import io.lettuce.core.pubsub.RedisPubSubAdapter
@@ -16,10 +16,10 @@ import org.slf4j.LoggerFactory
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration.Companion.minutes
 
-object Redis {
+object Valkey {
     private val environment = EnvironmentUtils.getOptionalProperty("APP_ENVIRONMENT_NAME").orElse("local")
-    private val log = LoggerFactory.getLogger(Redis::class.java)
-    private val reporter = SelftestGenerator.Reporter(name = "Redis pubSub consumer", critical = true)
+    private val log = LoggerFactory.getLogger(Valkey::class.java)
+    private val reporter = SelftestGenerator.Reporter(name = "Valkey pubSub consumer", critical = true)
 
     @JvmStatic
     fun getChannel() = "ContextOppdatering-$environment"
@@ -58,7 +58,7 @@ object Redis {
                     }
                     log.debug(
                         """
-                        Redismelding mottatt på kanal '$channel' med melding:
+                        Valkeymelding mottatt på kanal '$channel' med melding:
                         $message
                         """.trimIndent(),
                     )
@@ -69,7 +69,7 @@ object Redis {
 
         fun start() {
             running = true
-            log.info("starting redis consumer on channel '$channel'")
+            log.info("starting valkey consumer on channel '$channel'")
 
             thread = Thread(Runnable { run() })
             thread?.name = "consumer-$channel"

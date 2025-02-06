@@ -1,4 +1,4 @@
-package no.nav.modiacontextholder.redis
+package no.nav.modiacontextholder.valkey
 
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
@@ -12,33 +12,33 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 
 @Testcontainers
-class RedisVeilederContextDatabaseTest {
+class ValkeyVeilederContextDatabaseTest {
     companion object {
         @Container
-        private val redisContainer = TestUtils.RedisContainer()
+        private val valkeyContainer = TestUtils.ValkeyContainer()
     }
 
     @AfterTest
     fun afterEach(): Unit =
         runBlocking {
-            redis.flushall()
+            valkey.flushall()
         }
 
-    private val redisConnection by lazy {
+    private val valkeyConnection by lazy {
         RedisClient
             .create(
                 RedisURI
                     .builder()
-                    .withHost(redisContainer.host)
-                    .withPort(redisContainer.getMappedPort(6379))
+                    .withHost(valkeyContainer.host)
+                    .withPort(valkeyContainer.getMappedPort(6379))
                     .withAuthentication("default", "password")
                     .build(),
             ).connect()
     }
-    private val redis = redisConnection.sync()
-    private val redisVeilederContextDatabase by lazy {
-        RedisVeilederContextDatabase(
-            redisConnection,
+    private val valkey = valkeyConnection.sync()
+    private val valkeyVeilederContextDatabase by lazy {
+        ValkeyVeilederContextDatabase(
+            valkeyConnection,
         )
     }
 
@@ -58,9 +58,9 @@ class RedisVeilederContextDatabaseTest {
 
     @Test
     fun `brukereventer kan lagres og hentes`() {
-        redisVeilederContextDatabase.save(brukerEvent)
+        valkeyVeilederContextDatabase.save(brukerEvent)
 
-        val aktivBrukerEvent = redisVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
+        val aktivBrukerEvent = valkeyVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
 
         assertThat(aktivBrukerEvent?.verdi).isNotNull
         assertThat(aktivBrukerEvent?.verdi).isEqualTo(brukerEvent.verdi)
@@ -68,9 +68,9 @@ class RedisVeilederContextDatabaseTest {
 
     @Test
     fun `enheteventer kan lagres og hentes`() {
-        redisVeilederContextDatabase.save(enhetEvent)
+        valkeyVeilederContextDatabase.save(enhetEvent)
 
-        val aktivEnhetEvent = redisVeilederContextDatabase.sistAktiveEnhetEvent("veileder")
+        val aktivEnhetEvent = valkeyVeilederContextDatabase.sistAktiveEnhetEvent("veileder")
 
         assertThat(aktivEnhetEvent?.verdi).isNotNull
         assertThat(aktivEnhetEvent?.verdi).isEqualTo(enhetEvent.verdi)
@@ -78,13 +78,13 @@ class RedisVeilederContextDatabaseTest {
 
     @Test
     fun `sletter alle enheteventer for en veileder`() {
-        redisVeilederContextDatabase.save(enhetEvent)
-        redisVeilederContextDatabase.save(brukerEvent)
+        valkeyVeilederContextDatabase.save(enhetEvent)
+        valkeyVeilederContextDatabase.save(brukerEvent)
 
-        redisVeilederContextDatabase.slettAlleAvEventTypeForVeileder(VeilederContextType.NY_AKTIV_ENHET, "veileder")
+        valkeyVeilederContextDatabase.slettAlleAvEventTypeForVeileder(VeilederContextType.NY_AKTIV_ENHET, "veileder")
 
-        val aktivEnhetEvent = redisVeilederContextDatabase.sistAktiveEnhetEvent("veileder")
-        val aktivBrukerEvent = redisVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
+        val aktivEnhetEvent = valkeyVeilederContextDatabase.sistAktiveEnhetEvent("veileder")
+        val aktivBrukerEvent = valkeyVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
 
         assertThat(aktivEnhetEvent).isNull()
         assertThat(aktivBrukerEvent?.verdi).isNotNull
@@ -93,13 +93,13 @@ class RedisVeilederContextDatabaseTest {
 
     @Test
     fun `sletter alle brukereventer for en veileder`() {
-        redisVeilederContextDatabase.save(brukerEvent)
-        redisVeilederContextDatabase.save(enhetEvent)
+        valkeyVeilederContextDatabase.save(brukerEvent)
+        valkeyVeilederContextDatabase.save(enhetEvent)
 
-        redisVeilederContextDatabase.slettAlleAvEventTypeForVeileder(VeilederContextType.NY_AKTIV_BRUKER, "veileder")
+        valkeyVeilederContextDatabase.slettAlleAvEventTypeForVeileder(VeilederContextType.NY_AKTIV_BRUKER, "veileder")
 
-        val aktivBrukerEvent = redisVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
-        val aktivEnhetEvent = redisVeilederContextDatabase.sistAktiveEnhetEvent("veileder")
+        val aktivBrukerEvent = valkeyVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
+        val aktivEnhetEvent = valkeyVeilederContextDatabase.sistAktiveEnhetEvent("veileder")
 
         assertThat(aktivBrukerEvent).isNull()
         assertThat(aktivEnhetEvent?.verdi).isNotNull
@@ -108,13 +108,13 @@ class RedisVeilederContextDatabaseTest {
 
     @Test
     fun `alle eventer for en veileder kan slettes`() {
-        redisVeilederContextDatabase.save(brukerEvent)
-        redisVeilederContextDatabase.save(enhetEvent)
+        valkeyVeilederContextDatabase.save(brukerEvent)
+        valkeyVeilederContextDatabase.save(enhetEvent)
 
-        redisVeilederContextDatabase.slettAlleEventer("veileder")
+        valkeyVeilederContextDatabase.slettAlleEventer("veileder")
 
-        val aktivBrukerEvent = redisVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
-        val aktivEnhetEvent = redisVeilederContextDatabase.sistAktiveEnhetEvent("veileder")
+        val aktivBrukerEvent = valkeyVeilederContextDatabase.sistAktiveBrukerEvent("veileder")
+        val aktivEnhetEvent = valkeyVeilederContextDatabase.sistAktiveEnhetEvent("veileder")
 
         assertThat(aktivBrukerEvent).isNull()
         assertThat(aktivEnhetEvent).isNull()

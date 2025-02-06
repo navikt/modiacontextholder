@@ -12,11 +12,11 @@ import kotlinx.coroutines.withTimeout
 import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.domain.VeilederContextType
 import no.nav.modiacontextholder.modiacontextholderApp
-import no.nav.modiacontextholder.redis.TestUtils
+import no.nav.modiacontextholder.valkey.TestUtils
 import no.nav.modiacontextholder.rest.model.RSNyContext
 import kotlin.test.*
 
-class WebsocketTest : TestUtils.WithRedis() {
+class WebsocketTest : TestUtils.WithValkey() {
     private val hostAndPort = redisHostAndPort()
     private val redisUri = "redis://default:$PASSWORD@$hostAndPort"
 

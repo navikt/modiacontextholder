@@ -25,10 +25,10 @@ import no.nav.modiacontextholder.consumers.norg2.Norg2Client
 import no.nav.modiacontextholder.consumers.norg2.Norg2ClientImpl
 import no.nav.modiacontextholder.infrastructur.HealthCheckAware
 import no.nav.modiacontextholder.mock.MockNomClient
-import no.nav.modiacontextholder.redis.RedisPersistence
-import no.nav.modiacontextholder.redis.RedisPublisher
-import no.nav.modiacontextholder.redis.RedisVeilederContextDatabase
-import no.nav.modiacontextholder.redis.VeilederContextDatabase
+import no.nav.modiacontextholder.valkey.ValkeyPersistence
+import no.nav.modiacontextholder.valkey.ValkeyPublisher
+import no.nav.modiacontextholder.valkey.ValkeyVeilederContextDatabase
+import no.nav.modiacontextholder.valkey.VeilederContextDatabase
 import no.nav.modiacontextholder.service.*
 import no.nav.modiacontextholder.service.unleash.ToggleableFeatureService
 import no.nav.modiacontextholder.service.unleash.UnleashContextProviderImpl
@@ -100,8 +100,8 @@ object AppModule {
                 redisClient.connectPubSub()
             } onClose { it?.close() }
 
-            singleOf(::RedisVeilederContextDatabase) { binds(listOf(VeilederContextDatabase::class, HealthCheckAware::class)) }
-            single { RedisPublisher(get()) }
+            singleOf(::ValkeyVeilederContextDatabase) { binds(listOf(VeilederContextDatabase::class, HealthCheckAware::class)) }
+            single { ValkeyPublisher(get()) }
             singleOf(::VeilederService)
             singleOf(::ContextService)
 
@@ -121,7 +121,7 @@ object AppModule {
 
             singleOf(::EnheterCache) { bind<HealthCheckAware>() }
             single { EnheterService(get(), get(), get(), get()) }
-            single { RedisPersistence(get()) }
+            single { ValkeyPersistence(get()) }
             singleOf(::FnrCodeExchangeService)
         }
     val externalModules =

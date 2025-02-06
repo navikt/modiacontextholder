@@ -6,17 +6,17 @@ import io.ktor.server.websocket.*
 import io.lettuce.core.RedisClient
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import no.nav.modiacontextholder.redis.setupRedisConsumer
+import no.nav.modiacontextholder.valkey.setupValkeyConsumer
 import no.nav.modiacontextholder.utils.WebsocketStorage
 import org.koin.ktor.ext.inject
 import kotlin.time.Duration.Companion.minutes
 
 fun Application.setupWebsocket() {
-    val redisClient: RedisClient by inject()
-    val redisConsumer = setupRedisConsumer(redisClient)
+    val valkeyClient: RedisClient by inject()
+    val valkeyConsumer = setupValkeyConsumer(valkeyClient)
 
     @OptIn(DelicateCoroutinesApi::class)
-    val websocketStorage = WebsocketStorage(redisConsumer.getFlow(), GlobalScope)
+    val websocketStorage = WebsocketStorage(valkeyConsumer.getFlow(), GlobalScope)
 
     install(WebSockets) {
         pingPeriod = 1.minutes
@@ -32,12 +32,12 @@ fun Application.setupWebsocket() {
         webSocket(path = "/ws/{ident}", handler = websocketStorage.wsHandler)
     }
 
-    redisConsumer.start()
+    valkeyConsumer.start()
 
     Runtime.getRuntime().addShutdownHook(
         Thread {
             log.info("[WS module] Shutdown hook called: Shutting down redisconsumer")
-            redisConsumer.stop()
+            valkeyConsumer.stop()
         },
     )
 }

@@ -16,7 +16,7 @@ import io.ktor.server.testing.*
 import no.nav.modiacontextholder.AppModule
 import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.mock.mockModule
-import no.nav.modiacontextholder.redis.TestUtils
+import no.nav.modiacontextholder.valkey.TestUtils
 import no.nav.modiacontextholder.setupInfrastructure
 import no.nav.modiacontextholder.utils.getAuthorizedParty
 import org.koin.core.context.stopKoin
@@ -31,7 +31,7 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
-class MetricsTest : TestUtils.WithRedis() {
+class MetricsTest : TestUtils.WithValkey() {
     val audience = "testaudience"
     val issuer = "testissuer"
 

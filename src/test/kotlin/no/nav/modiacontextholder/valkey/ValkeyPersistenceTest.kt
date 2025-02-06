@@ -1,4 +1,4 @@
-package no.nav.modiacontextholder.redis
+package no.nav.modiacontextholder.valkey
 
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.seconds
 
-class RedisPersistenceTest : TestUtils.WithRedis() {
+class ValkeyPersistenceTest : TestUtils.WithValkey() {
     private val hostAndPort = redisHostAndPort()
-    private val redisConnection =
+    private val valkeyConnection =
         RedisClient
             .create(
                 RedisURI
@@ -22,31 +22,31 @@ class RedisPersistenceTest : TestUtils.WithRedis() {
                     .build(),
             ).connect()
 
-    private val redisPersistence: RedisPersistence = RedisPersistence(redisConnection)
+    private val valkeyPersistence: ValkeyPersistence = ValkeyPersistence(valkeyConnection)
 
     @Test
     fun `lager kode for fnr`() {
         val fnr = "10108000398"
-        val fnrCodeResult = runBlocking { redisPersistence.generateAndStoreTempCodeForFnr(fnr) }
+        val fnrCodeResult = runBlocking { valkeyPersistence.generateAndStoreTempCodeForFnr(fnr) }
 
         assertTrue(fnrCodeResult.result.isSuccess)
         assertNotNull(fnrCodeResult.code)
 
-        val result = runBlocking { redisPersistence.getFnr(fnrCodeResult.code) }
+        val result = runBlocking { valkeyPersistence.getFnr(fnrCodeResult.code) }
 
         assertEquals(fnr, result.getOrNull())
     }
 
     @Test
     fun `sletter fnr etter gitt tid`() {
-        val localRedisPersitence = RedisPersistence(redisConnection, expiration = 1.seconds)
+        val localValkeyPersitence = ValkeyPersistence(valkeyConnection, expiration = 1.seconds)
         val fnr = "10108000398"
-        val fnrCodeResult = runBlocking { localRedisPersitence.generateAndStoreTempCodeForFnr(fnr) }
+        val fnrCodeResult = runBlocking { localValkeyPersitence.generateAndStoreTempCodeForFnr(fnr) }
         assertTrue(fnrCodeResult.result.isSuccess)
 
         runBlocking { delay(2.seconds) }
 
-        val result = runBlocking { localRedisPersitence.getFnr(fnrCodeResult.code) }
+        val result = runBlocking { localValkeyPersitence.getFnr(fnrCodeResult.code) }
         assertTrue(result.isSuccess)
         assertNull(result.getOrNull())
     }

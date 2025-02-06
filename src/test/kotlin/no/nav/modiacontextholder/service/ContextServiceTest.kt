@@ -8,8 +8,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import no.nav.modiacontextholder.domain.VeilederContext
 import no.nav.modiacontextholder.domain.VeilederContextType.NY_AKTIV_BRUKER
-import no.nav.modiacontextholder.redis.RedisPublisher
-import no.nav.modiacontextholder.redis.VeilederContextDatabase
+import no.nav.modiacontextholder.valkey.ValkeyPublisher
+import no.nav.modiacontextholder.valkey.VeilederContextDatabase
 import no.nav.modiacontextholder.rest.model.RSContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -18,7 +18,7 @@ class ContextServiceTest {
     private val brukerId = "bruker"
 
     private val veilederContextDatabase: VeilederContextDatabase = mockk()
-    private val redisPublisher: RedisPublisher = mockk()
+    private val redisPublisher: ValkeyPublisher = mockk()
     private val contextService: ContextService =
         ContextService(
             veilederContextDatabase,

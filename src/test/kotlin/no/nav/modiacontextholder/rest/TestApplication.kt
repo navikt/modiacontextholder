@@ -10,8 +10,8 @@ import io.mockk.mockkClass
 import no.nav.modiacontextholder.AppModule
 import no.nav.modiacontextholder.config.Configuration
 import no.nav.modiacontextholder.modiacontextholderApp
-import no.nav.modiacontextholder.redis.TestUtils
-import no.nav.modiacontextholder.redis.TestUtils.WithRedis.Companion.PASSWORD
+import no.nav.modiacontextholder.valkey.TestUtils
+import no.nav.modiacontextholder.valkey.TestUtils.WithValkey.Companion.PASSWORD
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -22,18 +22,18 @@ import org.koin.test.junit5.mock.MockProviderExtension
 
 open class TestApplication : KoinTest {
     companion object {
-        val withRedis = TestUtils.WithRedis()
+        val withRedis = TestUtils.WithValkey()
 
         @JvmStatic
         @BeforeAll
         fun setup() {
-            TestUtils.WithRedis.startContainer()
+            TestUtils.WithValkey.startContainer()
         }
 
         @JvmStatic
         @AfterAll
         fun tearDown() {
-            TestUtils.WithRedis.stopContainer()
+            TestUtils.WithValkey.stopContainer()
         }
     }
 

@@ -1,8 +1,8 @@
-package no.nav.modiacontextholder.redis.model
+package no.nav.modiacontextholder.valkey.model
 
 import no.nav.modiacontextholder.domain.VeilederContextType
 
-enum class RedisVeilederContextType {
+enum class ValkeyVeilederContextType {
     AKTIV_BRUKER,
     AKTIV_ENHET,
     ;
@@ -14,7 +14,7 @@ enum class RedisVeilederContextType {
         }
 
     companion object {
-        fun from(contextType: VeilederContextType): RedisVeilederContextType =
+        fun from(contextType: VeilederContextType): ValkeyVeilederContextType =
             when (contextType) {
                 VeilederContextType.NY_AKTIV_BRUKER -> AKTIV_BRUKER
                 VeilederContextType.NY_AKTIV_ENHET -> AKTIV_ENHET
