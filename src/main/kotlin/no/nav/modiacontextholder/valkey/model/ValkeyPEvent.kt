@@ -1,4 +1,4 @@
-package no.nav.modiacontextholder.redis.model
+package no.nav.modiacontextholder.valkey.model
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -8,13 +8,13 @@ import kotlinx.serialization.Serializable
 import no.nav.modiacontextholder.domain.VeilederContext
 
 @Serializable
-data class RedisPEvent(
+data class ValkeyPEvent(
     val veilederIdent: String,
-    val contextType: RedisVeilederContextType,
+    val contextType: ValkeyVeilederContextType,
     val verdi: String,
     val created: LocalDateTime,
 ) {
-    val key: RedisPEventKey = RedisPEventKey(contextType, veilederIdent)
+    val key: ValkeyPEventKey = ValkeyPEventKey(contextType, veilederIdent)
 
     fun toPEvent(): VeilederContext =
         VeilederContext(
@@ -25,10 +25,10 @@ data class RedisPEvent(
         )
 
     companion object {
-        fun from(veilederContext: VeilederContext): RedisPEvent =
-            RedisPEvent(
+        fun from(veilederContext: VeilederContext): ValkeyPEvent =
+            ValkeyPEvent(
                 veilederIdent = veilederContext.veilederIdent,
-                contextType = RedisVeilederContextType.from(veilederContext.contextType),
+                contextType = ValkeyVeilederContextType.from(veilederContext.contextType),
                 verdi = veilederContext.verdi,
                 created = veilederContext.created ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
             )

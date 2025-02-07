@@ -15,7 +15,6 @@ val okhttp3_version = "4.12.0"
 val mockk_version = "1.13.14"
 val testcontainers_version = "1.20.4"
 val vavr_version = "0.10.6"
-val jedis_version = "5.2.0"
 val lettuce_version = "6.5.2.RELEASE"
 val kotlinx_serialization_version = "1.8.0"
 val kotlinx_datetime_version = "0.6.1"
@@ -77,7 +76,6 @@ dependencies {
 
     implementation("io.getunleash:unleash-client-java:$unleash_version")
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeine_version")
-    implementation("redis.clients:jedis:$jedis_version")
     implementation("io.lettuce:lettuce-core:$lettuce_version")
 
     implementation("com.squareup.okhttp3:okhttp:$okhttp3_version")

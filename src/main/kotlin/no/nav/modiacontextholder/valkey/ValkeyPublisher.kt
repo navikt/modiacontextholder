@@ -1,4 +1,4 @@
-package no.nav.modiacontextholder.redis
+package no.nav.modiacontextholder.valkey
 
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 import no.nav.common.utils.EnvironmentUtils
@@ -8,8 +8,8 @@ import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-class RedisPublisher(
-    redisConnection: StatefulRedisPubSubConnection<String, String>,
+class ValkeyPublisher(
+    valkeyConnection: StatefulRedisPubSubConnection<String, String>,
     private val channel: String = getChannel(),
 ) {
     companion object {
@@ -19,19 +19,19 @@ class RedisPublisher(
         fun getChannel() = "ContextOppdatering-$environment"
     }
 
-    private val redis = redisConnection.sync()
+    private val valkey = valkeyConnection.sync()
 
-    private val logger = LoggerFactory.getLogger(RedisPublisher::class.java)
+    private val logger = LoggerFactory.getLogger(ValkeyPublisher::class.java)
     private val reporter = SelftestGenerator.Reporter(name = "Redis publisher", critical = true)
 
     init {
         fixedRateTimer(
-            name = "Redis publisher health",
+            name = "Valkey publisher health",
             daemon = false,
             period = 1.minutes.inWholeMilliseconds,
             initialDelay = 1.seconds.inWholeMilliseconds,
         ) {
-            runCatching { redis.ping() }
+            runCatching { valkey.ping() }
                 .onFailure { reporter.reportError(it) }
                 .onSuccess { reporter.reportOk() }
         }
@@ -40,10 +40,10 @@ class RedisPublisher(
     fun publishMessage(message: String) {
         logger.info(
             """
-            Redismelding sendes på kanal '$channel' med melding:
+            Valkeymelding sendes på kanal '$channel' med melding:
             $message
             """.trimIndent(),
         )
-        redis.publish(channel, message)
+        valkey.publish(channel, message)
     }
 }

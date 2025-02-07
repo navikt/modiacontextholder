@@ -1,4 +1,4 @@
-package no.nav.modiacontextholder.redis
+package no.nav.modiacontextholder.valkey
 
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class RedisTest : TestUtils.WithRedis() {
+class ValkeyTest : TestUtils.WithValkey() {
     private val hostAndPort = redisHostAndPort()
-    private val redisClient =
+    private val valkeyClient =
         RedisClient
             .create(
                 RedisURI
@@ -18,12 +18,12 @@ class RedisTest : TestUtils.WithRedis() {
                     .withAuthentication("default", PASSWORD)
                     .build(),
             )
-    private val redisConnection = redisClient.connectPubSub()
+    private val valkeyConnection = valkeyClient.connectPubSub()
 
     @Test
-    fun `sender redis-meldinger`() =
+    fun `sender valkey-meldinger`() =
         runBlocking {
-            val redisPublisher = RedisPublisher(redisConnection, "TestChannel")
+            val redisPublisher = ValkeyPublisher(valkeyConnection, "TestChannel")
             redisPublisher.publishMessage("TestMessage1")
             redisPublisher.publishMessage("TestMessage2")
             redisPublisher.publishMessage("TestMessage3")
@@ -34,28 +34,28 @@ class RedisTest : TestUtils.WithRedis() {
         }
 
     @Test
-    fun `redis subscriber mottar meldinger`() =
+    fun `valkey subscriber mottar meldinger`() =
         runBlocking {
             val defferedMessage = CompletableDeferred<String>()
-            val redisSubscription = Redis.Consumer(redisClient, "TestChannel")
-            redisSubscription.start()
+            val valkeySubscription = Valkey.Consumer(valkeyClient, "TestChannel")
+            valkeySubscription.start()
             launch {
-                redisSubscription.getFlow().filterNotNull().collect {
+                valkeySubscription.getFlow().filterNotNull().collect {
                     defferedMessage.complete(it)
                     cancel()
                 }
             }
 
-            val redisPublisher = RedisPublisher(redisConnection, "TestChannel")
+            val valkeyPublisher = ValkeyPublisher(valkeyConnection, "TestChannel")
             println("Awaiting")
             val job =
                 launch {
                     assertEquals(defferedMessage.await(), "TestMessage")
                 }
             while (job.isActive) {
-                redisPublisher.publishMessage("TestMessage")
+                valkeyPublisher.publishMessage("TestMessage")
                 delay(1000)
             }
-            redisConnection.close()
+            valkeyConnection.close()
         }
 }

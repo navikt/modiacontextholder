@@ -1,11 +1,11 @@
 ---
 apiVersion: aiven.io/v1alpha1
-kind: Redis
+kind: Valkey
 metadata:
   labels:
-    app: contextholder-redis
+    app: contextholder-valkey
     team: personoversikt
-  name: redis-personoversikt-contextholder
+  name: valkey-personoversikt-contextholder
   namespace: personoversikt
 spec:
   plan: business-4

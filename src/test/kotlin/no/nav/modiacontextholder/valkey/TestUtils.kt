@@ -1,4 +1,4 @@
-package no.nav.modiacontextholder.redis
+package no.nav.modiacontextholder.valkey
 
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withTimeout
-import no.nav.modiacontextholder.redis.TestUtils.WithRedis.Companion.PASSWORD
+import no.nav.modiacontextholder.valkey.TestUtils.WithValkey.Companion.PASSWORD
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -22,14 +22,14 @@ import java.time.Duration
 import java.util.*
 
 object TestUtils {
-    class RedisContainer : GenericContainer<RedisContainer>("redis:6-alpine") {
+    class ValkeyContainer : GenericContainer<ValkeyContainer>("valkey/valkey:8-alpine") {
         init {
-            withCommand("redis-server --requirepass $PASSWORD")
+            withCommand("valkey-server --requirepass $PASSWORD")
             withExposedPorts(6379)
         }
     }
 
-    class RedisSubscriber(
+    class ValkeySubscriber(
         private val subscribeCallback: () -> Unit = {},
     ) : RedisPubSubAdapter<String, String>() {
         val messages: MutableList<Pair<String, String>> = mutableListOf()
@@ -66,12 +66,12 @@ object TestUtils {
         }
     }
 
-    open class WithRedis {
+    open class WithValkey {
         companion object {
             private lateinit var job: Job
-            private lateinit var subscriber: RedisSubscriber
-            private lateinit var redisPubSub: RedisPubSubCommands<String, String>
-            val container = RedisContainer()
+            private lateinit var subscriber: ValkeySubscriber
+            private lateinit var valkeyPubSub: RedisPubSubCommands<String, String>
+            val container = ValkeyContainer()
 
             const val PASSWORD = "password"
 
@@ -92,7 +92,7 @@ object TestUtils {
         fun setupSubscriber() =
             runBlocking {
                 val lock = WaitLock(true)
-                subscriber = RedisSubscriber { lock.unlock() }
+                subscriber = ValkeySubscriber { lock.unlock() }
                 val hostAndPort = redisHostAndPort()
 
                 val redisClient =
@@ -104,18 +104,18 @@ object TestUtils {
                     )
                 val statefulRedisPubSubConnection = redisClient.connectPubSub()
                 statefulRedisPubSubConnection.addListener(subscriber)
-                redisPubSub = statefulRedisPubSubConnection.sync()
+                valkeyPubSub = statefulRedisPubSubConnection.sync()
 
                 job =
                     CoroutineScope(Dispatchers.IO).launch {
-                        redisPubSub.psubscribe("*")
+                        valkeyPubSub.psubscribe("*")
                     }
                 lock.waitForUnlock()
             }
 
         @AfterEach
         fun closeSubscriber() {
-            redisPubSub.punsubscribe()
+            valkeyPubSub.punsubscribe()
             job.cancel()
         }
 

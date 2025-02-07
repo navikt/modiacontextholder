@@ -50,7 +50,7 @@ spec:
     scalingStrategy:
       cpu:
         thresholdPercentage: 50
-  redis:
+  valkey:
     - instance: contextholder
       access: readwrite
   azure:

@@ -3,8 +3,8 @@ package no.nav.modiacontextholder.service
 import no.nav.common.json.JsonUtils
 import no.nav.modiacontextholder.domain.VeilederContext
 import no.nav.modiacontextholder.domain.VeilederContextType
-import no.nav.modiacontextholder.redis.RedisPublisher
-import no.nav.modiacontextholder.redis.VeilederContextDatabase
+import no.nav.modiacontextholder.valkey.ValkeyPublisher
+import no.nav.modiacontextholder.valkey.VeilederContextDatabase
 import no.nav.modiacontextholder.rest.model.RSAktivBruker
 import no.nav.modiacontextholder.rest.model.RSAktivEnhet
 import no.nav.modiacontextholder.rest.model.RSContext
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
 
 class ContextService(
     private val veilederContextDatabase: VeilederContextDatabase,
-    private val redisPublisher: RedisPublisher,
+    private val valkeyPublisher: ValkeyPublisher,
 ) {
     private val log = LoggerFactory.getLogger(ContextService::class.java)
 
@@ -44,7 +44,7 @@ class ContextService(
 
         saveToDb(veilederContext)
 
-        redisPublisher.publishMessage(JsonUtils.toJson(RSEvent.from(veilederContext)))
+        valkeyPublisher.publishMessage(JsonUtils.toJson(RSEvent.from(veilederContext)))
     }
 
     fun hentAktivBruker(veilederIdent: String): RSContext =

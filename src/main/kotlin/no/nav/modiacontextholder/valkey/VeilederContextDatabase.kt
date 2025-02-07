@@ -1,4 +1,4 @@
-package no.nav.modiacontextholder.redis
+package no.nav.modiacontextholder.valkey
 
 import no.nav.modiacontextholder.domain.VeilederContext
 import no.nav.modiacontextholder.domain.VeilederContextType
