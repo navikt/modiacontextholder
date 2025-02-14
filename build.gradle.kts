@@ -17,7 +17,7 @@ val testcontainers_version = "1.20.4"
 val vavr_version = "0.10.6"
 val lettuce_version = "6.5.2.RELEASE"
 val kotlinx_serialization_version = "1.8.0"
-val kotlinx_datetime_version = "0.6.1"
+val kotlinx_datetime_version = "0.6.2"
 val kotlinx_coroutines_version = "1.10.1"
 val assertj_version = "3.27.3"
 
