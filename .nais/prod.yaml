@@ -141,6 +141,8 @@ spec:
         - application: cv-veileder
           namespace: teampam
           cluster: prod-gcp
+        - application: inngar
+          namespace: dab
   secureLogs:
     enabled: true
   envFrom:
