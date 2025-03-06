@@ -136,6 +136,9 @@ spec:
         - application: cv-veileder
           namespace: teampam
           cluster: dev-gcp
+        - application: familie-ba-sak
+          namespace: teamfamilie
+          cluster: dev-gcp
   secureLogs:
     enabled: true
   envFrom:
