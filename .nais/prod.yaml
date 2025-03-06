@@ -143,6 +143,9 @@ spec:
           cluster: prod-gcp
         - application: inngar
           namespace: dab
+        - application: familie-ba-sak
+          namespace: teamfamilie
+          cluster: prod-gcp
   secureLogs:
     enabled: true
   envFrom:
