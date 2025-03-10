@@ -136,7 +136,7 @@ spec:
         - application: cv-veileder
           namespace: teampam
           cluster: dev-gcp
-        - application: familie-ba-sak
+        - application: familie-integrasjoner
           namespace: teamfamilie
           cluster: dev-gcp
   secureLogs:

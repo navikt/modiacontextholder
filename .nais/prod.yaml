@@ -143,7 +143,7 @@ spec:
           cluster: prod-gcp
         - application: inngar
           namespace: dab
-        - application: familie-ba-sak
+        - application: familie-integrasjoner
           namespace: teamfamilie
           cluster: prod-gcp
   secureLogs:
