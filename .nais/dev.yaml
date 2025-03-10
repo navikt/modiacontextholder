@@ -138,7 +138,7 @@ spec:
           cluster: dev-gcp
         - application: familie-integrasjoner
           namespace: teamfamilie
-          cluster: dev-gcp
+          cluster: dev-fss
   secureLogs:
     enabled: true
   envFrom:
