@@ -145,7 +145,7 @@ spec:
           namespace: dab
         - application: familie-ba-sak
           namespace: teamfamilie
-          cluster: prod-gcp
+          cluster: prod-fss
   secureLogs:
     enabled: true
   envFrom:
