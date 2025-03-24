@@ -8,7 +8,7 @@ val koin_version = "4.1.0-Beta5"
 
 val modia_common_version = "1.2025.02.26-09.09-7de0cd38912e"
 val nav_common_version = "3.2025.03.07_13.21-bb112c97720d"
-val graphql_kotlin_version = "8.3.0"
+val graphql_kotlin_version = "8.4.0"
 val caffeine_version = "3.2.0"
 val unleash_version = "10.2.0"
 val okhttp3_version = "4.12.0"
