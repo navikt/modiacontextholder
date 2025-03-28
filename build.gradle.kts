@@ -2,7 +2,7 @@ import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLDownloadSDLTask
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
 
-val ktor_version = "3.1.1"
+val ktor_version = "3.1.2"
 val kotlin_version = "2.0.20"
 val koin_version = "4.1.0-Beta5"
 
