@@ -93,7 +93,7 @@ dependencies {
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttp3_version")
     testImplementation("io.mockk:mockk-jvm:$mockk_version")
     testImplementation("org.assertj:assertj-core:$assertj_version")
-    testImplementation("io.ktor:ktor-server-test-host-jvm:3.1.0")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:3.1.2")
     testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
 }
 
