@@ -20,7 +20,7 @@ class ValkeyVeilederContextDatabase(
     redisConnection: StatefulRedisConnection<String, String>,
 ) : VeilederContextDatabase,
     HealthCheckAware {
-    private val timeToLive = Duration.ofHours(12L)
+    private val timeToLive = Duration.ofHours(3L)
 
     private val valkey = redisConnection.sync()
     private val reporter = SelftestGenerator.Reporter(name = "Veileder database", critical = true)
