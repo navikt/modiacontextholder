@@ -39,8 +39,8 @@ spec:
     limits:
       memory: 4096Mi
     requests:
-      cpu: 200m
-      memory: 1024Mi
+      cpu: 40m
+      memory: 2048Mi
   ingresses:
     - https://modiacontextholder.intern.dev.nav.no
     - https://modiacontextholder.ansatt.dev.nav.no
