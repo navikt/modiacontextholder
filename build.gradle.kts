@@ -6,7 +6,7 @@ val ktor_version = "3.1.2"
 val kotlin_version = "2.0.20"
 val koin_version = "4.1.0-Beta7"
 
-val modia_common_version = "1.2025.04.10-08.38-f3f297ca275e"
+val modia_common_version = "1.2025.04.30-09.28-51d075572764"
 val nav_common_version = "3.2025.03.25_13.00-69496eec5820"
 val graphql_kotlin_version = "8.7.0"
 val caffeine_version = "3.2.0"
