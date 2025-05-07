@@ -71,7 +71,7 @@ object TestUtils {
             private lateinit var job: Job
             private lateinit var subscriber: ValkeySubscriber
             private lateinit var valkeyPubSub: RedisPubSubCommands<String, String>
-            val container = ValkeyContainer()
+            val container = ValkeyContainer().withReuse(true)
 
             const val PASSWORD = "password"
 
@@ -79,12 +79,6 @@ object TestUtils {
             @JvmStatic
             fun startContainer() {
                 container.start()
-            }
-
-            @AfterAll
-            @JvmStatic
-            fun stopContainer() {
-                container.stop()
             }
         }
 

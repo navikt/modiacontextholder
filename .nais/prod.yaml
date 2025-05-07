@@ -69,7 +69,6 @@ spec:
     outbound:
       external:
         - host: personoversikt-unleash-api.nav.cloud.nais.io
-        - host: axsys.prod-fss-pub.nais.io
         - host: pdl-api.prod-fss-pub.nais.io
         - host: graph.microsoft.com
       rules:
@@ -157,10 +156,6 @@ spec:
   env:
     - name: JAVA_TOOL_OPTIONS
       value: -XX:MaxRAMPercentage=60
-    - name: AXSYS_URL
-      value: "https://axsys.prod-fss-pub.nais.io"
-    - name: AXSYS_SCOPE
-      value: "prod-fss:org:axsys"
     - name: PDL_API_URL
       value: "https://pdl-api.prod-fss-pub.nais.io/graphql"
     - name: PDL_SCOPE

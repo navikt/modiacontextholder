@@ -29,12 +29,6 @@ open class TestApplication : KoinTest {
         fun setup() {
             TestUtils.WithValkey.startContainer()
         }
-
-        @JvmStatic
-        @AfterAll
-        fun tearDown() {
-            TestUtils.WithValkey.stopContainer()
-        }
     }
 
     private val hostAndPort = withRedis.redisHostAndPort()

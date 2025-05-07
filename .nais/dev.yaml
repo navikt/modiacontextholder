@@ -62,7 +62,6 @@ spec:
     outbound:
       external:
         - host: personoversikt-unleash-api.nav.cloud.nais.io
-        - host: axsys.dev-fss-pub.nais.io
         - host: pdl-api.dev-fss-pub.nais.io
         - host: graph.microsoft.com
       rules:
@@ -149,10 +148,6 @@ spec:
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
-    - name: AXSYS_URL
-      value: "https://axsys.dev-fss-pub.nais.io"
-    - name: AXSYS_SCOPE
-      value: "dev-fss:org:axsys"
     - name: PDL_API_URL
       value: "https://pdl-api.dev-fss-pub.nais.io/graphql"
     - name: PDL_SCOPE
