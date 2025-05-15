@@ -19,6 +19,7 @@ import no.nav.modiacontextholder.utils.getAuthorizedParty
 import no.nav.personoversikt.common.ktor.utils.Metrics
 import no.nav.personoversikt.common.ktor.utils.Selftest
 import org.koin.ktor.ext.getKoin
+import org.slf4j.event.Level
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -87,6 +88,7 @@ fun Application.setupInfrastructure() {
     }
 
     install(CallLogging) {
+        level = Level.DEBUG
         filter { call ->
             !call.request.path().startsWith("/internal")
         }
