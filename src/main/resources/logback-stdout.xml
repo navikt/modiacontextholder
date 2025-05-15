@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>
+
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+
+    <!-- Prometheus metrikker for antall ganger logget per nivå -->
+    <appender name="metrics" class="io.prometheus.client.logback.InstrumentedAppender"/>
+
+    <root level="INFO">
+        <appender-ref ref="consoleAppender"/>
+        <appender-ref ref="metrics"/>
+    </root>
+
+    <logger name="org.apache" level="INFO"/>
+    <logger name="org.apache.wss4j.common.crypto.CryptoBase" level="ERROR"/>
+    <logger name="no.nav.common.rest.client.LogRequestInterceptor" level="INFO"/>
+    <logger name="no.nav.common.rest.filter.LogRequestFilter" level="INFO"/>
+</included>
