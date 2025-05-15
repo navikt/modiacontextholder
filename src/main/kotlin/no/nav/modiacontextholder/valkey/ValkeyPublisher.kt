@@ -38,7 +38,7 @@ class ValkeyPublisher(
     }
 
     fun publishMessage(message: String) {
-        logger.info(
+        logger.debug(
             """
             Valkeymelding sendes på kanal '$channel' med melding:
             $message

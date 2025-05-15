@@ -30,7 +30,7 @@ class WebsocketStorage(
     private val sessions = ConcurrentHashMap<String, MutableList<WebSocketServerSession>>()
     val wsHandler: suspend DefaultWebSocketServerSession.() -> Unit = {
         val ident = (call.parameters["ident"] ?: throw BadRequestException("No ident found"))
-        log.info("Connected to websocket from $ident")
+        log.debug("Connected to websocket from $ident")
         try {
             sessions.computeIfAbsent(ident) { mutableListOf() }.add(this)
             incoming.receive() // Waiting so that the connection isn't closed at once
