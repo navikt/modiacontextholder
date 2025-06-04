@@ -149,6 +149,9 @@ spec:
         - application: familie-integrasjoner
           namespace: teamfamilie
           cluster: prod-fss
+        - application: gosys
+          namespace: isa
+          cluster: prod-fss
   secureLogs:
     enabled: true
   envFrom:
