@@ -25,7 +25,7 @@ val mainClass = "no.nav.modiacontextholder.MainKt"
 
 plugins {
     kotlin("jvm") version "2.2.0"
-    id("io.ktor.plugin") version "3.1.3"
+    id("io.ktor.plugin") version "3.2.1"
     kotlin("plugin.serialization") version "2.2.0"
     id("com.gradleup.shadow") version "8.3.7"
     id("com.expediagroup.graphql") version "8.8.1"
