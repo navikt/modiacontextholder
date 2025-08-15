@@ -23,7 +23,7 @@ jobs:
           cache: 'gradle'
 
       - name: Build
-        run: gradle build
+        run: ./gradlew build
 
   build-and-push:
     name: Build and push Docker container
