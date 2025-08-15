@@ -123,7 +123,7 @@ class Audit {
                         .toTypedArray(),
                 ).joinToString(" ")
 
-            tjenestekallLogg.info(logline)
+            tjenestekallLogg.info(Logging.TEAM_LOGS_MARKER,logline)
         }
     }
 }
