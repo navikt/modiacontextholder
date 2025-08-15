@@ -20,6 +20,7 @@ val kotlinx_serialization_version = "1.9.0"
 val kotlinx_datetime_version = "0.6.2"
 val kotlinx_coroutines_version = "1.10.2"
 val assertj_version = "3.27.3"
+val logstash_logback_enocder_version = "8.1"
 
 val mainClass = "no.nav.modiacontextholder.MainKt"
 
@@ -82,6 +83,8 @@ dependencies {
     implementation("io.vavr:vavr:$vavr_version")
     implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphql_kotlin_version")
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphql_kotlin_version")
+    implementation("net.logstash.logback:logstash-logback-encoder:$logstash_logback_enocder_version")
+
 
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")

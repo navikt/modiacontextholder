@@ -70,6 +70,8 @@ spec:
           cluster: dev-gcp
         - application: norg2
           namespace: org
+        - application: logging
+          namespace: nais-system
     inbound:
       rules:
         - application: arbeidssokerregistrering-for-veileder
