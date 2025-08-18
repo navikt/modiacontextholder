@@ -6,7 +6,7 @@ val ktor_version = "3.2.3"
 val kotlin_version = "2.0.20"
 val koin_version = "4.1.0-Beta8"
 
-val modia_common_version = "1.2025.06.10-08.39-c3535ac500cf"
+val modia_common_version = "1.2025.08.18-10.50-4e02c5797b17"
 val nav_common_version = "3.2025.06.23_14.50-3af3985d8555"
 val graphql_kotlin_version = "8.8.1"
 val caffeine_version = "3.2.2"
@@ -20,6 +20,7 @@ val kotlinx_serialization_version = "1.9.0"
 val kotlinx_datetime_version = "0.6.2"
 val kotlinx_coroutines_version = "1.10.2"
 val assertj_version = "3.27.3"
+val logstash_logback_enocder_version = "8.1"
 
 val mainClass = "no.nav.modiacontextholder.MainKt"
 
@@ -82,6 +83,8 @@ dependencies {
     implementation("io.vavr:vavr:$vavr_version")
     implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphql_kotlin_version")
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphql_kotlin_version")
+    implementation("net.logstash.logback:logstash-logback-encoder:$logstash_logback_enocder_version")
+
 
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")

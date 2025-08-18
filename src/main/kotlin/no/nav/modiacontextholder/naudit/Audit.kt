@@ -1,11 +1,10 @@
 package no.nav.modiacontextholder.naudit
-
+import no.nav.personoversikt.common.logging.Logging
 import no.nav.modiacontextholder.naudit.AuditIdentifier.DENY_REASON
 import no.nav.modiacontextholder.naudit.AuditIdentifier.FAIL_REASON
-import org.slf4j.LoggerFactory
 import java.util.*
 
-val tjenestekallLogg = LoggerFactory.getLogger("SecureLog")
+val tjenestekallLogg = Logging.teamLog
 
 class Audit {
     open class AuditResource(
@@ -124,7 +123,7 @@ class Audit {
                         .toTypedArray(),
                 ).joinToString(" ")
 
-            tjenestekallLogg.info(logline)
+            tjenestekallLogg.info(Logging.TEAM_LOGS_MARKER,logline)
         }
     }
 }

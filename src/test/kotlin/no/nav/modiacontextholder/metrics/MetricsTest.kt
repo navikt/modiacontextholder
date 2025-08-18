@@ -103,7 +103,7 @@ class MetricsTest : TestUtils.WithValkey() {
             client.get("/internal/metrics").apply {
                 assertContains(
                     this.bodyAsText(),
-                    """ktor_http_server_requests_seconds_count{address="localhost:80",authorized_party="dev-gcp:aura:nais-testapp",method="GET",route="/(authenticate jwt-auth)/test",status="200",throwable="n/a"} 1""",
+                    """ktor_http_server_requests_seconds_count{address="localhost:80",authorized_party="dev-gcp:aura:nais-testapp",method="GET",route="/test",status="200",throwable="n/a"} 1""",
                 )
             }
             client.get("/unauthenticated").apply {
