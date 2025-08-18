@@ -14,6 +14,7 @@ import no.nav.modiacontextholder.mock.mockModule
 import no.nav.modiacontextholder.rest.TestApplication
 import no.nav.modiacontextholder.utils.getIdent
 import no.nav.personoversikt.common.ktor.utils.Security
+import org.koin.core.context.stopKoin
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.slf4j.MDC
@@ -57,7 +58,9 @@ class UnleashContextProviderTest : TestApplication() {
             startApplication()
 
             client.get("/unleash").apply {
-                assertEquals(this.bodyAsText(), "Z999999")
+                assertEquals("Z999999",this.bodyAsText())
             }
+
+            stopKoin()
         }
 }
