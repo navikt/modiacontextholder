@@ -4,7 +4,7 @@ import no.nav.modiacontextholder.naudit.AuditIdentifier.DENY_REASON
 import no.nav.modiacontextholder.naudit.AuditIdentifier.FAIL_REASON
 import java.util.*
 
-val tjenestekallLogg = Logging.secureLog
+val tjenestekallLogg = Logging.teamLog
 
 class Audit {
     open class AuditResource(
