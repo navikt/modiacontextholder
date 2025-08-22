@@ -23,7 +23,7 @@ jobs:
         env: [ dev-gcp, prod-gcp ]
     environment: ${{ matrix.env }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup ${{ matrix.env }}
         if: github.ref == 'refs/heads/master'
