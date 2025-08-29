@@ -28,7 +28,7 @@ jobs:
   build-and-push:
     name: Build and push Docker container
     needs: build
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/eksponer-gruppeid'
     permissions:
       packages: write
       contents: read
@@ -55,7 +55,7 @@ jobs:
   deploy-gcp-dev:
     name: Deploy to dev gcp
     needs: build-and-push
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/eksponer-gruppeid'
     environment: dev-gcp
     runs-on: ubuntu-latest
     permissions:
