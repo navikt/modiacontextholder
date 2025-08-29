@@ -33,7 +33,7 @@ open class EnheterService(
                         .mapNotNull {
                             enhetId(it.gruppeNavn)?.let { enhetId ->
                                 aktiveEnheter[enhetId]
-                            }
+                            }?.copy(gruppeId = it.gruppeId)
                         }.sortedBy { it.enhetId }
                         .ifEmpty { null }
                 }

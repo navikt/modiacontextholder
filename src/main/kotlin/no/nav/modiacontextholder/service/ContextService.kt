@@ -22,6 +22,7 @@ class ContextService(
         RSContext(
             hentAktivBruker(veilederIdent).aktivBruker,
             hentAktivEnhet(veilederIdent).aktivEnhet,
+            hentAktivEnhet(veilederIdent).aktivGruppeId,
         )
 
     fun oppdaterVeiledersContext(
