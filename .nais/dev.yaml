@@ -145,8 +145,6 @@ spec:
         - application: familie-integrasjoner
           namespace: teamfamilie
           cluster: dev-fss
-  secureLogs:
-    enabled: true
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
