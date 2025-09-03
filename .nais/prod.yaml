@@ -154,8 +154,6 @@ spec:
         - application: gosys
           namespace: isa
           cluster: prod-fss
-  secureLogs:
-    enabled: true
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
