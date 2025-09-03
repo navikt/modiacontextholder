@@ -10,6 +10,8 @@ interface VeilederContextDatabase {
 
     fun sistAktiveEnhetEvent(veilederIdent: String): VeilederContext?
 
+    fun sistAktiveGruppeIdEvent(veilederIdent: String): VeilederContext?
+
     fun slettAlleEventer(veilederIdent: String)
 
     fun slettAlleAvEventTypeForVeileder(

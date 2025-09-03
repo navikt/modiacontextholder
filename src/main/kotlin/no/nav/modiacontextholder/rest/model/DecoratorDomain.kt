@@ -18,6 +18,7 @@ class DecoratorDomain {
     data class Enhet(
         val enhetId: String,
         val navn: String,
+        val gruppeId: String? = null,
     )
 
     @Serializable

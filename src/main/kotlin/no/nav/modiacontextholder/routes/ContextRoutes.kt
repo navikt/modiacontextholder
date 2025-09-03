@@ -10,6 +10,7 @@ import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import no.nav.modiacontextholder.domain.VeilederContextType
 import no.nav.modiacontextholder.log
 import no.nav.modiacontextholder.naudit.Audit
 import no.nav.modiacontextholder.naudit.Audit.Companion.describe
@@ -21,6 +22,7 @@ import no.nav.modiacontextholder.rest.model.VerdiType
 import no.nav.modiacontextholder.service.ContextService
 import no.nav.modiacontextholder.service.FnrCodeExchangeService
 import no.nav.modiacontextholder.utils.HTTPException
+import no.nav.modiacontextholder.utils.getIdToken
 import no.nav.modiacontextholder.utils.getIdent
 import org.koin.ktor.ext.inject
 import java.util.*
@@ -109,6 +111,8 @@ fun Route.contextRoutes() {
         post("") {
             val rsNyContext = call.receive<RSNyContext>()
             val ident = Optional.of(call.getIdent())
+            val veilederIdent = ident.get()
+            val token = call.getIdToken()
 
             val referrer = call.request.headers[HttpHeaders.Referrer]
             val type = Pair(AuditIdentifier.TYPE, rsNyContext.eventType.toString())
@@ -132,21 +136,22 @@ fun Route.contextRoutes() {
                 } else {
                     rsNyContext
                 }
+            withAudit(
+                describe(
+                    ident,
+                    Audit.Action.UPDATE,
+                    AuditResources.OppdaterKontekst,
+                    listOf(type, verdi, url),
+                ),
+            ) {
+                contextService.oppdaterVeiledersContext(context, veilederIdent)
+            }
 
-            call.respond(
-                withAudit(
-                    describe(
-                        ident,
-                        Audit.Action.UPDATE,
-                        AuditResources.OppdaterKontekst,
-                        listOf(type, verdi, url),
-                    ),
-                ) {
-                    val veilederIdent = ident.get()
-                    contextService.oppdaterVeiledersContext(context, veilederIdent)
-                    contextService.hentVeiledersContext(veilederIdent)
-                },
-            )
+            if(context.eventType == VeilederContextType.NY_AKTIV_ENHET){
+                contextService.oppdaterVeiledersGroupId(context, veilederIdent, token)
+            }
+
+            call.respond(contextService.hentVeiledersContext(veilederIdent))
         }
     }
 }

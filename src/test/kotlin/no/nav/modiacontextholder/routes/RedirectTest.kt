@@ -35,8 +35,7 @@ class RedirectTest : TestApplication() {
             val contextService: ContextService by inject()
             contextService.oppdaterVeiledersContext(
                 RSNyContext("12345678910", VeilederContextType.NY_AKTIV_BRUKER),
-                "Z999999",
-            )
+                "Z999999")
 
             it.getAuth("/redirect/aaregisteret").apply {
                 assertEquals(HttpStatusCode.Found, this.status)
