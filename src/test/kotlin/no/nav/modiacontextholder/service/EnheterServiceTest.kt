@@ -21,18 +21,19 @@ class EnheterServiceTest : TestApplication() {
         coEvery { azureADService.fetchRoller(any(), any()) } returns
             listOf(
                 AnsattRolle("0000-GA-ENHET_0001", "0001"),
-                AnsattRolle("0000-GA-ENHET_0002", "0002"),
+                AnsattRolle("0000-GA-ENHET_0002", "1234"),
                 AnsattRolle("0000-GA-ENHET_0003", "0003"),
                 AnsattRolle("0000-GA-ENHET_0004", "0004"),
             )
         every { enhetCache.get() } returns
             mapOf(
-                "0002" to DecoratorDomain.Enhet("0002", "0002"),
+                "0002" to DecoratorDomain.Enhet("0002", "0002","1234"),
             )
 
         val enheter = runBlocking { service.hentEnheter("ident", "token") }.getOrNull()
         assertNotNull(enheter)
         Assertions.assertThat(enheter).hasSize(1)
         Assertions.assertThat(enheter[0].enhetId).isEqualTo("0002")
+        Assertions.assertThat(enheter[0].gruppeId).isEqualTo("1234")
     }
 }

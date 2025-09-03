@@ -7,6 +7,7 @@ import no.nav.modiacontextholder.rest.model.DecoratorDomain
 import no.nav.modiacontextholder.utils.CacheFactory
 import no.nav.modiacontextholder.utils.DistributedCache
 import org.slf4j.LoggerFactory
+import kotlin.text.get
 
 open class EnheterService(
     private val azureADService: AzureADService,
@@ -33,7 +34,7 @@ open class EnheterService(
                         .mapNotNull {
                             enhetId(it.gruppeNavn)?.let { enhetId ->
                                 aktiveEnheter[enhetId]
-                            }
+                            }?.copy(gruppeId = it.gruppeId)
                         }.sortedBy { it.enhetId }
                         .ifEmpty { null }
                 }

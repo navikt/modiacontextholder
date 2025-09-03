@@ -19,10 +19,12 @@ class ContextServiceTest {
 
     private val veilederContextDatabase: VeilederContextDatabase = mockk()
     private val redisPublisher: ValkeyPublisher = mockk()
+    private val enheterService: EnheterService = mockk()
     private val contextService: ContextService =
         ContextService(
             veilederContextDatabase,
             redisPublisher,
+            enheterService
         )
 
     @Test

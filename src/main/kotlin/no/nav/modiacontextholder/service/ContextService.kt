@@ -1,5 +1,6 @@
 package no.nav.modiacontextholder.service
 
+import kotlinx.coroutines.runBlocking
 import no.nav.common.json.JsonUtils
 import no.nav.modiacontextholder.domain.VeilederContext
 import no.nav.modiacontextholder.domain.VeilederContextType
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory
 class ContextService(
     private val veilederContextDatabase: VeilederContextDatabase,
     private val valkeyPublisher: ValkeyPublisher,
+    private val enheterService: EnheterService
 ) {
     private val log = LoggerFactory.getLogger(ContextService::class.java)
 
@@ -22,6 +24,7 @@ class ContextService(
         RSContext(
             hentAktivBruker(veilederIdent).aktivBruker,
             hentAktivEnhet(veilederIdent).aktivEnhet,
+            hentAktivGruppeId(veilederIdent).aktivGruppeId,
         )
 
     fun oppdaterVeiledersContext(
@@ -47,6 +50,24 @@ class ContextService(
         valkeyPublisher.publishMessage(JsonUtils.toJson(RSEvent.from(veilederContext)))
     }
 
+    suspend fun oppdaterVeiledersGroupId(
+        nyContext: RSNyContext,
+        veilederIdent: String,
+        token: String
+    ) {
+        val gruppeId = enheterService.hentEnheter(veilederIdent, token).getOrNull()
+            ?.find { it.enhetId == nyContext.verdi }?.gruppeId
+        if (gruppeId != null) {
+            saveToDb(
+                VeilederContext(
+                    verdi = gruppeId,
+                    contextType = VeilederContextType.MY_AKTIV_GRUPPE_ID,
+                    veilederIdent = veilederIdent,
+                )
+            )
+        }
+    }
+
     fun hentAktivBruker(veilederIdent: String): RSContext =
         veilederContextDatabase
             .sistAktiveBrukerEvent(veilederIdent)
@@ -64,6 +85,13 @@ class ContextService(
             .sistAktiveEnhetEvent(veilederIdent)
             ?.let(RSContext::from)
             ?: RSContext()
+
+    fun hentAktivGruppeId(veilederIdent: String): RSContext =
+        veilederContextDatabase
+            .sistAktiveGruppeIdEvent(veilederIdent)
+            ?.let(RSContext::from)
+            ?: RSContext()
+
 
     fun hentAktivEnhetV2(veilederIdent: String): RSAktivEnhet =
         veilederContextDatabase

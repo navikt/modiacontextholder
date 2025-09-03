@@ -46,6 +46,7 @@ class ValkeyVeilederContextDatabase(
         when (valkeyPEvent.contextType) {
             ValkeyVeilederContextType.AKTIV_BRUKER -> valkey.setex(key, timeToLive.seconds, json)
             ValkeyVeilederContextType.AKTIV_ENHET -> valkey.set(key, json)
+            ValkeyVeilederContextType.AKTIV_GRUPPE_ID -> valkey.set(key, json)
         }
     }
 
@@ -59,6 +60,12 @@ class ValkeyVeilederContextDatabase(
     override fun sistAktiveEnhetEvent(veilederIdent: String): VeilederContext? {
         val key = ValkeyPEventKey(ValkeyVeilederContextType.AKTIV_ENHET, veilederIdent)
 
+        val result = valkey.get(key.toString()) ?: return null
+        return Json.decodeFromString<ValkeyPEvent>(result).toPEvent()
+    }
+
+    override fun sistAktiveGruppeIdEvent(veilederIdent: String): VeilederContext? {
+        val key = ValkeyPEventKey(ValkeyVeilederContextType.AKTIV_GRUPPE_ID, veilederIdent)
         val result = valkey.get(key.toString()) ?: return null
         return Json.decodeFromString<ValkeyPEvent>(result).toPEvent()
     }
