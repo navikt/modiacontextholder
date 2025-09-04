@@ -15,7 +15,7 @@ data class RSContext(
             RSContext(
                 aktivBruker = if (VeilederContextType.NY_AKTIV_BRUKER == veilederContext.contextType) veilederContext.verdi else null,
                 aktivEnhet = if (VeilederContextType.NY_AKTIV_ENHET == veilederContext.contextType) veilederContext.verdi else null,
-                aktivGruppeId = if (VeilederContextType.MY_AKTIV_GRUPPE_ID == veilederContext.contextType) veilederContext.verdi else null,
+                aktivGruppeId = if (VeilederContextType.NY_AKTIV_GRUPPE_ID == veilederContext.contextType) veilederContext.verdi else null,
             )
     }
 }
