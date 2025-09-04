@@ -520,6 +520,8 @@ components:
           type: "string"
         aktivEnhet:
           type: "string"
+        aktivGruppeId:
+          type: "string"
     RSNyContext:
       type: "object"
       properties:
@@ -530,6 +532,7 @@ components:
           enum:
           - "NY_AKTIV_BRUKER"
           - "NY_AKTIV_ENHET"
+          - "NY_AKTIV_GRUPPE_ID"
       required:
       - "verdi"
       - "eventType"
