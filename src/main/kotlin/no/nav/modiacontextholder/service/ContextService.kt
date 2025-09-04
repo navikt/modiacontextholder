@@ -1,6 +1,5 @@
 package no.nav.modiacontextholder.service
 
-import kotlinx.coroutines.runBlocking
 import no.nav.common.json.JsonUtils
 import no.nav.modiacontextholder.domain.VeilederContext
 import no.nav.modiacontextholder.domain.VeilederContextType
@@ -61,7 +60,7 @@ class ContextService(
             saveToDb(
                 VeilederContext(
                     verdi = gruppeId,
-                    contextType = VeilederContextType.MY_AKTIV_GRUPPE_ID,
+                    contextType = VeilederContextType.NY_AKTIV_GRUPPE_ID,
                     veilederIdent = veilederIdent,
                 )
             )
