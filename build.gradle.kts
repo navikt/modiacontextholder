@@ -25,7 +25,7 @@ val logstash_logback_enocder_version = "8.1"
 val mainClass = "no.nav.modiacontextholder.MainKt"
 
 plugins {
-    kotlin("jvm") version "2.2.0"
+    kotlin("jvm") version "2.2.20"
     id("io.ktor.plugin") version "3.2.3"
     kotlin("plugin.serialization") version "2.2.10"
     id("com.gradleup.shadow") version "8.3.8"
