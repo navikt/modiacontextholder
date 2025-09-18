@@ -145,6 +145,9 @@ spec:
         - application: familie-integrasjoner
           namespace: teamfamilie
           cluster: dev-fss
+        - application: oppslag-bruker-frontend
+          namespace: holmes
+          cluster: dev-gcp
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
