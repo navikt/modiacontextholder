@@ -145,7 +145,7 @@ spec:
         - application: familie-integrasjoner
           namespace: teamfamilie
           cluster: dev-fss
-        - application: oppslag-bruker-frontend
+        - application: nav-persondata-api
           namespace: holmes
           cluster: dev-gcp
   envFrom:

@@ -151,6 +151,9 @@ spec:
         - application: familie-integrasjoner
           namespace: teamfamilie
           cluster: prod-fss
+        - application: nav-persondata-api
+          namespace: holmes
+          cluster: prod-gcp
         - application: gosys
           namespace: isa
           cluster: prod-fss
