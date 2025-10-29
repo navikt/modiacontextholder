@@ -157,6 +157,9 @@ spec:
         - application: gosys
           namespace: isa
           cluster: prod-fss
+        - application: rekrutteringstreff-api
+          namespace: toi
+          cluster: prod-gcp
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:

@@ -148,6 +148,9 @@ spec:
         - application: nav-persondata-api
           namespace: holmes
           cluster: dev-gcp
+        - application: rekrutteringstreff-api
+          namespace: toi
+          cluster: dev-gcp
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
