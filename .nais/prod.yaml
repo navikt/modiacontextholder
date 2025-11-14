@@ -96,6 +96,9 @@ spec:
         - application: syfosmmanuell
           namespace: teamsykmelding
           cluster: prod-gcp
+        - application: tsm-manuell
+          namespace: tsm
+          cluster: prod-gcp
         - application: syk-dig
           namespace: teamsykmelding
           cluster: prod-gcp

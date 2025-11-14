@@ -92,6 +92,9 @@ spec:
         - application: syfosmmanuell
           namespace: teamsykmelding
           cluster: dev-gcp
+        - application: tsm-manuell
+          namespace: tsm
+          cluster: dev-gcp
         - application: syk-dig
           namespace: teamsykmelding
           cluster: dev-gcp
