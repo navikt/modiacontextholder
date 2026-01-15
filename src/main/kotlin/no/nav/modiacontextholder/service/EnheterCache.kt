@@ -51,7 +51,7 @@ class EnheterCache(
             cacheList =
                 Collections.unmodifiableList(
                     enheter
-                        .map { enhet -> DecoratorDomain.Enhet(enhet.enhetNr, enhet.navn, enhet.type) }
+                        .map { enhet -> DecoratorDomain.Enhet(enhet.enhetNr, enhet.navn) }
                         .sortedBy { it.enhetId },
                 )
 

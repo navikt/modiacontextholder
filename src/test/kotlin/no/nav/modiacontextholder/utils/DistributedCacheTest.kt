@@ -18,7 +18,7 @@ import kotlin.test.assertNotNull
 
 class DistributedCacheTest : TestApplication() {
     val mockService: EnheterService = mockk()
-    val mockEnheter = listOf(DecoratorDomain.Enhet("0000", "Test Enhet", "LOKAL"))
+    val mockEnheter = listOf(DecoratorDomain.Enhet("0000", "Test Enhet"))
 
     @Test
     fun `skal cache i redis med riktig key`() =

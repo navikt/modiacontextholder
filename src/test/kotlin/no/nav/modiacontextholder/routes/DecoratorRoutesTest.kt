@@ -71,9 +71,9 @@ class DecoratorRoutesTest : TestApplication() {
             gitt_saksbehandler_i_ad()
             gitt_tilgang_til_enheter(
                 listOf(
-                    enhet("0001", "Test 1", "LOKAL"),
-                    enhet("0002", "Test 2", "KLAGE"),
-                    enhet("0003", "Test 3", "OKONOMI"),
+                    enhet("0001", "Test 1"),
+                    enhet("0002", "Test 2"),
+                    enhet("0003", "Test 3"),
                 ),
             )
 
@@ -98,7 +98,7 @@ class DecoratorRoutesTest : TestApplication() {
             gitt_saksbehandler_i_ad()
             gitt_tilgang_til_enheter(
                 listOf(
-                    enhet("0001", "Test 1", "LOKAL"),
+                    enhet("0001", "Test 1"),
                 ),
             )
 
@@ -123,11 +123,11 @@ class DecoratorRoutesTest : TestApplication() {
         coEvery { enheterService.hentEnheter(ident, any()) } returns Result.success(data)
         every { enheterService.hentAlleEnheter() } returns
             listOf(
-                enhet("0001", "Test 1", "LOKAL"),
-                enhet("0002", "Test 2", "KLAGE"),
-                enhet("0003", "Test 3", "OKONOMI"),
-                enhet("0004", "Test 4", "KO"),
-                enhet("0005", "Test 5", "IT"),
+                enhet("0001", "Test 1"),
+                enhet("0002", "Test 2"),
+                enhet("0003", "Test 3"),
+                enhet("0004", "Test 4"),
+                enhet("0005", "Test 5"),
             )
     }
 
@@ -143,6 +143,5 @@ class DecoratorRoutesTest : TestApplication() {
     private fun enhet(
         id: String,
         navn: String,
-        type: String,
-    ): DecoratorDomain.Enhet = DecoratorDomain.Enhet(id, navn, type)
+    ): DecoratorDomain.Enhet = DecoratorDomain.Enhet(id, navn)
 }
