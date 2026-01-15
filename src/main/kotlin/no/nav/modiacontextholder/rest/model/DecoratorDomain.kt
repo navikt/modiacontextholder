@@ -18,7 +18,6 @@ class DecoratorDomain {
     data class Enhet(
         val enhetId: String,
         val navn: String,
-        val type: String,
         val gruppeId: String? = null,
     )
 

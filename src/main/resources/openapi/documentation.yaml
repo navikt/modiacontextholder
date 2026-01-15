@@ -553,12 +553,9 @@ components:
           type: "string"
         navn:
           type: "string"
-        type:
-          type: "string"
       required:
       - "enhetId"
       - "navn"
-      - "type"
     DecoratorConfig:
       type: "object"
       properties:
