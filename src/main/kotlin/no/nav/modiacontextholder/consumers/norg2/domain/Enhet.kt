@@ -6,5 +6,6 @@ data class Enhet(
     var enhetNr: String,
     var navn: String,
     var status: String,
+    var type: String? = null,
     var gruppeId: String? = null,
 ) : Serializable
