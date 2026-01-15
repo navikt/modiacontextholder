@@ -5,6 +5,7 @@ import java.io.Serializable
 data class Enhet(
     var enhetNr: String,
     var navn: String,
+    var type: String,
     var status: String,
     var gruppeId: String? = null,
 ) : Serializable
