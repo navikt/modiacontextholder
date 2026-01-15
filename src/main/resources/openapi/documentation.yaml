@@ -553,6 +553,8 @@ components:
           type: "string"
         navn:
           type: "string"
+        type:
+          type: "string"
       required:
       - "enhetId"
       - "navn"
