@@ -17,21 +17,34 @@ Denne applikasjonen bruker både lokal in-memory caching og distribuert caching 
 
 #### Oversikt
 
-##### Lokal in-memory cache
+##### In-memory cache
 For data som ikke må deles på tvers av instanser, brukes in-memory caching basert på Caffeine.
 
+- `EnheterCache` cacher enhetsdata hentet fra NORG2.
+  - Cachen fylles ved oppstart av applikasjonen og refreshes hver 6. time.
+
 ##### Distribuert cache i Redis/Valkey
-For data som må deles på tvers av instanser, brukes distribuert caching i Redis/Valkey.
+For data som må deles på tvers av instanser, brukes distribuert caching i Redis. Her er det satt opp
+to databaser med ulike formål:
 
-- Den distribuerte cachen bruker en dedikert Redis database (`REDIS_CACHE_DB = 1`).
-- Cache-keys navngis slik: `<cacheNavn>:<key>`
-  - Standard cache-navn genereres som `cache-<UUID>`, hvor UUID genereres tilfeldig.
-- Verdiene lagres som serialiserte JSON-strenger ved hjelp av Kotlin serialization.
+###### DB '0' – kontekst-data
+Brukes til lagring av kontekst-data for innloggede brukere.
 
-#### Databaser
-Applikasjonen benytter to Redis databaser:
-- **DB `0`**: standarddatabase for kontekst-data.
-- **DB `1`**: distribuert cache.
+Eksempler på keys:
+- `veiledercontext:AKTIV_ENHET:<nav-ident>` - aktiv enhet for innlogget bruker
+- `veiledercontext:AKTIV_BRUKER:<nav-ident>` - aktiv bruker (åpnet person)
+- `veiledercontext:AKTIV_GRUPPE_ID:<nav-ident>` - aktiv gruppe_id
+
+###### DB '1' – generell cache
+Brukes til caching av oppslått data fra eksterne tjenester for å unngå gjentatte kall.
+
+- Nøkler følger mønsteret: `<cacheNavn>:<key>` der `key` typisk er `nav-ident`.
+- Verdier lagres med utløpstid, slik at de automatisk forsvinner etter en periode.
+- 
+Eksempler på keys:
+- `enheter:<nav-ident>` - enheter innlogget bruker kan velge mellom i dropdown-meny (basert på tilganger og NORG2 data)
+- `veileder:<nav-ident>` - personalinfo knyttet til innlogget bruker
+- `azuread:<nav-ident>` - tilganger for innlogget bruker
 
 ### Lese ut og rydde opp i verdier i cachen
 For å lese ut eller rydde opp i verdier i cachen kan du benytte `redis-cli`.
