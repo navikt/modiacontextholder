@@ -154,6 +154,9 @@ spec:
         - application: rekrutteringstreff-api
           namespace: toi
           cluster: dev-gcp
+        - application: sosialhjelp-modia
+          namespace: teamdigisos
+          cluster: dev-gcp
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
