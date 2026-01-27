@@ -157,6 +157,9 @@ spec:
         - application: sosialhjelp-modia
           namespace: teamdigisos
           cluster: dev-gcp
+        - application: sosialhjelp-modia-mock
+          namespace: teamdigisos
+          cluster: dev-gcp
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
