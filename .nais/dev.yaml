@@ -110,7 +110,7 @@ spec:
         - application: rekrutteringsbistand-kandidatsok-api
           namespace: toi
           cluster: dev-gcp
-        - application: rekrutteringsbistand
+        - application: rekrutteringsbistand-frontend2
           namespace: toi
           cluster: dev-gcp
         - application: rekrutteringsbistand-frontend
