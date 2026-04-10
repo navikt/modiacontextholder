@@ -160,6 +160,12 @@ spec:
         - application: sosialhjelp-modia-mock
           namespace: teamdigisos
           cluster: dev-gcp
+         - application: hotsak-frontend
+          namespace: teamdigihot
+          cluster: dev-gcp
+         - application: azure-token-generator
+          namespace: nais
+          cluster: dev-gcp
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
