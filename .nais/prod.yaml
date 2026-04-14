@@ -163,6 +163,9 @@ spec:
         - application: sosialhjelp-modia
           namespace: teamdigisos
           cluster: prod-gcp
+        - application: hotsak-frontend
+          namespace: teamdigihot
+          cluster: prod-gcp
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
