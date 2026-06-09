@@ -52,11 +52,9 @@ open class AzureADServiceImpl(
             try {
                 runBlocking {
                     val response = handleRequest(url, userToken, veilederIdent)
-                    response.value.map {
-                        AnsattRolle(
-                            gruppeNavn = requireNotNull(it.displayName),
-                            gruppeId = requireNotNull(it.id),
-                        )
+                    response.value.mapNotNull { group ->
+                        if (group.displayName == null || group.id == null) null
+                        else AnsattRolle(gruppeNavn = group.displayName, gruppeId = group.id)
                     }
                 }
             } catch (e: Exception) {
