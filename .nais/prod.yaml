@@ -93,9 +93,6 @@ spec:
         - application: beslutteroversikt
           namespace: obo
           cluster: prod-gcp
-        - application: syfosmmanuell
-          namespace: teamsykmelding
-          cluster: prod-gcp
         - application: tsm-manuell
           namespace: tsm
           cluster: prod-gcp
