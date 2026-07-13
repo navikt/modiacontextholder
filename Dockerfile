@@ -1,4 +1,4 @@
-FROM gradle:8-jdk21-alpine as builder
+FROM gradle:9-jdk21-alpine as builder
 
 # sett riktig tidssone
 ENV TZ Europe/Oslo
