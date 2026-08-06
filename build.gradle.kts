@@ -2,16 +2,16 @@ import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLDownloadSDLTask
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
 
-val ktor_version = "3.2.3"
+val ktor_version = "3.5.2"
 val kotlin_version = "2.0.20"
 val koin_version = "4.1.0-Beta8"
 
-val modia_common_version = "1.2025.09.15-12.01-37deb02592aa"
+val modia_common_version = "1.2026.08.06-12.11-d922f6248916"
 val nav_common_version = "3.2025.08.25_12.27-58dc47568753"
 val graphql_kotlin_version = "8.8.1"
 val caffeine_version = "3.2.2"
 val unleash_version = "11.0.2"
-val okhttp3_version = "4.12.0"
+val okhttp3_version = "5.3.2"
 val mockk_version = "1.14.5"
 val testcontainers_version = "1.21.3"
 val vavr_version = "0.10.7"
@@ -26,7 +26,7 @@ val mainClass = "no.nav.modiacontextholder.MainKt"
 
 plugins {
     kotlin("jvm") version "2.2.20"
-    id("io.ktor.plugin") version "3.2.3"
+    id("io.ktor.plugin") version "3.5.2"
     kotlin("plugin.serialization") version "2.2.20"
     id("com.gradleup.shadow") version "8.3.8"
     id("com.expediagroup.graphql") version "8.8.1"
