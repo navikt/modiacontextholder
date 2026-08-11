@@ -22,17 +22,14 @@ val kotlinx_coroutines_version = "1.11.0"
 val assertj_version = "3.27.4"
 val logstash_logback_enocder_version = "8.1"
 
-val mainClass = "no.nav.modiacontextholder.MainKt"
+val mainClassName = "no.nav.modiacontextholder.MainKt"
 
 plugins {
     kotlin("jvm") version "2.2.20"
-    id("io.ktor.plugin") version "3.5.2"
+    application
     kotlin("plugin.serialization") version "2.2.20"
-    id("com.gradleup.shadow") version "8.3.8"
     id("com.expediagroup.graphql") version "8.8.1"
 }
-
-project.setProperty("mainClassName", mainClass)
 
 repositories {
     mavenCentral()
@@ -106,13 +103,21 @@ java {
     }
 }
 
-val graphqlDownloadSDL by tasks.getting(GraphQLDownloadSDLTask::class) {
+sourceSets {
+    main {
+        kotlin {
+            srcDir(layout.buildDirectory.dir("generated/source/graphql/main"))
+        }
+    }
+}
+
+tasks.named<GraphQLDownloadSDLTask>("graphqlDownloadSDL") {
     endpoint.set("https://navikt.github.io/pdl/pdl-api-sdl.graphqls")
 }
 
-val graphqlGenerateClient by tasks.getting(GraphQLGenerateClientTask::class) {
+tasks.named<GraphQLGenerateClientTask>("graphqlGenerateClient") {
     packageName.set("no.nav.modiacontextholder.consumers.pdl.generated")
-    schemaFile.set(graphqlDownloadSDL.outputFile)
+    schemaFile.set(tasks.named<GraphQLDownloadSDLTask>("graphqlDownloadSDL").flatMap { it.outputFile })
     queryFileDirectory.set(file("${project.projectDir}/src/main/resources/pdl/queries"))
     serializer.set(GraphQLSerializer.KOTLINX)
 
@@ -124,31 +129,8 @@ tasks.test {
 }
 
 tasks.jar {
-    enabled = false
-}
-
-tasks.shadowJar {
-    archiveFileName.set("modiacontextholder.jar")
     manifest {
-        attributes(
-            mapOf("Main-Class" to mainClass),
-        )
+        attributes(mapOf("Main-Class" to mainClassName))
     }
     dependsOn("graphqlGenerateClient")
-}
-
-tasks.distZip {
-    dependsOn("shadowJar")
-}
-
-tasks.distTar {
-    dependsOn("shadowJar")
-}
-
-tasks.startScripts {
-    dependsOn("shadowJar")
-}
-
-tasks.build {
-    dependsOn("shadowJar")
 }
