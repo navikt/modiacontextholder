@@ -1,11 +1,12 @@
 package no.nav.modiacontextholder.consumers.norg2.domain
 
-import java.io.Serializable
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Enhet(
-    var enhetNr: String,
-    var navn: String,
-    var status: String,
-    var type: String? = null,
-    var gruppeId: String? = null,
-) : Serializable
+    val enhetNr: String,
+    val navn: String,
+    val status: String,
+    val type: String? = null,
+    val gruppeId: String? = null,
+)

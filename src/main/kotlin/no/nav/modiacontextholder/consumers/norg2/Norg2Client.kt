@@ -1,8 +1,6 @@
 package no.nav.modiacontextholder.consumers.norg2
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import kotlinx.serialization.json.Json
 import no.nav.common.health.HealthCheckResult
 import no.nav.common.health.selftest.SelfTestCheck
 import no.nav.common.log.MDCConstants
@@ -15,8 +13,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.slf4j.MDC
 
-private val Norg2EnheterResponse = object : TypeReference<List<Enhet>>() {}
-
 interface Norg2Client {
     fun hentAlleEnheter(): List<Enhet>
 }
@@ -26,34 +22,40 @@ class Norg2ClientImpl(
     private val client: OkHttpClient,
 ) : Norg2Client,
     HealthCheckAware {
-    private val objectmapper =
-        jacksonObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    private val json = Json { ignoreUnknownKeys = true }
 
     private val reporter = SelftestGenerator.Reporter(name = "Norg2 client", critical = true)
 
     override fun hentAlleEnheter(): List<Enhet> {
         val callId = MDC.get(MDCConstants.MDC_CALL_ID) ?: IdUtils.generateId()
 
-        val response =
-            client
-                .newCall(
-                    Request
-                        .Builder()
-                        .url(
-                            "$url/api/v1/enhet"
-                                .toHttpUrl()
-                                .newBuilder()
-                                .addQueryParameter("enhetStatusListe", "AKTIV")
-                                .addQueryParameter("enhetStatusListe", "UNDER_ETABLERING")
-                                .addQueryParameter("enhetStatusListe", "UNDER_AVVIKLING")
-                                .build(),
-                        ).header("Nav-Call-Id", callId)
-                        .header("Content-Type", "application/json")
+        val request =
+            Request
+                .Builder()
+                .url(
+                    "$url/api/v1/enhet"
+                        .toHttpUrl()
+                        .newBuilder()
+                        .addQueryParameter("enhetStatusListe", "AKTIV")
+                        .addQueryParameter("enhetStatusListe", "UNDER_ETABLERING")
+                        .addQueryParameter("enhetStatusListe", "UNDER_AVVIKLING")
                         .build(),
-                ).execute()
+                ).header("Nav-Call-Id", callId)
+                .header("Content-Type", "application/json")
+                .build()
 
-        return objectmapper.readValue(response.body?.byteStream(), Norg2EnheterResponse)
+        val body =
+            client
+                .newCall(request)
+                .execute()
+                .use { response ->
+                    if (!response.isSuccessful) {
+                        throw RuntimeException("Norg2 /api/v1/enhet svarte ${response.code} ${response.message}")
+                    }
+                    response.body.string()
+                }
+
+        return json.decodeFromString<List<Enhet>>(body)
     }
 
     override fun getHealthCheck(): SelfTestCheck =
@@ -74,7 +76,11 @@ class Norg2ClientImpl(
     }
 
     fun ping() {
-        val status = client.newCall(Request.Builder().url("$url/internal/health/liveness").build()).execute().code
+        val status =
+            client
+                .newCall(Request.Builder().url("$url/internal/health/liveness").build())
+                .execute()
+                .use { it.code }
         if (status != 200) {
             throw RuntimeException("Norg2 /isAlive status: $status")
         }
