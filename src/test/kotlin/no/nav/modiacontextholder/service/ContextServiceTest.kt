@@ -2,7 +2,7 @@ package no.nav.modiacontextholder.service
 
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
