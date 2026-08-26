@@ -20,7 +20,7 @@ val kotlinx_serialization_version = "1.11.0"
 val kotlinx_datetime_version = "0.8.0"
 val kotlinx_coroutines_version = "1.11.0"
 val assertj_version = "3.27.4"
-val logstash_logback_enocder_version = "8.1"
+val logstash_logback_enocder_version = "9.0"
 
 val mainClassName = "no.nav.modiacontextholder.MainKt"
 
