@@ -19,6 +19,21 @@ import org.koin.ktor.ext.inject
 
 private const val ROLLE_MODIA_ADMIN = "0000-GA-Modia_Admin"
 
+private const val QUERY_PARAM_KUN_OPPGAVEBEHANDLENDE_ENHETER = "kunOppgavebehandlendeEnheter"
+
+/**
+ * Opt-in-filter: `?kunOppgavebehandlendeEnheter=true` gir kun enheter som kan behandle oppgaver.
+ * Parameteret er valgfritt, og default (false) beholder dagens oppførsel.
+ */
+private fun ApplicationCall.kunOppgavebehandlendeEnheter(): Boolean {
+    val raw = request.queryParameters[QUERY_PARAM_KUN_OPPGAVEBEHANDLENDE_ENHETER] ?: return false
+    return raw.lowercase().toBooleanStrictOrNull()
+        ?: throw HTTPException(
+            HttpStatusCode.BadRequest,
+            "Ugyldig verdi for query-parameter '$QUERY_PARAM_KUN_OPPGAVEBEHANDLENDE_ENHETER'. Forventet 'true' eller 'false'.",
+        )
+}
+
 fun Route.decoratorRoutes() {
     decoratorRoutesInternal()
     route("/v2") {
@@ -36,11 +51,12 @@ fun Route.decoratorRoutesInternal() {
         roles: List<String>,
         ident: String,
         userToken: String,
+        kunOppgavebehandlendeEnheter: Boolean,
     ): Result<List<DecoratorDomain.Enhet>> {
         if (roles.contains(ROLLE_MODIA_ADMIN)) {
-            return Result.success(enheterService.hentAlleEnheter())
+            return Result.success(enheterService.hentAlleEnheter(kunOppgavebehandlendeEnheter))
         } else {
-            return enheterService.hentEnheter(ident, userToken)
+            return enheterService.hentEnheter(ident, userToken, kunOppgavebehandlendeEnheter)
         }
     }
 
@@ -54,9 +70,10 @@ fun Route.decoratorRoutesInternal() {
     suspend fun getDecoratorRessurs(
         ident: String,
         userToken: String,
+        kunOppgavebehandlendeEnheter: Boolean,
     ): DecoratorConfig {
         val roles = azureADService.fetchRoller(userToken, NavIdent(ident)).map { it.gruppeNavn }
-        return getEnheter(roles, ident, userToken)
+        return getEnheter(roles, ident, userToken, kunOppgavebehandlendeEnheter)
             .map { enheter -> DecoratorConfig(veilederService.hentVeilederNavn(ident), enheter) }
             .getOrElse { throw exceptionHandlder(it) }
     }
@@ -65,12 +82,15 @@ fun Route.decoratorRoutesInternal() {
         /**
          * Get info for the decorator. Includes the users enheter, name and ident
          *
+         * Query param `kunOppgavebehandlendeEnheter=true` gir kun enheter som kan behandle oppgaver.
+         * Utelates parameteren returneres alle enheter (uendret oppførsel).
+         *
          * @OpenAPITag decorator
          */
         get("/v2") {
             val ident = call.getIdent()
             val token = call.getIdToken()
-            call.respond(getDecoratorRessurs(ident, token))
+            call.respond(getDecoratorRessurs(ident, token, call.kunOppgavebehandlendeEnheter()))
         }
 
         /**
@@ -83,7 +103,7 @@ fun Route.decoratorRoutesInternal() {
         get("") {
             val ident = call.getIdent()
             val token = call.getIdToken()
-            call.respond(getDecoratorRessurs(ident, token))
+            call.respond(getDecoratorRessurs(ident, token, call.kunOppgavebehandlendeEnheter()))
         }
 
         /**
