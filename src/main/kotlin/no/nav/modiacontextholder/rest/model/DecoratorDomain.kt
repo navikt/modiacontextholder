@@ -19,7 +19,17 @@ class DecoratorDomain {
         val enhetId: String,
         val navn: String,
         val type: String? = null,
+        /**
+         * GruppeId er id-en til enheten in Entra ID.
+         * Det ble forespurt i august 2025 om å eksponere den i APIet vårt slik at folk
+         * kan bruke verdien videre til kall til Entra via MS Graph
+         */
         val gruppeId: String? = null,
+        /**
+         * Om enheten kan behandle oppgaver. `null` betyr at NORG2 ikke oppga verdien,
+         * og likestilles med `false`.
+         */
+        val oppgavebehandler: Boolean? = null,
     )
 
     @Serializable

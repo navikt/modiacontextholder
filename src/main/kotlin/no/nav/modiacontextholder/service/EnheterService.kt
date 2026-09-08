@@ -23,6 +23,7 @@ open class EnheterService(
     suspend fun hentEnheter(
         ident: String,
         token: String,
+        kunOppgavebehandlere: Boolean = false,
     ): Result<List<DecoratorDomain.Enhet>> {
         val aktiveEnheter = enheterCache.get()
 
@@ -39,6 +40,7 @@ open class EnheterService(
                         .ifEmpty { null }
                 }
             }.orEmpty()
+                .filtrerOppgavebehandlere(kunOppgavebehandlere)
         }.onFailure { exception ->
             log.error("Kunne ikke hente enheter for $ident fra Entra ID", exception)
         }
@@ -46,5 +48,9 @@ open class EnheterService(
 
     private fun enhetId(gruppeNavn: String): String? = Regex("0000-GA-ENHET_(.*)").find(gruppeNavn)?.groupValues?.get(1)
 
-    open fun hentAlleEnheter(): List<DecoratorDomain.Enhet> = enheterCache.getAll()
+    open fun hentAlleEnheter(kunOppgavebehandlere: Boolean = false): List<DecoratorDomain.Enhet> =
+        enheterCache.getAll().filtrerOppgavebehandlere(kunOppgavebehandlere)
 }
+
+private fun List<DecoratorDomain.Enhet>.filtrerOppgavebehandlere(kunOppgavebehandlere: Boolean): List<DecoratorDomain.Enhet> =
+    if (kunOppgavebehandlere) filter { it.oppgavebehandler == true } else this

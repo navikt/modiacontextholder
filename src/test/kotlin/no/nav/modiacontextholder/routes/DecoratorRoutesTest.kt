@@ -42,7 +42,7 @@ class DecoratorRoutesTest : TestApplication() {
         testApp {
             gitt_saksbehandler_i_ad()
 
-            coEvery { enheterService.hentEnheter(ident, any()) } returns Result.failure(IllegalStateException("Noe gikk feil"))
+            coEvery { enheterService.hentEnheter(ident, any(), any()) } returns Result.failure(IllegalStateException("Noe gikk feil"))
 
             client.getAuth("/api/v2/decorator").apply {
                 assertEquals(this.status, HttpStatusCode.InternalServerError)
@@ -109,6 +109,72 @@ class DecoratorRoutesTest : TestApplication() {
         }
 
     @Test
+    fun `opt-in gir kun oppgavebehandler-enheter for vanlig veileder`() =
+        testApp {
+            gitt_saksbehandler_i_ad()
+            gitt_tilgang_til_enheter(alleEnheter)
+
+            client.getAuth("/api/v2/decorator?kunOppgavebehandlendeEnheter=true").apply {
+                val decoratorConfig = Json.decodeFromString<DecoratorDomain.DecoratorConfig>(this.bodyAsText())
+                // kun 0001 og 0003 er true; 0005 er null og likestilles med false
+                assertThat(decoratorConfig.enheter.map { it.enhetId }).containsExactly("0001", "0003")
+            }
+        }
+
+    @Test
+    fun `opt-in gjelder ogsaa for modia-admin`() =
+        testApp {
+            val azureADService = declareMock<AzureADService>()
+            coEvery { azureADService.fetchRoller(any(), any()) } returns
+                listOf(AnsattRolle(adminGroupName, azureObjectId))
+
+            gitt_saksbehandler_i_ad()
+            gitt_tilgang_til_enheter(emptyList())
+
+            client.getAuth("/api/v2/decorator?kunOppgavebehandlendeEnheter=true").apply {
+                val decoratorConfig = Json.decodeFromString<DecoratorDomain.DecoratorConfig>(this.bodyAsText())
+                assertThat(decoratorConfig.enheter.map { it.enhetId }).containsExactly("0001", "0003")
+            }
+        }
+
+    @Test
+    fun `uten opt-in returneres alle enheter`() =
+        testApp {
+            gitt_saksbehandler_i_ad()
+            gitt_tilgang_til_enheter(alleEnheter)
+
+            client.getAuth("/api/v2/decorator").apply {
+                val decoratorConfig = Json.decodeFromString<DecoratorDomain.DecoratorConfig>(this.bodyAsText())
+                assertThat(decoratorConfig.enheter).hasSize(5)
+            }
+        }
+
+    @Test
+    fun `oppgavebehandler-flagget eksponeres i responsen`() =
+        testApp {
+            gitt_saksbehandler_i_ad()
+            gitt_tilgang_til_enheter(alleEnheter)
+
+            client.getAuth("/api/v2/decorator").apply {
+                val decoratorConfig = Json.decodeFromString<DecoratorDomain.DecoratorConfig>(this.bodyAsText())
+                assertThat(decoratorConfig.enheter.single { it.enhetId == "0001" }.oppgavebehandler).isTrue()
+                assertThat(decoratorConfig.enheter.single { it.enhetId == "0002" }.oppgavebehandler).isFalse()
+                assertThat(decoratorConfig.enheter.single { it.enhetId == "0005" }.oppgavebehandler).isNull()
+            }
+        }
+
+    @Test
+    fun `ugyldig verdi paa oppgavebehandler gir 400`() =
+        testApp {
+            gitt_saksbehandler_i_ad()
+            gitt_tilgang_til_enheter(alleEnheter)
+
+            client.getAuth("/api/v2/decorator?kunOppgavebehandlendeEnheter=kanskje").apply {
+                assertEquals(HttpStatusCode.BadRequest, this.status)
+            }
+        }
+
+    @Test
     fun `hent-fnr route`() =
         testApp {
             val mockPdl: PdlService by inject()
@@ -120,16 +186,17 @@ class DecoratorRoutesTest : TestApplication() {
         }
 
     private fun gitt_tilgang_til_enheter(data: List<DecoratorDomain.Enhet>) {
-        coEvery { enheterService.hentEnheter(ident, any()) } returns Result.success(data)
-        every { enheterService.hentAlleEnheter() } returns
-            listOf(
-                enhet("0001", "Test 1", "LOKAL"),
-                enhet("0002", "Test 2", "KLAGE"),
-                enhet("0003", "Test 3", "OKONOMI"),
-                enhet("0004", "Test 4", "KO"),
-                enhet("0005", "Test 5", "IT"),
-            )
+        coEvery { enheterService.hentEnheter(ident, any(), any()) } answers {
+            Result.success(data.kunOppgavebehandlere(thirdArg()))
+        }
+        every { enheterService.hentAlleEnheter(any()) } answers {
+            alleEnheter.kunOppgavebehandlere(firstArg())
+        }
     }
+
+    /** Speiler serverens filtrering slik at ruten kan verifiseres ende-til-ende. */
+    private fun List<DecoratorDomain.Enhet>.kunOppgavebehandlere(aktivert: Boolean) =
+        if (aktivert) filter { it.oppgavebehandler == true } else this
 
     private fun gitt_saksbehandler_i_ad() {
         coEvery { veilederService.hentVeilederNavn(any()) } returns
@@ -144,5 +211,16 @@ class DecoratorRoutesTest : TestApplication() {
         id: String,
         navn: String,
         type: String?,
-    ): DecoratorDomain.Enhet = DecoratorDomain.Enhet(id, navn, type)
+        oppgavebehandler: Boolean? = null,
+    ): DecoratorDomain.Enhet = DecoratorDomain.Enhet(id, navn, type, oppgavebehandler = oppgavebehandler)
+
+    private val alleEnheter
+        get() =
+            listOf(
+                enhet("0001", "Test 1", "LOKAL", oppgavebehandler = true),
+                enhet("0002", "Test 2", "KLAGE", oppgavebehandler = false),
+                enhet("0003", "Test 3", "OKONOMI", oppgavebehandler = true),
+                enhet("0004", "Test 4", "KO", oppgavebehandler = false),
+                enhet("0005", "Test 5", "IT", oppgavebehandler = null),
+            )
 }

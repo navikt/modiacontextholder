@@ -9,4 +9,5 @@ data class Enhet(
     val status: String,
     val type: String? = null,
     val gruppeId: String? = null,
+    val oppgavebehandler: Boolean? = null,
 )

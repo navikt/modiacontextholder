@@ -51,8 +51,14 @@ class EnheterCache(
             cacheList =
                 Collections.unmodifiableList(
                     enheter
-                        .map { enhet -> DecoratorDomain.Enhet(enhet.enhetNr, enhet.navn, enhet.type) }
-                        .sortedBy { it.enhetId },
+                        .map { enhet ->
+                            DecoratorDomain.Enhet(
+                                enhetId = enhet.enhetNr,
+                                navn = enhet.navn,
+                                type = enhet.type,
+                                oppgavebehandler = enhet.oppgavebehandler,
+                            )
+                        }.sortedBy { it.enhetId },
                 )
 
             cache =
@@ -61,7 +67,10 @@ class EnheterCache(
                         .associateBy { it.enhetId },
                 )
 
-            log.info("Cache lastet inn med ${cache.count()} enheter")
+            log.info(
+                "Cache lastet inn med ${cache.count()} enheter, " +
+                    "hvorav ${cacheList.count { it.oppgavebehandler == true }} kan behandle oppgaver",
+            )
         } catch (e: Exception) {
             log.error("Kunne ikke hente ut alle aktive enheter fra NORG2-rest", e)
         }

@@ -15,7 +15,6 @@ tags:
 - name: "fnrExchange"
   description: " <br> "
 - name: "websocket"
-  description: " <br> "
 - name: "redirect"
   description: " <br> "
 paths:
@@ -130,7 +129,15 @@ paths:
       - "decorator"
       description: "Get info for the decorator. Includes the users enheter, name and\
         \ ident <br> Deprecated: use v2 instead"
+      parameters:
+      - $ref: "#/components/parameters/OppgavebehandlerFilter"
       responses:
+        "400":
+          description: "Ugyldig verdi for query-parameteren 'kunOppgavebehandlendeEnheter'"
+          content:
+            text/plain:
+              schema:
+                type: "string"
         "403":
           description: "Forbidden"
           content:
@@ -202,7 +209,15 @@ paths:
       - "decorator"
       description: "Get info for the decorator. Includes the users enheter, name and\
         \ ident"
+      parameters:
+      - $ref: "#/components/parameters/OppgavebehandlerFilter"
       responses:
+        "400":
+          description: "Ugyldig verdi for query-parameteren 'kunOppgavebehandlendeEnheter'"
+          content:
+            text/plain:
+              schema:
+                type: "string"
         "403":
           description: "Forbidden"
           content:
@@ -272,7 +287,15 @@ paths:
       - "decorator"
       description: "Get info for the decorator. Includes the users enheter, name and\
         \ ident <br> Deprecated: use v2 instead"
+      parameters:
+      - $ref: "#/components/parameters/OppgavebehandlerFilter"
       responses:
+        "400":
+          description: "Ugyldig verdi for query-parameteren 'kunOppgavebehandlendeEnheter'"
+          content:
+            text/plain:
+              schema:
+                type: "string"
         "403":
           description: "Forbidden"
           content:
@@ -344,7 +367,15 @@ paths:
       - "decorator"
       description: "Get info for the decorator. Includes the users enheter, name and\
         \ ident"
+      parameters:
+      - $ref: "#/components/parameters/OppgavebehandlerFilter"
       responses:
+        "400":
+          description: "Ugyldig verdi for query-parameteren 'kunOppgavebehandlendeEnheter'"
+          content:
+            text/plain:
+              schema:
+                type: "string"
         "403":
           description: "Forbidden"
           content:
@@ -512,6 +543,18 @@ paths:
               schema:
                 type: "string"
 components:
+  parameters:
+    OppgavebehandlerFilter:
+      name: "kunOppgavebehandlendeEnheter"
+      in: "query"
+      required: false
+      description: >-
+        Opt-in-filter. Settes til `true` for kun å få enheter som kan behandle oppgaver.
+        Utelates parameteren returneres alle enheter (uendret oppførsel).
+        Enheter der `oppgavebehandler` er `null` eller `false` filtreres bort.
+      schema:
+        type: "boolean"
+        default: false
   schemas:
     RSContext:
       type: "object"
@@ -555,6 +598,18 @@ components:
           type: "string"
         type:
           type: "string"
+          nullable: true
+        gruppeId:
+          type: "string"
+          nullable: true
+          description: "Entra ID id for enheten"
+        oppgavebehandler:
+          type: "boolean"
+          nullable: true
+          description: >-
+            Om enheten kan behandle oppgaver. `null` betyr at NORG2 ikke oppga verdien,
+            og likestilles med `false`.
+            Ved `?kunOppgavebehandlendeEnheter=true` returneres kun enheter med verdien `true`.
       required:
       - "enhetId"
       - "navn"
