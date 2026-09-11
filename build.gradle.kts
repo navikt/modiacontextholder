@@ -27,7 +27,7 @@ val mainClassName = "no.nav.modiacontextholder.MainKt"
 plugins {
     kotlin("jvm") version "2.4.10"
     application
-    kotlin("plugin.serialization") version "2.4.10"
+    kotlin("plugin.serialization") version "2.4.20"
     id("com.expediagroup.graphql") version "10.2.2"
 }
 
