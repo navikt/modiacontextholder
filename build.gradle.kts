@@ -25,7 +25,7 @@ val logstash_logback_enocder_version = "9.0"
 val mainClassName = "no.nav.modiacontextholder.MainKt"
 
 plugins {
-    kotlin("jvm") version "2.4.10"
+    kotlin("jvm") version "2.4.20"
     application
     kotlin("plugin.serialization") version "2.4.10"
     id("com.expediagroup.graphql") version "10.2.2"
