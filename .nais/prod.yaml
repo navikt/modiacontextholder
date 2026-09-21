@@ -163,6 +163,12 @@ spec:
         - application: hotsak-frontend
           namespace: teamdigihot
           cluster: prod-gcp
+        - application: dinpensjon-frontend-veileder
+          namespace: pensjonselvbetjening
+          cluster: prod-gcp
+        - application: din-uforetrygd-frontend-veileder
+          namespace: ufore
+          cluster: prod-gcp
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
