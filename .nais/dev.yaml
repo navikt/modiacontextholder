@@ -163,6 +163,12 @@ spec:
         - application: azure-token-generator
           namespace: nais
           cluster: dev-gcp
+        - application: dinpensjon-frontend-veileder-q2
+          namespace: pensjonselvbetjening
+          cluster: dev-gcp
+        - application: din-uforetrygd-frontend-veileder
+          namespace: ufore
+          cluster: dev-gcp
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
