@@ -112,6 +112,27 @@ case "$( uname )" in                #(
   NONSTOP* )        nonstop=true ;;
 esac
 
+# Testcontainers does not resolve Colima's Docker socket from the Docker context.
+if [ "$darwin" = true ] && [ -z "${DOCKER_HOST:-}" ] && command -v docker > /dev/null 2>&1; then
+    docker_context=$(docker context show 2>/dev/null) || docker_context=
+    if [ "$docker_context" = "colima" ]; then
+        docker_host=$(docker context inspect --format '{{ .Endpoints.docker.Host }}' "$docker_context" 2>/dev/null) || docker_host=
+        case $docker_host in
+            unix://*)
+                docker_socket=${docker_host#unix://}
+                if [ -S "$docker_socket" ]; then
+                    DOCKER_HOST=$docker_host
+                    export DOCKER_HOST
+                    if [ -z "${TESTCONTAINERS_RYUK_DISABLED:-}" ]; then
+                        TESTCONTAINERS_RYUK_DISABLED=true
+                        export TESTCONTAINERS_RYUK_DISABLED
+                    fi
+                fi
+                ;;
+        esac
+    fi
+fi
+
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
 
