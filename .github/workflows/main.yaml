@@ -20,6 +20,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 21
+          check-latest: true
           cache: 'gradle'
 
       - name: Build
@@ -42,6 +43,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 21
+          check-latest: true
           cache: 'gradle'
       - name: Build distribution
         run: ./gradlew installDist
