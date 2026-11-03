@@ -172,6 +172,9 @@ spec:
         - application: din-uforetrygd-frontend-veileder
           namespace: ufore
           cluster: dev-gcp
+        - application: vis-stilling-veileder
+          namespace: toi
+          cluster: dev-gcp
   envFrom:
     - secret: modiacontextholder-unleash-api-token
   env:
