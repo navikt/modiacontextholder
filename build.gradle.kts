@@ -2,21 +2,21 @@ import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLDownloadSDLTask
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
 
-val ktor_version = "3.6.0"
+val ktor_version = "3.6.1"
 val kotlin_version = "2.0.20"
 val koin_version = "4.1.0-Beta8"
 
-val modia_common_version = "1.2026.08.06-12.11-d922f6248916"
-val nav_common_version = "4.2026.09.01_09.49-e681e09ca089"
-val graphql_kotlin_version = "10.2.2"
-val caffeine_version = "3.2.4"
-val unleash_version = "11.0.2"
-val okhttp3_version = "5.5.0"
-val mockk_version = "1.14.11"
+val modia_common_version = "1.2026.09.02-15.52-e0484649b92e"
+val nav_common_version = "4.2026.11.05_07.24-dd0ce2805c16"
+val graphql_kotlin_version = "11.0.0"
+val caffeine_version = "3.3.1"
+val unleash_version = "11.2.1"
+val okhttp3_version = "5.5.1"
+val mockk_version = "1.14.12"
 val testcontainers_version = "1.21.4"
-val vavr_version = "1.0.1"
+val vavr_version = "1.1.0"
 val lettuce_version = "7.6.0.RELEASE"
-val kotlinx_serialization_version = "1.11.0"
+val kotlinx_serialization_version = "1.12.0"
 val kotlinx_datetime_version = "0.8.0"
 val kotlinx_coroutines_version = "1.11.0"
 val assertj_version = "3.27.7"
@@ -28,7 +28,7 @@ plugins {
     kotlin("jvm") version "2.4.20"
     application
     kotlin("plugin.serialization") version "2.4.20"
-    id("com.expediagroup.graphql") version "10.2.2"
+    id("com.expediagroup.graphql") version "11.0.0"
 }
 
 repositories {
@@ -43,6 +43,18 @@ dependencyLocking {
 }
 
 dependencies {
+    listOf("implementation", "graphqlClient", "graphqlGraalVM", "graphqlSDL").forEach { configuration ->
+        add(configuration, platform("com.fasterxml.jackson:jackson-bom:2.23.0"))
+        add(configuration, platform("tools.jackson:jackson-bom:3.3.0"))
+    }
+    implementation(platform("io.netty:netty-bom:4.2.20.Final"))
+    implementation(platform("io.micrometer:micrometer-bom:1.17.2"))
+
+    constraints {
+        implementation("com.google.guava:guava:33.8.0-jre")
+        testImplementation("org.apache.commons:commons-compress:1.28.0")
+    }
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
@@ -95,7 +107,7 @@ dependencies {
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttp3_version")
     testImplementation("io.mockk:mockk-jvm:$mockk_version")
     testImplementation("org.assertj:assertj-core:$assertj_version")
-    testImplementation("io.ktor:ktor-server-test-host-jvm:3.5.2")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
     testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
 }
 
