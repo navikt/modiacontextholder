@@ -113,9 +113,6 @@ spec:
           cluster: prod-gcp
         - application: rekrutteringsbistand-frontend
           namespace: toi
-        - application: spinnsyn-frontend-interne
-          namespace: flex
-          cluster: prod-gcp
         - application: finnfastlege
           namespace: teamsykefravr
           cluster: prod-gcp
