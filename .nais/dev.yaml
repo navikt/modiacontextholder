@@ -112,9 +112,6 @@ spec:
           cluster: dev-gcp
         - application: rekrutteringsbistand-frontend
           namespace: toi
-        - application: spinnsyn-frontend-interne
-          namespace: flex
-          cluster: dev-gcp
         - application: finnfastlege
           namespace: teamsykefravr
           cluster: dev-gcp
