@@ -48,7 +48,7 @@ jobs:
       - name: Build distribution
         run: ./gradlew installDist
       - name: Publish Docker image
-        uses: nais/docker-build-push@v0
+        uses: nais/docker-build-push@v1
         id: docker-build-push
         with:
           team: personoversikt
